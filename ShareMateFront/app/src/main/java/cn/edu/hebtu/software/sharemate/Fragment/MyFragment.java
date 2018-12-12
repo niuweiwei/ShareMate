@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,7 +34,6 @@ import cn.edu.hebtu.software.sharemate.Activity.NoteDetailActivity;
 import cn.edu.hebtu.software.sharemate.Activity.PersonalActivity;
 import cn.edu.hebtu.software.sharemate.Activity.SettingActivity;
 import cn.edu.hebtu.software.sharemate.Adapter.NoteAdapter;
-import cn.edu.hebtu.software.sharemate.tools.FileUtilcll;
 import cn.edu.hebtu.software.sharemate.Bean.NoteBean;
 import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
@@ -62,9 +60,6 @@ public class MyFragment extends Fragment {
     private ImageView settingView;
     private Button more;
     private Button button;
-    private String path;
-    private static final int CODE_PHOTO_REQUEST = 1;
-    private static  final  int CROP_SMALL_PICTURE = 2;
 
     @Nullable
     @Override
@@ -140,7 +135,6 @@ public class MyFragment extends Fragment {
         focusView.setOnClickListener(listener);
         addView.setOnClickListener(listener);
         settingView.setOnClickListener(listener);
-        headImg.setOnClickListener(listener);
         button.setOnClickListener(listener);
         more.setOnClickListener(listener);
     }
@@ -190,13 +184,6 @@ public class MyFragment extends Fragment {
                     setIntent.putExtra("user",user);
                     startActivity(setIntent);
                     break;
-                case R.id.userPhoto:
-                    Intent headIntent = new Intent(Intent.ACTION_PICK, null);
-                    headIntent.setDataAndType(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            "image/*");
-                    startActivityForResult(headIntent,CODE_PHOTO_REQUEST);
-                    break;
                 case R.id.more:
                     showPopupWindow();
                     addBackgroundAlpha(0.7f);
@@ -204,47 +191,6 @@ public class MyFragment extends Fragment {
             }
         }
     }
-    //修改头像
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode) {
-            case CODE_PHOTO_REQUEST:
-                if(resultCode == RESULT_OK){
-                    cutImage(data.getData());
-                }
-                break;
-            case CROP_SMALL_PICTURE:
-                RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true);
-                Bundle extras = data.getExtras();
-                Bitmap photo = extras.getParcelable("data");
-                path = FileUtilcll.saveBitmap(photo);
-                Glide.with(this).load(path).apply(mRequestOptions).into(headImg);
-                upLoadImage(path);
-                break;
-        }
-    }
-    public void upLoadImage(String path){
-        UpLoadUtil upLoadUtil = new UpLoadUtil();
-        upLoadUtil.execute(path);
-    }
-    //对图片进行裁剪
-    public  void cutImage(Uri uri){
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        //下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
-        intent.putExtra("crop", "true");
-        // aspectX aspectY 是宽高的比例
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        // outputX outputY 是裁剪图片宽高
-        intent.putExtra("outputX", 80);
-        intent.putExtra("outputY", 80);
-        intent.putExtra("return-data", true);
-        startActivityForResult(intent,CROP_SMALL_PICTURE);
-    }
-
     // 弹出选项框时为背景加上透明度
     private void addBackgroundAlpha(float alpha){
         WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();

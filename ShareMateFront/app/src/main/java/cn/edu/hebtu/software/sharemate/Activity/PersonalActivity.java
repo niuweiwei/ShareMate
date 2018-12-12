@@ -5,12 +5,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,16 +27,20 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import cn.edu.hebtu.software.sharemate.tools.FileUtilcll;
 import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 
 public class PersonalActivity extends AppCompatActivity {
 
+    private Uri cropUri;
+    private File file;
+    private File cropFile;
     private TextView tv_name;
     private TextView tv_sex;
     private TextView tv_id;
@@ -48,15 +55,13 @@ public class PersonalActivity extends AppCompatActivity {
     private LinearLayout layoutAddress;
     private LinearLayout layoutIntro;
     private LinearLayout rootLayout;
-    private LinearLayout layoutHead;
     private String name;
     private String sex;
     private String birth;
-    private String path;
     //user应该从数据库中获得
     private UserBean user;
     private static final int CODE_PHOTO_REQUEST = 1;
-    private static  final  int CROP_SMALL_PICTURE = 2;
+    private static final int CROP_SMALL_PICTURE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +75,14 @@ public class PersonalActivity extends AppCompatActivity {
         name = intent.getStringExtra("name");
     }
 
-    private void findView(){
+    private void findView() {
         iv_back = findViewById(R.id.back);
         iv_head = findViewById(R.id.head);
         iv_head.setImageResource(user.getUserPhoto());
         tv_name = findViewById(R.id.user);
         tv_name.setText(user.getUserName());
         tv_id = findViewById(R.id.num);
-        tv_id.setText(""+user.getUserId());
+        tv_id.setText("" + user.getUserId());
         tv_sex = findViewById(R.id.sex);
         tv_sex.setText(user.getUserSex());
         tv_birth = findViewById(R.id.birth);
@@ -85,28 +90,27 @@ public class PersonalActivity extends AppCompatActivity {
         tv_address = findViewById(R.id.address);
         tv_address.setText(user.getUserAddress());
         tv_introduce = findViewById(R.id.introduction);
-        if(user.getUserIntroduce()==null || user.getUserIntroduce().length()<7){
+        if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 7) {
             tv_introduce.setText(user.getUserIntroduce());
-        }else {
-            tv_introduce.setText(user.getUserIntroduce().substring(0,6)+"...");
+        } else {
+            tv_introduce.setText(user.getUserIntroduce().substring(0, 6) + "...");
         }
         layoutName = findViewById(R.id.ly_name);
         layoutAddress = findViewById(R.id.ly_address);
         layoutBirth = findViewById(R.id.ly_birth);
         layoutIntro = findViewById(R.id.ly_intro);
         layoutSex = findViewById(R.id.ly_sex);
-        layoutHead = findViewById(R.id.ly_head);
     }
 
-    private void setListener(){
+    private void setListener() {
         perOnClickListener listener = new perOnClickListener();
         layoutName.setOnClickListener(listener);
         iv_back.setOnClickListener(listener);
+        iv_head.setOnClickListener(listener);
         layoutSex.setOnClickListener(listener);
         layoutIntro.setOnClickListener(listener);
         layoutBirth.setOnClickListener(listener);
         layoutAddress.setOnClickListener(listener);
-        layoutHead.setOnClickListener(listener);
     }
     public class perOnClickListener implements View.OnClickListener{
 
@@ -116,12 +120,10 @@ public class PersonalActivity extends AppCompatActivity {
                 case R.id.back:
                     PersonalActivity.this.finish();
                     break;
-                case R.id.ly_head:
+                case R.id.head:
                     Intent intent = new Intent(Intent.ACTION_PICK, null);
-                    intent.setDataAndType(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            "image/*");
-                    startActivityForResult(intent,CODE_PHOTO_REQUEST);
+                    intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    startActivityForResult(intent, CODE_PHOTO_REQUEST);
                     break;
                 case R.id.ly_name:
                     Intent userIntent = new Intent();
@@ -250,39 +252,59 @@ public class PersonalActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
             case CODE_PHOTO_REQUEST:
-                if(resultCode == RESULT_OK){
-                cutImage(data.getData());
+                if (data != null) {
+                    startPhotoZoom(data.getData());
                 }
                 break;
             case CROP_SMALL_PICTURE:
-                RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true);
-                Bundle extras = data.getExtras();
-                Bitmap photo = extras.getParcelable("data");
-                path = FileUtilcll.saveBitmap(photo);
-                Glide.with(this).load(path).apply(mRequestOptions).into(iv_head);
-                upLoadImage(path);
+                if (data != null) {
+                    if (!cropUri.equals("")) {
+                        RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true);
+                        Glide.with(this).load(cropUri).apply(mRequestOptions).into(iv_head);
+                    }
+                }
+                UpLoadUtil upLoadUtil = new UpLoadUtil();
+                upLoadUtil.execute(cropUri.getPath());
                 break;
         }
     }
-    public void upLoadImage(String path){
-        UpLoadUtil upLoadUtil = new UpLoadUtil();
-        upLoadUtil.execute(path);
-    }
+
     //对图片进行裁剪
-    public  void cutImage(Uri uri){
+    private void startPhotoZoom(Uri uri) {
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        //保存裁剪后的图片
+        cropFile = new File(Environment.getExternalStorageDirectory() + "/CoolImage", System.currentTimeMillis() + ".jpg");
+        if (cropFile.exists()) {
+            cropFile.delete();
+            Log.e("delete", "delete");
+        } else {
+            try {
+                cropFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        cropUri = Uri.fromFile(cropFile);
         Intent intent = new Intent("com.android.camera.action.CROP");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
         intent.setDataAndType(uri, "image/*");
-        //下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
         intent.putExtra("crop", "true");
-        // aspectX aspectY 是宽高的比例
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        // outputX outputY 是裁剪图片宽高
-        intent.putExtra("outputX", 80);
-        intent.putExtra("outputY", 80);
-        intent.putExtra("return-data", true);
-        startActivityForResult(intent,CROP_SMALL_PICTURE);
+        intent.putExtra("outputX", 300);
+        intent.putExtra("outputY", 300);
+        intent.putExtra("scale", true);
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        Log.e("cropUri = ", cropUri.toString());
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, CROP_SMALL_PICTURE);
     }
 }
