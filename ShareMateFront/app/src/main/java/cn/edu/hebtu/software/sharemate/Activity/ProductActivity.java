@@ -20,7 +20,6 @@ public class ProductActivity extends AppCompatActivity implements GradationScrol
     private RelativeLayout title;
     private int height;
     private TextView titleName;
-    private ImageView titleImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +72,6 @@ public class ProductActivity extends AppCompatActivity implements GradationScrol
             titleName.setTextColor(Color.argb((int) alpha, 255,255,255));
             titleName.setTextSize(18);
             title.setBackgroundColor(Color.argb((int) alpha, 222,65,56));
-            titleImage.setAlpha(scale);//设置图片透明度数值from 0 to 1
         } else {    //滑动到banner下面设置普通颜色
             title.setBackgroundColor(Color.argb((int) 255, 222,65,56));
         }
