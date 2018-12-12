@@ -3,8 +3,10 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -22,15 +24,17 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.io.File;
+import java.io.IOException;
+
 import cn.edu.hebtu.software.sharemate.R;
-import cn.edu.hebtu.software.sharemate.tools.FileUtilcll;
 import cn.edu.hebtu.software.sharemate.tools.IdentifyingCode;
 import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final int OPEN_ALBUM = 2;
-    private static final int RESULT_REQUEST_CODE = 3;
+    private static final int OPEN_ALBUM = 1;
+    private static final int RESULT_REQUEST_CODE = 2;
     private ImageView back;
     private Button btnTrue;
     private Button getCode;
@@ -43,18 +47,21 @@ public class RegisterActivity extends AppCompatActivity {
     private LinearLayout rootLinear;
     private Button btnOpen;
     private Button btnCancle;
+    private File file;
+    private Uri cropUri;
+    private File cropFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        //创建保存图片的路径
+        file = new File(Environment.getExternalStorageDirectory() + "/CoolImage/");
         findViews();
         back.setOnClickListener(new backClickListener());
         btnTrue.setOnClickListener(new ButtonClickListener());
-
         time = new TimeCount(30000, 1000);
         getCode.setOnClickListener(new getCodeClickListener());
-
         ivCode.setOnClickListener(new idtfCodeClickListener());
         head.setOnClickListener(new photoClickListener());
     }
@@ -68,7 +75,6 @@ public class RegisterActivity extends AppCompatActivity {
         head = findViewById(R.id.head);
         rootLinear = findViewById(R.id.root);
     }
-
     /**
      点击返回
      */
@@ -80,7 +86,6 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
     /**
      * 点击确定按钮
      */
@@ -91,7 +96,6 @@ public class RegisterActivity extends AppCompatActivity {
             String code = etCode.getText().toString().toLowerCase();
 //            String msg = "生成的验证码："+realCode+"输入的验证码："+code;
 //            Toast.makeText(RegisterActivity.this,msg,Toast.LENGTH_LONG).show();
-
             if(code.equals(realCode)){
                 Toast.makeText(RegisterActivity.this,code + "验证码正确",Toast.LENGTH_SHORT).show();
 
@@ -102,7 +106,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
     }
-
     /**
      * 获取验证码
      */
@@ -113,7 +116,6 @@ public class RegisterActivity extends AppCompatActivity {
             time.start();
         }
     }
-
     /**
      * 实现验证码倒计时
      */
@@ -144,7 +146,6 @@ public class RegisterActivity extends AppCompatActivity {
             getCode.setBackgroundResource(R.drawable.get_verify_code);
         }
     }
-
     /**
      * 生成随机验证码图片
      */
@@ -156,7 +157,6 @@ public class RegisterActivity extends AppCompatActivity {
             realCode = IdentifyingCode.getInstance().getCode().toLowerCase();
         }
     }
-
     /**
      * 上传头像
      */
@@ -175,8 +175,8 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Intent.ACTION_PICK, null);
-                    intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
-                    startActivityForResult(intent,OPEN_ALBUM);
+                    intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    startActivityForResult(intent, OPEN_ALBUM);
                     popupWindow.dismiss();
                 }
             });
@@ -195,37 +195,86 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-                switch (requestCode){
-                    case OPEN_ALBUM:
-                        startPhotoZoom(data.getData());
-                        break;
-                    case RESULT_REQUEST_CODE:
-                                RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .skipMemoryCache(true);
-                                Bundle bundle = data.getExtras();
-                                Log.e("aaa","aaa");
-                                Bitmap bitmap = bundle.getParcelable("data");
-                                Glide.with(this).load(FileUtilcll.saveBitmap(bitmap)).apply(mRequestOptions).into(head);
-                                UpLoadUtil uploadUtil = new UpLoadUtil();
-                                uploadUtil.execute(FileUtilcll.saveBitmap(bitmap));
-                        break;
-                }
+        //用户没有进行有效地设置操作，返回
+        if (resultCode == RESULT_CANCELED) {
+            Toast.makeText(getApplication(), "取消", Toast.LENGTH_LONG).show();
+            return;
         }
+        switch (requestCode) {
+            //                //从相册中获取到图片了，才执行裁剪动作
+            case OPEN_ALBUM:
+                if (data != null) {
+                    startPhotoZoom(data.getData());
+                }
+                Log.e("data", data.getData().getPath() + "");
+                Log.e("DATA", data + "");
+                break;
+            //裁剪后的返回值
+            case RESULT_REQUEST_CODE:
+                if (data != null) {
+                    setImageToHeadView(data);
+                }
+                String path = cropUri.getPath();
+                getUploadUtil(path);
+                break;
+        }
+    }
 
-    //对图片进行裁剪
+    /**
+     * 对图片进行裁剪
+     * @param uri
+     */
     private void startPhotoZoom(Uri uri) {
+        Log.e("uri", uri.toString());
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        //保存裁剪后的图片
+        cropFile = new File(Environment.getExternalStorageDirectory() + "/CoolImage", System.currentTimeMillis() + ".jpg");
+        if (cropFile.exists()) {
+            cropFile.delete();
+            Log.e("delete", "delete");
+        } else {
+            try {
+                cropFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        cropUri = Uri.fromFile(cropFile);
+
         Intent intent = new Intent("com.android.camera.action.CROP");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //添加这一句表示对目标应用临时授权该Uri所代表的文件
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
         intent.setDataAndType(uri, "image/*");
-        //下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
         intent.putExtra("crop", "true");
-        // aspectX aspectY 是宽高的比例
-        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectX", 1); // 裁剪框比例
         intent.putExtra("aspectY", 1);
-        // outputX outputY 是裁剪图片宽高
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
-        intent.putExtra("return-data", true);
+        intent.putExtra("outputX", 300); // 输出图片大小
+        intent.putExtra("outputY", 300);
+        intent.putExtra("scale", true);
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        Log.e("cropUri = ", cropUri.toString());
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
         startActivityForResult(intent, RESULT_REQUEST_CODE);//这里的RESULT_REQUEST_CODE是在startActivityForResult里使用的返回值。
+    }
+    /**
+     * 提取保存裁剪之后的图片数据，并设置头像部分的view
+     */
+    private void setImageToHeadView(Intent intent) {
+        if (!cropUri.equals("")) {
+            RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true);
+            Glide.with(this).load(cropUri).apply(mRequestOptions).into(head);
+        }
+    }
+    private void getUploadUtil(String path){
+        UpLoadUtil uploadUtil = new UpLoadUtil();
+        uploadUtil.execute(path);
     }
 }
