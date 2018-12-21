@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.VerifyCodeView;
 
@@ -65,7 +67,12 @@ public class InputCodeActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             //跳到首页
+            ArrayList<Integer> list = new ArrayList<>();
+            list.add(2);list.add(4);list.add(5);list.add(6);
             Intent intent = new Intent(InputCodeActivity.this,MainActivity.class);
+            intent.putExtra("userId",2);
+            //传递int型数组
+            intent.putIntegerArrayListExtra("type", list);
             startActivity(intent);
         }
     }

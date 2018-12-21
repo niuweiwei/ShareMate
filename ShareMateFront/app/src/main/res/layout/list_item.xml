@@ -13,7 +13,7 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/user"
             android:layout_marginTop="15dp"
             android:layout_width="wrap_content"
@@ -31,20 +31,20 @@
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="小明"
+                android:layout_marginLeft="35dp"
+                android:text="小明先森"
                 android:textColor="@android:color/black"
                 android:textSize="20sp" />
 
             <Button
-                android:layout_marginTop="0dp"
+                android:layout_alignParentRight="true"
                 android:id="@+id/guannzhu"
+                android:layout_marginRight="10dp"
                 android:layout_width="65dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="190dp"
-                android:background="@drawable/guanzhu"
+                android:layout_height="30dp"
+                android:background="@drawable/yiguanzhu"
                 />
-        </LinearLayout>
+        </RelativeLayout>
 
         <ImageView
             android:layout_marginTop="-20dp"
@@ -53,7 +53,7 @@
             android:layout_height="540dp"
             android:layout_below="@+id/user"
             android:layout_gravity="center_horizontal"
-             />
+            />
 
         <LinearLayout
             android:id="@+id/iv_text"
@@ -72,10 +72,10 @@
 
             <Button
                 android:id="@+id/title"
-                android:layout_width="150dp"
-                android:layout_height="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/b1"
+                android:background="@drawable/titleback"
                 android:text="#  英语学习"
                 android:textColor="#FF3885DE"
                 android:textSize="20sp" />
@@ -95,7 +95,8 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="100dp"
-                        android:background="@drawable/xin" />
+                        android:background="@drawable/xin"
+                         />
 
                     <TextView
                         android:id="@+id/z_count"
@@ -116,7 +117,7 @@
                         android:id="@+id/shoucang"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginLeft="10sp"
+                        android:layout_marginLeft="10dp"
                         android:background="@drawable/xingxing" />
 
                     <TextView
@@ -138,7 +139,7 @@
                         android:id="@+id/pinglun"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginLeft="10sp"
+                        android:layout_marginLeft="10dp"
                         android:background="@drawable/pinglun" />
 
                     <TextView
@@ -160,15 +161,20 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:id="@+id/pinglun1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="小明：这么难吗" />
-
                 <TextView
+                    android:id="@+id/pinglun2"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/all_count"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="共3条评论"
@@ -186,7 +192,7 @@
                     android:id="@+id/user_icon2"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/a5" />
+                    android:src="@drawable/dm5" />
                 <EditText
                     android:id="@+id/fb"
                     android:layout_width="250dp"

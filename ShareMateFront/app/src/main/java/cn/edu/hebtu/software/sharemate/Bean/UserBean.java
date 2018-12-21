@@ -1,5 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Bean;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 public class UserBean implements Serializable {
@@ -11,13 +13,15 @@ public class UserBean implements Serializable {
     private String userAddress;
     private String userBirth;
     private String userIntroduce;
+    private Bitmap userImage;
+    private String userPhotoPath;
 
     public UserBean(String userName, int userPhoto) {
         this.userName = userName;
         this.userPhoto = userPhoto;
     }
     public UserBean(int userId, int userPhoto, String userName, String userSex,
-                String userAddress, String userBirth, String userIntroduce) {
+                    String userAddress, String userBirth, String userIntroduce) {
         this.userId = userId;
         this.userPhoto = userPhoto;
         this.userName = userName;
@@ -27,8 +31,19 @@ public class UserBean implements Serializable {
         this.userIntroduce = userIntroduce;
     }
 
+    public UserBean() {
+    }
+
     public String getUserName() {
         return userName;
+    }
+
+    public void setUserImage(Bitmap userImage) {
+        this.userImage = userImage;
+    }
+
+    public Bitmap getUserImage() {
+        return userImage;
     }
 
     public void setUserName(String userName) {
@@ -62,4 +77,12 @@ public class UserBean implements Serializable {
     public String getUserIntroduce() {return userIntroduce;}
 
     public void setUserIntroduce(String userIntroduce) {this.userIntroduce = userIntroduce;}
+
+    public String getUserPhotoPath() {
+        return userPhotoPath;
+    }
+
+    public void setUserPhotoPath(String userPhotoPath) {
+        this.userPhotoPath = userPhotoPath;
+    }
 }

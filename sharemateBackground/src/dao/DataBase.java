@@ -14,8 +14,10 @@ public class DataBase {
 		Connection conn=null;
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
+//			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/sharemate?serverTimezone=GMT&useUnicode=true&characterEncoding=utf-8&useSSL=false", 
+//					"root", "liu_216216");
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/sharemate?serverTimezone=GMT&useUnicode=true&characterEncoding=utf-8&useSSL=false", 
-					"root", "liu_216216");
+					"root", "1234");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

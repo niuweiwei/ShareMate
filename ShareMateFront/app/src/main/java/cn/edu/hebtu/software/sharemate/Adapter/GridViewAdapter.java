@@ -9,21 +9,27 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.edu.hebtu.software.sharemate.Bean.NoteBean;
 import cn.edu.hebtu.software.sharemate.R;
 
-public class GridViewAdapter extends BaseAdapter {
+public class GridViewAdapter extends BaseAdapter implements View.OnClickListener{
 
     //ALt+enter出方法
     private Context context;
     private boolean c1=true;
     private int itemLayout;
+    private Callback mCallback;
+    private Map<Integer,Boolean> isLike=new HashMap<>();
     private List<NoteBean> notes =new ArrayList<>();
-    public GridViewAdapter(Context context, int itemLayout, List<NoteBean> notes){
+    public GridViewAdapter(Context context, int itemLayout, Callback mCallback, List<NoteBean> notes){
         this.context=context;
+        this.mCallback=mCallback;
         this.itemLayout=itemLayout;
         this.notes = notes;
     }
@@ -52,35 +58,37 @@ public class GridViewAdapter extends BaseAdapter {
 
         //获取每个item中视图空间对象，设置显示的图片和文字
         ImageView ivPhoto=convertView.findViewById(R.id.iv_photo);
-        ivPhoto.setImageResource(notes.get(position).getNoteImage());
+        ivPhoto.setImageBitmap(notes.get(position).getNoteImage1());
         TextView text=convertView.findViewById(R.id.note_text);
         text.setText(notes.get(position).getNoteDetail());
         TextView username=convertView.findViewById(R.id.user_name);
         username.setText(notes.get(position).getUser().getUserName());
         ImageView icon=convertView.findViewById(R.id.user_icon);
-        icon.setImageResource(notes.get(position).getUser().getUserPhoto());
+        icon.setImageBitmap(notes.get(position).getUser().getUserImage());
         final TextView count=convertView.findViewById(R.id.zan_count);
         count.setText(notes.get(position).getZancount()+"");
         final Button button = convertView.findViewById(R.id.dianzan);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(c1){
-                button.setBackgroundResource(R.drawable.xinxin2);
-                int count1=notes.get(position).getZancount();
-                count1++;
-                count.setText(""+count1);
-                c1=false;
-                }
-                else {
-                    button.setBackgroundResource(R.drawable.xinxin);
-                    int count1=notes.get(position).getZancount();
-                    count1--;
-                    count.setText(""+count1);
-                    c1=true;
-                }
-            }
-        });
+        if(notes.get(position).isIslike()==1){
+            notes.get(position).setZan(R.drawable.xihuan2);
+        }else if(notes.get(position).isIslike()==0) {
+            notes.get(position).setZan(R.drawable.xin);
+        }else {notes.get(position).setZan(R.drawable.weizhi);}
+        button.setBackgroundResource(notes.get(position).getZan());
+        button.setTag(position);
+        icon.setTag(position);
+        button.setOnClickListener(this);
+        icon.setOnClickListener(this);
         return convertView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        mCallback.click(v);
+    }
+    /**
+     * 回调接口.
+     */
+    public interface Callback {
+        void click(View v);
     }
 }

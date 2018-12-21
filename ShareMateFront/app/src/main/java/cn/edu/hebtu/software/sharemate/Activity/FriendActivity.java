@@ -27,13 +27,13 @@ public class FriendActivity extends AppCompatActivity {
     private TextView note;
     private GridView gridView;
     private NoteAdapter noteAdapter;
-    private List<NoteBean> collectionList = new ArrayList<>();
-    private List<NoteBean> noteList = new ArrayList<>();
+    private List<cn.edu.hebtu.software.sharemate.Bean.NoteBean> collectionList = new ArrayList<>();
+    private List<cn.edu.hebtu.software.sharemate.Bean.NoteBean> noteList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend);
-        UserBean user = (UserBean) getIntent().getSerializableExtra("user");
+        user = (UserBean) getIntent().getSerializableExtra("friend");
         findView();
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +50,8 @@ public class FriendActivity extends AppCompatActivity {
             public void onClick(View v) {
                 collection.setTextColor(getResources().getColor(R.color.warmRed));
                 note.setTextColor(getResources().getColor(R.color.darkGray));
-                NoteBean collection1 = new NoteBean(R.drawable.e,"明星资讯随时看");
-                NoteBean collection2 = new NoteBean(R.drawable.f,"旅游时笔芯狂魔");
+                cn.edu.hebtu.software.sharemate.Bean.NoteBean collection1 = new NoteBean(R.drawable.e,"明星资讯随时看");
+                cn.edu.hebtu.software.sharemate.Bean.NoteBean collection2 = new NoteBean(R.drawable.f,"旅游时笔芯狂魔");
                 collectionList.add(collection1);
                 collectionList.add(collection2);
                 noteAdapter = new NoteAdapter(FriendActivity.this, R.layout.note_item,collectionList);

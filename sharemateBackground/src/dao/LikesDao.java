@@ -28,7 +28,7 @@ public class LikesDao {
 			pstmt.setInt(1, noteId);
 			ResultSet rs=pstmt.executeQuery();
 			if(rs.next()) {
-				count=rs.getInt("c");
+				count=rs.getInt("c"); 
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -115,7 +115,7 @@ public class LikesDao {
 		//1.通过userId查询该用户发过的所有笔记
 		NoteDao noteDao = new NoteDao();
 		UserBean userBean=new UserDao().getUserById(userId);
-		List<NoteBean> noteList = noteDao.getNoteList(userBean);
+		List<NoteBean> noteList = noteDao.getNoteList(userId);
 	
 		Connection conn = DataBase.getConnection();
 		PreparedStatement pstmt = null;

@@ -33,11 +33,7 @@ public class FaxianFragment extends Fragment {
         //初始化Tabhost容器
         tabHost.setup(getContext(),getChildFragmentManager(),android.R.id.tabcontent);
         tabHost.getTabWidget().setDividerDrawable(null);
-        //创建选项卡对象
-        TabHost.TabSpec tabSpec0 = tabHost.newTabSpec("t0")
-                .setIndicator(getTabSpecView("推荐","t0"));
-        //添加选项卡
-        tabHost.addTab(tabSpec0,TuijianFragment.class,null);
+
         //创建选项卡对象
         TabHost.TabSpec tabSpec1 = tabHost.newTabSpec("t1")
                 .setIndicator(getTabSpecView("推荐","t1"));
@@ -57,7 +53,7 @@ public class FaxianFragment extends Fragment {
         TabHost.TabSpec tabSpec4 = tabHost.newTabSpec("t4")
                 .setIndicator(getTabSpecView("美妆","t4"));
         //添加选项卡
-        tabHost.addTab(tabSpec4,MeizhuangFragment.class,null);
+        tabHost.addTab(tabSpec4,BeautFragment.class,null);
         //创建选项卡对象
         TabHost.TabSpec tabSpec5 = tabHost.newTabSpec("t5")
                 .setIndicator(getTabSpecView("动漫","t5"));
@@ -68,6 +64,11 @@ public class FaxianFragment extends Fragment {
                 .setIndicator(getTabSpecView("运动","t6"));
         //添加选项卡
         tabHost.addTab(tabSpec6,SportFragment.class,null);
+        //创建选项卡对象
+        TabHost.TabSpec tabSpec0 = tabHost.newTabSpec("t0")
+                .setIndicator(getTabSpecView("科技","t0"));
+        //添加选项卡
+        tabHost.addTab(tabSpec0,ScienceFragment.class,null);
         //设置默认选中某个选项卡
         tabHost.setCurrentTab(0);
         TextView textView = textViews.get("t1");
@@ -86,7 +87,7 @@ public class FaxianFragment extends Fragment {
                                     getColor(R.color.textcolor2));
                             TextView textView2 = textViews.get("t2");
                             textView2.setTextColor(getResources().
-                                  getColor(R.color.textcolor));
+                                    getColor(R.color.textcolor));
                             TextView textView3 = textViews.get("t3");
                             textView3.setTextColor(getResources().
                                     getColor(R.color.textcolor));
@@ -95,9 +96,12 @@ public class FaxianFragment extends Fragment {
                                     getColor(R.color.textcolor));
                             TextView textView5 = textViews.get("t5");
                             textView5.setTextColor(getResources().
-                                  getColor(R.color.textcolor));
+                                    getColor(R.color.textcolor));
                             TextView textView6 = textViews.get("t6");
                             textView6.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView = textViews.get("t0");
+                            textView.setTextColor(getResources().
                                     getColor(R.color.textcolor));
                         }else if(str.equals("t2")){
                             TextView textView1 = textViews.get("t1");
@@ -118,6 +122,9 @@ public class FaxianFragment extends Fragment {
                             TextView textView6 = textViews.get("t6");
                             textView6.setTextColor(getResources().
                                     getColor(R.color.textcolor));
+                            TextView textView = textViews.get("t0");
+                            textView.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
                         }else if(str.equals("t3")){
                             TextView textView1 = textViews.get("t1");
                             textView1.setTextColor(getResources().
@@ -136,6 +143,9 @@ public class FaxianFragment extends Fragment {
                                     getColor(R.color.textcolor));
                             TextView textView6 = textViews.get("t6");
                             textView6.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView = textViews.get("t0");
+                            textView.setTextColor(getResources().
                                     getColor(R.color.textcolor));
                         }else if(str.equals("t4")){
                             TextView textView1 = textViews.get("t1");
@@ -156,6 +166,9 @@ public class FaxianFragment extends Fragment {
                             TextView textView6 = textViews.get("t6");
                             textView6.setTextColor(getResources().
                                     getColor(R.color.textcolor));
+                            TextView textView = textViews.get("t0");
+                            textView.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
                         }else if(str.equals("t5")){
                             TextView textView1 = textViews.get("t1");
                             textView1.setTextColor(getResources().
@@ -175,6 +188,9 @@ public class FaxianFragment extends Fragment {
                             TextView textView6 = textViews.get("t6");
                             textView6.setTextColor(getResources().
                                     getColor(R.color.textcolor));
+                            TextView textView = textViews.get("t0");
+                            textView.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
                         }else if(str.equals("t6")){
                             TextView textView1 = textViews.get("t1");
                             textView1.setTextColor(getResources().
@@ -193,6 +209,31 @@ public class FaxianFragment extends Fragment {
                                     getColor(R.color.textcolor));
                             TextView textView6 = textViews.get("t6");
                             textView6.setTextColor(getResources().
+                                    getColor(R.color.textcolor2));
+                            TextView textView = textViews.get("t0");
+                            textView.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                        }else if(str.equals("t0")){
+                            TextView textView1 = textViews.get("t1");
+                            textView1.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView2 = textViews.get("t2");
+                            textView2.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView3 = textViews.get("t3");
+                            textView3.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView4 = textViews.get("t4");
+                            textView4.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView5 = textViews.get("t5");
+                            textView5.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView6 = textViews.get("t6");
+                            textView6.setTextColor(getResources().
+                                    getColor(R.color.textcolor));
+                            TextView textView = textViews.get("t0");
+                            textView.setTextColor(getResources().
                                     getColor(R.color.textcolor2));
                         }
                     }

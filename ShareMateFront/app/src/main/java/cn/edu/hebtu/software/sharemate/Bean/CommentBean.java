@@ -14,6 +14,18 @@ public class CommentBean {
     private int notePhoto;//回复的相关笔记的图片
     private String name;//被回复的人的昵称
     private String argued;//被回复的内容
+    private String commentDetail;
+
+    public void setCommentDetail(String commentDetail) {
+        this.commentDetail = commentDetail;
+    }
+
+    public String getCommentDetail() {
+        return commentDetail;
+    }
+
+    public CommentBean() {
+    }
 
     public CommentBean(int tag, UserBean user, Date date, String comment, int notePhoto, String name, String argued) {
         this.tag = tag;

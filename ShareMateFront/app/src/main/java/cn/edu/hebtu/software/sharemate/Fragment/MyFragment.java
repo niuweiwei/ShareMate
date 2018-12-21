@@ -1,10 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Fragment;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,10 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,11 +28,8 @@ import cn.edu.hebtu.software.sharemate.Activity.PersonalActivity;
 import cn.edu.hebtu.software.sharemate.Activity.SettingActivity;
 import cn.edu.hebtu.software.sharemate.Adapter.NoteAdapter;
 import cn.edu.hebtu.software.sharemate.Bean.NoteBean;
-import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
-
-import static android.app.Activity.RESULT_OK;
 
 public class MyFragment extends Fragment {
     private PopupWindow popupWindow = null;
@@ -50,8 +40,8 @@ public class MyFragment extends Fragment {
     private ImageView headImg;
     private GridView gridView;
     private NoteAdapter noteAdapter;
-    private List<NoteBean> collectionList = new ArrayList<>();
-    private List<NoteBean> noteList = new ArrayList<>();
+    private List<cn.edu.hebtu.software.sharemate.Bean.NoteBean> collectionList = new ArrayList<>();
+    private List<cn.edu.hebtu.software.sharemate.Bean.NoteBean> noteList = new ArrayList<>();
     private UserBean user ;
     private TextView collection;
     private TextView note;
@@ -160,8 +150,8 @@ public class MyFragment extends Fragment {
                 case R.id.collection:
                     collection.setTextColor(getResources().getColor(R.color.warmRed));
                     note.setTextColor(getResources().getColor(R.color.darkGray));
-                    NoteBean collection1 = new NoteBean(R.drawable.e,"明星资讯随时看");
-                    NoteBean collection2 = new NoteBean(R.drawable.f,"旅游时笔芯狂魔");
+                    cn.edu.hebtu.software.sharemate.Bean.NoteBean collection1 = new NoteBean(R.drawable.e,"明星资讯随时看");
+                    cn.edu.hebtu.software.sharemate.Bean.NoteBean collection2 = new NoteBean(R.drawable.f,"旅游时笔芯狂魔");
                     collectionList.add(collection1);
                     collectionList.add(collection2);
                     noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,collectionList);

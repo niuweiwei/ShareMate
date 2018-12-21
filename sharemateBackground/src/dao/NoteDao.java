@@ -365,13 +365,13 @@ public class NoteDao {
 	/**
 	 * 获取用户发过的笔记
 	 */
-	public List<NoteBean> getNoteList(UserBean userbean){
+	public List<NoteBean> getNoteList(int userId){
 		List<NoteBean> noteList = new ArrayList<>();
 		Connection con = DataBase.getConnection();
 		String sql = "select note_id from note where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			while(rs.next()) {
 				noteList.add(this.getNoteById(rs.getInt("note_id")));

@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import bean.NoteBean;
+import bean.UserBean;
 
 public class CollectDao {
 	
@@ -73,4 +78,30 @@ public class CollectDao {
 			DataBase.close(conn);
 		}
 	}
+	//后添加
+	/**
+	 * 查询用户收藏过的所有笔记
+	 */
+	public List<NoteBean> getCollectNoteList(UserBean userbean){
+		List<NoteBean> noteList = new ArrayList<NoteBean>();
+		NoteDao notedao = new NoteDao();
+		Connection con = DataBase.getConnection();
+		ResultSet rs = null;
+		String sql = "select note_id from collect where user_id=?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setInt(1,userbean.getUserId());
+			rs = ptmt.executeQuery();
+			while(rs.next()) {
+				noteList.add(notedao.getNoteById(rs.getInt("note_id")));
+			}
+			rs.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return noteList;
+	}
+	
 }

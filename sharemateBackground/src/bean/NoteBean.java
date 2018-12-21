@@ -11,10 +11,13 @@ public class NoteBean {
 	private Date noteDate;
 	private int noteCommentCount;
 	private int noteCollectionCount;
-	private int noteLikeCount;
+	private int noteLikeCount,isLike,isCollect,isFollow;
+	private UserBean userContent;
 	private TypeBean type;
 	private UserBean user;
 	private List<CommentBean> comment;
+	
+
 	public NoteBean() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -118,5 +121,34 @@ public class NoteBean {
 		this.comment = comment;
 	}
 	
-	
+	//后添加
+		public int isLike() {
+			return isLike;
+		}
+
+		public void setLike(int isLike) {
+			this.isLike = isLike;
+		}
+		public int getIsCollect() {
+			return isCollect;
+		}
+
+		public void setIsCollect(int isCollect) {
+			this.isCollect = isCollect;
+		}
+
+		public int getIsFollow() {
+			return isFollow;
+		}
+
+		public void setIsFollow(int isFollow) {
+			this.isFollow = isFollow;
+		}
+		public UserBean getUserContent() {
+			return userContent;
+		}
+
+		public void setUserContent(UserBean userContent) {
+			this.userContent = userContent;
+		}
 }

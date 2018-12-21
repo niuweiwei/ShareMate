@@ -184,7 +184,7 @@ public class CAndRDao {
 		List <CAndRBean> list = new ArrayList<>();
 		//获得该用户发布过的所有笔记
 		UserBean user=new UserDao().getUserById(userId);
-		List<NoteBean> noteList = new NoteDao().getNoteList(user);
+		List<NoteBean> noteList = new NoteDao().getNoteList(userId);
 		for(NoteBean note : noteList) {
 			//获得每一个笔记下的所有的评论
 			List<CommentBean> commentList = new CommentDao().getCommentsBynoteId(note.getNoteId());

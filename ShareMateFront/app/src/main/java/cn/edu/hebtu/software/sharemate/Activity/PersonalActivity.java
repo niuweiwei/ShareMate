@@ -32,8 +32,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
+import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 import cn.edu.hebtu.software.sharemate.R;
 
 public class PersonalActivity extends AppCompatActivity {

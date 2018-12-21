@@ -18,7 +18,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.MainActivity"/>
+        <activity
+            android:name=".Activity.MainActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".Activity.LikeActivity" />
         <activity android:name=".Activity.FollowedActivity" />
         <activity android:name=".Activity.CommentActivity" />
@@ -35,7 +37,6 @@
         <activity android:name=".Activity.FabuActivity" />
         <activity android:name=".Activity.YouhuapicActivity" />
         <activity android:name=".Activity.ProductActivity" />
-        <activity android:name=".Activity.FollowDetailActivity" />
         <activity android:name=".Activity.NoteDetailActivity" />
         <activity android:name=".Activity.CommentDetailActivity" />
         <activity android:name=".Activity.ReplyActivity" />

@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class LikeBean {
 
-   private  UserBean user;
+   private UserBean user;
     private Date date;
     private int noteId;
 
