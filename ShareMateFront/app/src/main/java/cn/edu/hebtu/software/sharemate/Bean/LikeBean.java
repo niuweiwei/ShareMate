@@ -1,17 +1,23 @@
 package cn.edu.hebtu.software.sharemate.Bean;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 public class LikeBean {
 
-   private  UserBean user;
-    private Date date;
+    private  UserBean user;
+    private String date;
     private int noteId;
+    private String notePhotoPath;
 
-    public LikeBean(UserBean user, Date date, int noteId) {
+    public LikeBean(){}
+
+    public LikeBean(UserBean user, String date, int noteId,String notePhoto) {
         this.user = user;
         this.date = date;
         this.noteId = noteId;
+        this.notePhotoPath = notePhoto;
     }
 
     public UserBean getUser() {
@@ -22,11 +28,11 @@ public class LikeBean {
         this.user = user;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -36,5 +42,13 @@ public class LikeBean {
 
     public void setNoteId(int noteId) {
         this.noteId = noteId;
+    }
+
+    public String getNotePhotoPath() {
+        return notePhotoPath;
+    }
+
+    public void setNotePhotoPath(String notePhotoPath) {
+        this.notePhotoPath = notePhotoPath;
     }
 }

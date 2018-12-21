@@ -3,9 +3,11 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,6 +21,20 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +57,9 @@ public class CommentActivity extends AppCompatActivity {
     private EditText text = null;
     private CommentListAdapter adapter = null;
     private final List<CommentBean> comments = new ArrayList<>();
+    private ListView listView = null;
+    private String path = "http://172.20.10.4:8080/sharemate/";
+    private int currentUserId = 3;//表示当前用户的id
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,53 +69,17 @@ public class CommentActivity extends AppCompatActivity {
         replyLayout = findViewById(R.id.rl_reply);
         manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        UserBean user1 = new UserBean("小仙女",R.drawable.niuweiwei);
-        UserBean user2 = new UserBean("小菲菲",R.drawable.mengfeifei);
-        UserBean user3 = new UserBean("狗莹",R.drawable.sunliying);
-        UserBean user4 = new UserBean("我昭",R.drawable.wangzhao);
-        UserBean user5 = new UserBean("低调的仙女姐姐",R.drawable.wangou);
-        UserBean user6 = new UserBean("白头鞋老",R.drawable.baijingting);
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date date1 = new Date();
-        Date date2 = new Date();
-        Date date3 = new Date();
-        Date date4 = new Date();
-        Date date5 = new Date();
-
-        try {
-            date1 = format.parse("2018-4-30");
-            date2 = format.parse("2018-7-9");
-            date3 = format.parse("2018-7-25");
-            date4 = format.parse("2018-9-28");
-            date5 = format.parse("2018-11-29");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        comments.add(new CommentBean(CommentBean.REPLY,user4,date5,"这个奶茶真的建议尝试一下，非常棒!",R.drawable.note3,user6.getUserName(),"我都想喝奶茶了!"));
-        comments.add(new CommentBean(CommentBean.COMMENT,user6,date5,"我都想喝奶茶了!",R.drawable.note3,null,null));
-        comments.add(new CommentBean(CommentBean.REPLY,user2,date4,"谢谢博主!收到了原图",R.drawable.note1,"我","私信聊"));
-        comments.add(new CommentBean(CommentBean.COMMENT,user2,date3,"博主，想要这个壁纸呀!",R.drawable.note1,null,null));
-        comments.add(new CommentBean(CommentBean.REPLY,user1,date2,"对对对，最近塔卡沙联名超级可爱",R.drawable.note4,"我","最近超级喜欢塔卡沙的包包"));
-        comments.add(new CommentBean(CommentBean.REPLY,user3,date2,"这个包尤其喜欢呀",R.drawable.note4,"我","最近超级喜欢塔卡沙的包包"));
-        comments.add(new CommentBean(CommentBean.COMMENT,user5,date1,"这个壁纸也太少女心了吧！超级喜欢",R.drawable.note2,null,null));
-
-        ListView listView = findViewById(R.id.lv_comment);
-        adapter = new CommentListAdapter(this,comments,R.layout.comment_list_item_layout);
-        listView.setAdapter(adapter);
+        listView = findViewById(R.id.lv_comment);
 
         //点击 listview 的每一个子项 弹出 popupwindow
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 //将回复框隐藏 关闭软键盘
-               if(replyLayout.getVisibility()==View.VISIBLE) {
-                   replyLayout.setVisibility(View.GONE);
-                   manager.hideSoftInputFromWindow(CommentActivity.this.getCurrentFocus().getWindowToken(), 0);
-               }
-
+                if(replyLayout.getVisibility()==View.VISIBLE) {
+                    replyLayout.setVisibility(View.GONE);
+                    manager.hideSoftInputFromWindow(CommentActivity.this.getCurrentFocus().getWindowToken(), 0);
+                }
                 window = new PopupWindow(root,LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
                 window.setOnDismissListener(new PopupWindow.OnDismissListener() {
                     @Override
@@ -108,36 +91,18 @@ public class CommentActivity extends AppCompatActivity {
                 if(window.isShowing()){
                     window.dismiss();
                 }else{
-                    showPopupWindow(root,position);
-                    addBackgroundAlpha(0.7f);
+                        showPopupWindow(root,position);
+                        addBackgroundAlpha(0.7f);
                 }
             }
         });
 
-        //为发送按钮绑定事件
+        //为发送回复的按钮绑定事件
         send = findViewById(R.id.btn_send);
         text = findViewById(R.id.et_reply);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String msg = text.getText().toString();
-                if("".equals(msg)){
-                    //nothing to do
-                }else{
-                    //向数据库中添加该条评论
 
-                    //回复框隐藏 软键盘消失
-                    if(replyLayout.getVisibility()==View.VISIBLE) {
-                        replyLayout.setVisibility(View.GONE);
-                        manager.hideSoftInputFromWindow(CommentActivity.this.getCurrentFocus().getWindowToken(), 0);
-                    }
-                    //弹出toast提示用户回复成功或失败
-                    Toast replySuccess = Toast.makeText(CommentActivity.this,"发表评论成功",Toast.LENGTH_SHORT);
-                    replySuccess.setGravity(Gravity.TOP,0,300);
-                    replySuccess.show();
-                }
-            }
-        });
+        CommentTask commentTask = new CommentTask();
+        commentTask.execute();
 
         //为返回按钮绑定事件
         Button back = findViewById(R.id.btn_back);
@@ -158,23 +123,39 @@ public class CommentActivity extends AppCompatActivity {
         }
         //通过view获取到各个按钮 并绑定事件监听器
         final Button like = view.findViewById(R.id.btn_like);
+        //根据该用户是否对该评论赞而现实button 中的数据
+        if(comments.get(position).isLike()){
+            //表示该用户对该评论点赞过
+            like.setText("取消赞");
+        }else
+            like.setText("赞");
+
         final Button reply = view.findViewById(R.id.btn_reply);
         Button detail = view.findViewById(R.id.btn_detail);
         final Button commentList = view.findViewById(R.id.btn_commentlist);
         Button delete = view.findViewById(R.id.btn_delete);
         Button cancel = view.findViewById(R.id.btn_cancel);
 
-        //绑定监听器
+        //为popupwindow中的按钮绑定监听器
 
+        //为赞或取消赞绑定监听器
         like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(like.getText().equals("赞")){
+                    int tag = comments.get(position).getTag();
+                    int id = comments.get(position).getId();
+                    LikeTask likeTask = new LikeTask();
+                    likeTask.execute(currentUserId,tag,id,"like");
                     Toast likeToast = Toast.makeText(CommentActivity.this,"点赞成功",Toast.LENGTH_SHORT);
                     likeToast.setGravity(Gravity.TOP,0,300);
                     like.setText("取消赞");
                     likeToast.show();
                 }else{
+                    int tag = comments.get(position).getTag();
+                    int id = comments.get(position).getId();
+                    LikeTask likeTask = new LikeTask();
+                    likeTask.execute(currentUserId,tag,id,"cancel");
                     like.setText("赞");
                     Toast cancelToast = Toast.makeText(CommentActivity.this,"取消赞成功",Toast.LENGTH_SHORT);
                     cancelToast.setGravity(Gravity.TOP,0,300);
@@ -183,6 +164,8 @@ public class CommentActivity extends AppCompatActivity {
                 window.dismiss();
             }
         });
+
+        //为回复选项绑定监听器
         reply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,6 +180,30 @@ public class CommentActivity extends AppCompatActivity {
                 replyInput.requestFocus();
                 //自动弹出软键盘
                 manager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        });
+
+        //为发送按钮绑定监听器
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String msg = text.getText().toString();
+                if(msg.trim().isEmpty()){
+                    //nothing to do
+                }else{
+                    //开启异步任务 添加回复
+                    SendTask sendTask = new SendTask();
+                    sendTask.execute(currentUserId,comments.get(position).getTag(),msg,comments.get(position).getId());
+                    //回复框隐藏 软键盘消失
+                    if(replyLayout.getVisibility()==View.VISIBLE) {
+                        replyLayout.setVisibility(View.GONE);
+                        manager.hideSoftInputFromWindow(CommentActivity.this.getCurrentFocus().getWindowToken(), 0);
+                    }
+                    //弹出toast提示用户回复成功或失败
+                    Toast replySuccess = Toast.makeText(CommentActivity.this,"发表评论成功",Toast.LENGTH_SHORT);
+                    replySuccess.setGravity(Gravity.TOP,0,300);
+                    replySuccess.show();
+                }
             }
         });
 
@@ -219,14 +226,9 @@ public class CommentActivity extends AppCompatActivity {
                 builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        comments.remove(position);
-                        //刷新适配器
-                        adapter.notifyDataSetChanged();
-                        //弹出 toast 提示删除成功 并将评论的内容改为"该评论已删除"
-                        Toast deleteSuccess = Toast.makeText(CommentActivity.this,"评论删除成功",Toast.LENGTH_SHORT);
-                        deleteSuccess.setGravity(Gravity.TOP,0,300);
-                        deleteSuccess.show();
-                        //到数据库删除该评论
+                        //开启异步任务 数据库删除该评论
+                       DeleteTask deleteTask = new DeleteTask(position);
+                        deleteTask.execute(comments.get(position).getTag(),comments.get(position).getId());
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -235,7 +237,7 @@ public class CommentActivity extends AppCompatActivity {
         });
 
         //为其余三个按钮绑定监听器
-        Listener listener = new Listener();
+        Listener listener = new Listener(position);
         detail.setOnClickListener(listener);
         commentList.setOnClickListener(listener);
         cancel.setOnClickListener(listener);
@@ -259,6 +261,11 @@ public class CommentActivity extends AppCompatActivity {
 
     //监听器类
     private class Listener implements View.OnClickListener{
+        private int position;
+
+        public Listener(int position) {
+            this.position = position;
+        }
 
         @Override
         public void onClick(View v) {
@@ -266,16 +273,198 @@ public class CommentActivity extends AppCompatActivity {
                 case R.id.btn_detail:
                     //跳转到笔记详情页面
                     Intent intent = new Intent(CommentActivity.this,NoteDetailActivity.class);
+                    intent.putExtra("noteId",comments.get(position).getNoteId());
                     startActivity(intent);
                     break;
                 case R.id.btn_commentlist:
                     Intent intent1 = new Intent(CommentActivity.this,CommentDetailActivity.class);
+                    intent1.putExtra("noteId",comments.get(position).getNoteId());
                     startActivity(intent1);
                     break;
                 case R.id.btn_cancel:
                     window.dismiss();
                     break;
             }
+        }
+    }
+
+    //异步任务：获取评论及所有回复
+    private class CommentTask extends AsyncTask{
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try {
+                URL url = new URL(path+"CAndRServlet?userId=3");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("contentType","utf-8");
+
+                String result = "";
+                InputStream is = connection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                String line = "";
+                while((line=reader.readLine())!=null){
+                    result+=line;
+                }
+
+                if(comments.size()!=0)
+                    comments.clear();
+                JSONArray array = new JSONArray(result);
+                for(int i=0;i<array.length();i++) {
+
+                    JSONObject object = array.getJSONObject(i);
+                    CommentBean comment = new CommentBean();
+                    comment.setTag(object.getInt("tag"));
+                    UserBean publisher = new UserBean();
+                    publisher.setUserName(object.getString("publisherName"));
+                    publisher.setUserPhotoPath(path+object.getString("publisherPhotoPath"));
+                    comment.setUser(publisher);
+                    comment.setUserId(object.getInt("userId"));
+                    if(object.getInt("userId")==currentUserId){
+                        comment.setName("我");
+                    }else {
+                        comment.setName(object.getString("userName"));
+                    }
+                    comment.setNoteId(object.getInt("noteId"));
+                    comment.setNotePhotoPath(path+object.getString("notePhotoPath"));
+                    comment.setComment(object.getString("content"));
+                    comment.setArgued(object.getString("argued"));
+                    comment.setDate(object.getString("date"));
+                    comment.setId(object.getInt("id"));
+                    comment.setLike(object.getBoolean("isLike"));
+                    comment.setArguedId(object.getInt("arguedId"));
+                    comments.add(comment);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            adapter = new CommentListAdapter(CommentActivity.this,comments,R.layout.comment_list_item_layout);
+            listView.setAdapter(adapter);
+        }
+    }
+
+    //异步：任务赞评论或者是回复
+    private class LikeTask extends AsyncTask{
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            int userId = (Integer)objects[0];
+            int tag = (Integer)objects[1];
+            int id = (Integer)objects[2];
+            String act = (String) objects[3];
+
+            try {
+                String str = path+"LikeCAndRServlet?userId="+userId+"&tag="+tag+"&id="+id+"&act="+act;
+                URL url = new URL(str);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("contentType","utf-8");
+
+                InputStream is = connection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    //异步任务：对评论或者回复进行回复
+    private class SendTask extends AsyncTask{
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            int userId = (Integer)objects[0];
+            int tag = (Integer)objects[1];
+            String replyContent = (String) objects[2];
+            int id = (Integer)objects[3];
+
+            try {
+                URL url = new URL(path+"AddReplyServlet");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("contentType","utf-8");
+
+                JSONObject object = new JSONObject();
+                object.put("userId",userId);
+                object.put("tag",tag);
+                object.put("replyContent",replyContent);
+                object.put("id",id);
+
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter br = new BufferedWriter(new OutputStreamWriter(os));
+                br.write(object.toString());
+                br.flush();
+                br.close();
+
+                InputStream is = connection.getInputStream();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            text.setText("");
+        }
+    }
+
+    //异步任务：删除评论或回复
+    private class DeleteTask extends AsyncTask{
+
+        private int position;
+
+        public DeleteTask(int position) {
+            this.position = position;
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            int tag = (Integer)objects[0];
+            int id = (Integer)objects[1];
+            try {
+                URL url = new URL(path+"DeleteCAndRServlet?tag="+tag+"&id="+id);
+                HttpURLConnection connection =(HttpURLConnection)url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("contentType","utf-8");
+
+                InputStream is = connection.getInputStream();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            Toast deleteSuccess = Toast.makeText(CommentActivity.this,"评论删除成功",Toast.LENGTH_SHORT);
+            deleteSuccess.setGravity(Gravity.TOP,0,300);
+            deleteSuccess.show();
+            new CommentTask().execute();
+            adapter.notifyDataSetChanged();
         }
     }
 }

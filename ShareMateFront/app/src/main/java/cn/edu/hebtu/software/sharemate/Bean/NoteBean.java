@@ -7,6 +7,7 @@ public class NoteBean {
     private int noPhoto;
     private String title;
     private int noteImage;
+    private String noteImagePath;
     private String noteDetail,noteTitle;
     private UserBean user;
     private String noteTime;
@@ -145,5 +146,13 @@ public class NoteBean {
 
     public void setPingluncount(int pingluncount) {
         this.pingluncount = pingluncount;
+    }
+
+    public String getNoteImagePath() {
+        return noteImagePath;
+    }
+
+    public void setNoteImagePath(String noteImagePath) {
+        this.noteImagePath = noteImagePath;
     }
 }
