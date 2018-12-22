@@ -164,7 +164,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                 int noteid = (int) objects[0];
                 boolean islike = (boolean) objects[1];
                 Log.e("noteid", noteid+"");Log.e("like", islike+"");
-                URL url = new URL(U+"NoteServlet?userId="+userId+"&noteId="+noteid+"&islike="+islike);
+                URL url = new URL(U+"TuijianNoteServlet?userId="+userId+"&noteId="+noteid+"&islike="+islike);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType", "UTF-8");
@@ -192,7 +192,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL(U+"NoteServlet?userId="+userId);
+                URL url = new URL(U+"TuijianNoteServlet?userId="+userId);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType", "UTF-8");
@@ -275,7 +275,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL(U+"NoteServlet?userId="+userId+"&typeid1="+typeid1+"&typeid2="+typeid2+"&typeid3="+typeid3);
+                URL url = new URL(U+"TuijianNoteServlet?userId="+userId+"&typeid1="+typeid1+"&typeid2="+typeid2+"&typeid3="+typeid3);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType", "UTF-8");
@@ -357,7 +357,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL(U+"NoteServlet?userId="+userId+"&typeid1="+typeid1+"&typeid2="+typeid2+"&typeid3="+typeid3+"&typeid4="+typeid4);
+                URL url = new URL(U+"TuijianNoteServlet?userId="+userId+"&typeid1="+typeid1+"&typeid2="+typeid2+"&typeid3="+typeid3+"&typeid4="+typeid4);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType", "UTF-8");
@@ -439,7 +439,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL(U+"NoteServlet?userId="+userId+"&typeid1="+typeid1+"&typeid2="+typeid2+"&typeid3="+typeid3+"&typeid4="+typeid4+"&typeid5="+typeid5);
+                URL url = new URL(U+"TuijianNoteServlet?userId="+userId+"&typeid1="+typeid1+"&typeid2="+typeid2+"&typeid3="+typeid3+"&typeid4="+typeid4+"&typeid5="+typeid5);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType", "UTF-8");
