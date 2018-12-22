@@ -68,6 +68,7 @@ public class NoteServlet extends HttpServlet {
 		
 		UserDao userDao=new UserDao();
 		UserBean userBean=userDao.getUserById(noteBean.getUser().getUserId());
+		noteObj.put("userId",noteBean.getUser().getUserId());
 		noteObj.put("userPhoto",userBean.getUserPhoto());
 		noteObj.put("userName",userBean.getUserName());
 		
@@ -77,8 +78,6 @@ public class NoteServlet extends HttpServlet {
 		noteObj.put("collectCount", collectDao.selectCollectCount(noteId));
 		CommentDao commentDao=new CommentDao();
 		noteObj.put("commentCount", commentDao.getCommentCount(noteId));
-		
-		
 		response.getWriter().append(noteObj.toString());
 	}  
 
