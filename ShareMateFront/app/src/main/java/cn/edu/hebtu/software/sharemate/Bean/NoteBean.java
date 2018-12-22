@@ -14,6 +14,8 @@ public class NoteBean {
     private List<CommentBean> comment;
     private int zancount,sharecount,collectcount,pingluncount;
 
+    public NoteBean(){}
+
     public NoteBean(int noteImage, String noteDetail, String noteTitle, UserBean user, String noteTime, int zancount, int sharecount, int collectcount, int pingluncount) {
         this.noteImage = noteImage;
         this.noteDetail = noteDetail;

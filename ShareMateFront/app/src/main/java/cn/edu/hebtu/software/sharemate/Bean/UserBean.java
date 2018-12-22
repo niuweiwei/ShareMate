@@ -14,6 +14,11 @@ public class UserBean implements Serializable {
     private String userBirth;
     private String userIntroduce;
     private String userPhotoPath;
+    private int followCount;
+    private int fanCount;
+    private int likeCount;
+    private int noteCount;
+    private boolean states;
 
     public UserBean() { }
 
@@ -74,5 +79,45 @@ public class UserBean implements Serializable {
 
     public void setUserPhotoPath(String userPhotoPath) {
         this.userPhotoPath = userPhotoPath;
+    }
+
+    public int getFollowCount() {
+        return followCount;
+    }
+
+    public void setFollowCount(int followCount) {
+        this.followCount = followCount;
+    }
+
+    public int getFanCount() {
+        return fanCount;
+    }
+
+    public void setFanCount(int fanCount) {
+        this.fanCount = fanCount;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public int getNoteCount() {
+        return noteCount;
+    }
+
+    public void setNoteCount(int noteCount) {
+        this.noteCount = noteCount;
+    }
+
+    public boolean isStates() {
+        return states;
+    }
+
+    public void setStates(boolean states) {
+        this.states = states;
     }
 }

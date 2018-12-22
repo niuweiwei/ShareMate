@@ -85,7 +85,7 @@ public class LikesDao {
 	/**
 	 * 查询用户点赞过的所有笔记
 	 */
-	public List<NoteBean> getLikeNoteList(UserBean userbean){
+	public List<NoteBean> getLikeNoteList(int userId){
 		List<NoteBean> noteList = new ArrayList<NoteBean>();
 		NoteDao notedao = new NoteDao();
 		Connection con = DataBase.getConnection();
@@ -93,7 +93,7 @@ public class LikesDao {
 		String sql = "select note_id from likes where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			rs = ptmt.executeQuery();
 			while(rs.next()) {
 				noteList.add(notedao.getNoteById(rs.getInt("note_id")));

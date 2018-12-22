@@ -3,7 +3,7 @@ package bean;
 import java.util.Date;
 
 public class FollowBean {
-	private int followId;//followId关注的userBean
+	private int followId;
 	private UserBean userbean;
 	private boolean status;
 	private Date date;
@@ -43,6 +43,5 @@ public class FollowBean {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
 	
 }

@@ -38,7 +38,7 @@ import cn.edu.hebtu.software.sharemate.tools.ImageTask;
 public class LikeActivity extends AppCompatActivity {
 
     private List<LikeBean> likes = new ArrayList<>();
-    private String path = "http://10.7.89.232:8080/sharemate/";
+    private String path = null;
     private ListView listView = null;
     private LikeListAdapter adapter = null;
     @Override
@@ -46,6 +46,7 @@ public class LikeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like);
         listView = findViewById(R.id.lv_like);
+        path = getResources().getString(R.string.server_path);
 
         LikeNoteTask task = new LikeNoteTask();
         task.execute();

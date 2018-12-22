@@ -108,88 +108,20 @@ public class UserDao {
 	}
 	
 	/**
-	 * 修改用户的姓名
+	 * 修改用户的信息
 	 */
-	public void setUserName(int userId,String name) {
+	public void setUserInfom(UserBean user) {
 		Connection con = DataBase.getConnection();
-		String sql = "update user set user_name = ? where user_id = ?";
+		String sql = "update user set user_name = ?,user_sex=?,user_birth=?,user_address=?,user_intro=? where user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setString(1,name);
-			ptmt.setInt(2,userId);
+			ptmt.setString(1,user.getUserName());
+			ptmt.setString(2,user.getUserSex());
+			ptmt.setDate(3, (Date)user.getUserBirth());
+			ptmt.setString(4, user.getUserAddress());
+			ptmt.setString(5, user.getUserIntro());
+			ptmt.setInt(6, user.getUserId());
 			int row = ptmt.executeUpdate();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * 修改用户的性别
-	 */
-	public void setUserSex(UserBean userbean,String sex) {
-		Connection con = DataBase.getConnection();
-		String sql = "update user set user_sex = ? where user_id = ?";
-		try {
-			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setString(1,sex);
-			ptmt.setInt(2,userbean.getUserId());
-			int row = ptmt.executeUpdate();
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * 修改用户的生日
-	 */
-	public void setUserBirth(UserBean userbean,Date date) {
-		Connection con = DataBase.getConnection();
-		String sql = "update user set user_birth = ? where user_id = ?";
-		try {
-			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setDate(1,new java.sql.Date(date.getTime()));
-			ptmt.setInt(2,userbean.getUserId());
-			int row = ptmt.executeUpdate();
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * 修改用户的地址
-	 */
-	public void setUserAddress(UserBean userbean,String address) {
-		Connection con = DataBase.getConnection();
-		String sql = "update user set user_address = ? where user_id = ?";
-		try {
-			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setString(1,address);
-			ptmt.setInt(2,userbean.getUserId());
-			int row = ptmt.executeUpdate();
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * 修改用户的个性签名o
-	 */
-	public void setUserIntro(UserBean userbean,String intro) {
-		Connection con = DataBase.getConnection();
-		String sql = "update user set user_intro = ? where user_id = ?";
-		try {
-			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setString(1,intro);
-			ptmt.setInt(2,userbean.getUserId());
-			int row = ptmt.executeUpdate();
-			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -199,13 +131,13 @@ public class UserDao {
 	/**
 	 * 修改用户的头像（保存的是头像在安卓手机数据库中的路径）
 	 */
-	public void setUserHead(UserBean userbean,String head) {
+	public void setUserHead(int userId,String head) {
 		Connection con = DataBase.getConnection();
 		String sql = "update user set user_photo = ? where user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
 			ptmt.setString(1,head);
-			ptmt.setInt(2,userbean.getUserId());
+			ptmt.setInt(2,userId);
 			int row = ptmt.executeUpdate();
 			con.close();
 		} catch (SQLException e) {

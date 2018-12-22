@@ -96,6 +96,7 @@ public class FollowedListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if(follow.getText().equals("回粉")) {
+                    Log.e("FollowedListAdapter","点击了回粉");
                     FollowTask followTask = new FollowTask(position);
                     followTask.execute(follow);
                 }else{
@@ -142,9 +143,7 @@ public class FollowedListAdapter extends BaseAdapter {
         protected Object doInBackground(Object[] objects) {
             Button follow = (Button) objects[0];
             try {
-                Log.e("FollowedListAdapter","进入异步任务");
                 String param = "followId="+follows.get(position).getCurrentUser()+"&userId="+follows.get(position).getUser().getUserId()+"&act=follow";
-                Log.e("URL",path+"DoFollowServlet?"+param);
                 URL url = new URL(path+"DoFollowServlet?"+param);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");

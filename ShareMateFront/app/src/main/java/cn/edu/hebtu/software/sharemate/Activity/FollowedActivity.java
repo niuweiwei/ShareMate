@@ -38,7 +38,7 @@ import cn.edu.hebtu.software.sharemate.R;
 
 public class FollowedActivity extends AppCompatActivity {
 
-    private String path = "http://10.7.89.232:8080/sharemate/";
+    private String path = null;
     List<FollowBean> follows = new ArrayList<>();
     ListView listView = null;
     FollowedListAdapter adapter = null;
@@ -48,6 +48,7 @@ public class FollowedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followed);
         listView = findViewById(R.id.lv_followed);
+        path = getResources().getString(R.string.server_path);
 
         FollowTask followTask = new FollowTask();
         followTask.execute();
@@ -73,16 +74,8 @@ public class FollowedActivity extends AppCompatActivity {
                 //获取连接
                 URL url = new URL(path+"/FollowServlet?userId=3");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
+                conn.setRequestMethod("GET");
                 conn.setRequestProperty("contentType","utf-8");
-
-                //通过输出流传递参数
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(os));
-                buffer.write("userId=3");
-                buffer.flush();
-                buffer.close();
-                conn.connect();
 
                 //得到服务器端数据输入流
                 InputStream is = conn.getInputStream();
