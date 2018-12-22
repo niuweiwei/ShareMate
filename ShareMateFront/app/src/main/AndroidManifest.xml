@@ -36,7 +36,13 @@
         <activity android:name=".Activity.YouhuapicActivity" />
         <activity android:name=".Activity.ProductActivity" />
         <activity android:name=".Activity.FollowDetailActivity" />
-        <activity android:name=".Activity.NoteDetailActivity" />
+        <activity android:name=".Activity.NoteDetailActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Activity.CommentDetailActivity" />
         <activity android:name=".Activity.ReplyActivity" />
         <activity android:name=".Activity.StartActivity"/>

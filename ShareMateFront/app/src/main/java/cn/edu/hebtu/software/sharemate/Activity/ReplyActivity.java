@@ -2,6 +2,7 @@ package cn.edu.hebtu.software.sharemate.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,72 +20,123 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.edu.hebtu.software.sharemate.Adapter.CommentAdapter;
 import cn.edu.hebtu.software.sharemate.Adapter.ReplyAdapter;
+import cn.edu.hebtu.software.sharemate.Adapter.ReplyCommentAdapter;
+import cn.edu.hebtu.software.sharemate.Bean.Comment;
 import cn.edu.hebtu.software.sharemate.Bean.Reply;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.tools.ImageTask;
 
 public class ReplyActivity extends AppCompatActivity {
     private Boolean isZan=false;
     private TextView  send;
     private EditText etReply;
-    private List<Reply> replies1;
+    private ArrayList<Reply> replyList;
+    private String path;
+
+    private UserBean user;//当前登录用户
+    private ImageView userPhoto;
+    private Comment comment;
+    private int currentReplyId=0;
+    private List<Integer> replylist=new ArrayList<>();//当前用户赞过的所有回复id
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply);
+        path="http://"+getResources().getString(R.string.server_path)+":8080/sharemate/";;
         send=findViewById(R.id.tv_send);
         etReply=findViewById(R.id.et_reply);
+        userPhoto=findViewById(R.id.iv_headimage);
+        Bundle b=getIntent().getExtras();
+        comment=(Comment)b.getSerializable("comment");
+        user=(UserBean)b.getSerializable("user");
+        ImageTask imageTask1=new ImageTask(path+user.getUserPhotoPath());
+        Object[] objects1=new Object[]{userPhoto};
+        imageTask1.execute(objects1);
+
+        boolean isLike=b.getBoolean("isLike");
+        UserLikeReply userLikeReply=new UserLikeReply(path);
+        userLikeReply.execute();
+        //判断评论有无被点击过
+        ImageView zan=findViewById(R.id.iv_zan);
+        if (isLike){
+            zan.setImageResource(R.drawable.a11);
+        }else{
+            zan.setImageResource(R.drawable.a10);
+        }
         clickZan();
-        getReply();
         skipPreviousPage();
 
     }
-    private void getReply(){
-        //根据Id从数据库中找到评论，设置评论
-        Intent request=getIntent();
-        int commentId=request.getIntExtra("commentId",0);
-        ImageView imageView=findViewById(R.id.iv_image);
-        imageView.setImageResource(R.drawable.b13);
-        TextView name=findViewById(R.id.tv_name);
-        name.setText("新地图开发");
-        final TextView content=findViewById(R.id.tv_CommentContent);
-        content.setText("水煮要吃谭记水煮，在渊明北路上（靠近中山路）推荐鸡脚腰子等荤菜，一定要老板多刷特制辣酱~然后拌粉推荐高师傅，和谭记在一个区域~然后苍蝇馆推荐两家：一家叫老三样，一家叫佳佳麻辣烧菜馆");
-        TextView time=findViewById(R.id.tv_time);
-        time.setText("07-09 17:33");
-        TextView count=findViewById(R.id.tv_zanCount);
-        count.setText(3+"");
-        //准备回复数据
-        SimpleDateFormat sdf=new SimpleDateFormat("MM-dd hh:mm");
-        Date date=new Date();
-        replies1=new ArrayList<>();
-        Reply reply1=new Reply(1,1,R.drawable.b13,"一个人去游泳像投水(作者)","好嘞！got!!!",sdf.format(date),2);
-        Reply reply2=new Reply(2,1,R.drawable.b13,"TT","哈哈哈哈哈我也想要",sdf.format(date),1);
-        Reply reply3=new Reply(3,1,R.drawable.b13,"啊","水煮最有名的不是洪都的丽丽水煮吗",sdf.format(date),1);
-        Reply reply4=new Reply(4,1,R.drawable.b13,"J.C24 > 啊","那也是招牌水煮之一，南昌好几家都很有名的",sdf.format(date),1);
-        Reply reply5=new Reply(5,1,R.drawable.b13,"Juno","行家啊",sdf.format(date),1);
-        replies1.add(reply1);
-        replies1.add(reply2);
-        replies1.add(reply3);
-        replies1.add(reply4);
-        replies1.add(reply5);
-        //设置Adapter
-        ReplyAdapter replyAdapter=new ReplyAdapter(replies1,R.layout.item_reply,ReplyActivity.this);
-        ListView listView=findViewById(R.id.lv_reply);
-        showAllListView(replyAdapter,listView);
-        listView.setAdapter(replyAdapter);
-        //回复指定的回复
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String content=replies1.get(position).getName()+":"+replies1.get(position).getContent();
-                showPopupWindow(content,position);
+    //查询当前用户点赞过哪些回复
+    class UserLikeReply extends AsyncTask {
+        private String path;
+
+        public UserLikeReply(String path) {
+            this.path = path;
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            URL url = null;
+            try {
+                url = new URL(path + "UserServlet?userId=" + user.getUserId() + "&remark=userlikeReply");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("contentType", "utf-8");
+                InputStream is = connection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(is);
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                String res = reader.readLine();
+                JSONArray jsonArray = new JSONArray(res);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    replylist.add(object.getInt("replyId"));
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        });
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            getReply();
+        }
+    }
+
+        private void getReply(){
+
+        ReplyTask replyTask=new ReplyTask();
+        replyTask.execute();
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,25 +145,205 @@ public class ReplyActivity extends AppCompatActivity {
                 String content=etReply.getText().toString();
                 if(hint.equals("矜持点赞也可以，知音难觅聊一句")){
                     //回复该评论,向数据库中添加该评论的回复
-                    Log.e("添加评论回复",hint);
-                    Log.e("添加评论回复",content);
+                    if (!content.trim().isEmpty()){
+                        AddReplyTask addReplyTask=new AddReplyTask(path+"ReplyServlet",content);
+                        addReplyTask.execute();
+                        Toast toast=Toast.makeText(ReplyActivity.this,"回复成功",Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                    }else{
+                        //Toast
+                        Toast toast=Toast.makeText(ReplyActivity.this,"回复内容不能为空",Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                    }
+
                 }else {
-                    //向数据库中添加回复
-                    Log.e("添加回复",hint);
-                    Log.e("添加回复",content);
+                    if(!content.trim().isEmpty()){
+                        //向数据库中添加回复的回复
+                        AddReReplyTask addReReplyTask=new AddReReplyTask(path+"ReplyServlet",content);
+                        addReReplyTask.execute();
+                        Toast toast=Toast.makeText(ReplyActivity.this,"回复成功",Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                    }else{
+                        Toast toast=Toast.makeText(ReplyActivity.this,"回复内容不能为空",Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                    }
+
                 }
                 etReply.setText("");
                 etReply.setHint("矜持点赞也可以，知音难觅聊一句");
                 //隐藏软键盘
                 InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(),0);
-                //Toast
-                Toast toast=Toast.makeText(ReplyActivity.this,"评论成功",Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER,0,0);
-                toast.show();
+
             }
         });
 
+    }
+    //添加回复的异步
+    class AddReplyTask extends AsyncTask {
+        private String path;
+        private String content;
+        public AddReplyTask(String path,String content) {
+            this.path = path;
+            this.content=content;
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            URL url = null;
+            try {
+                url = new URL(path);
+                HttpURLConnection connection=(HttpURLConnection)url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("contentType","utf-8");
+                OutputStream os=connection.getOutputStream();
+                BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(os));
+                writer.write("remark=addReply&replyDetail="+content+"&userId="+user.getUserId()+"&commentId="+comment.getCommentId());
+                writer.flush();
+                writer.close();
+                connection.connect();
+                InputStream is=connection.getInputStream();
+                BufferedReader reader=new BufferedReader(new InputStreamReader(is));
+                Log.e("replyDetail",reader.readLine());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            ReplyTask replyTask=new ReplyTask();
+            replyTask.execute();
+        }
+    }
+    //加载回复的异步
+    class ReplyTask extends AsyncTask{
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            replyList=new ArrayList<>();
+            URL url=null;
+                try {
+                    url = new URL(path + "ReplyServlet?commentId=" + comment.getCommentId()+"&remark=selectReply");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.setRequestProperty("contentType", "utf-8");
+                    InputStream is = connection.getInputStream();
+                    InputStreamReader isr = new InputStreamReader(is);
+                    BufferedReader reader = new BufferedReader(isr);
+                    String res1 = reader.readLine();
+                    JSONArray array = new JSONArray(res1);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = array.getJSONObject(i);
+                        Reply reply = new Reply();
+                        reply.setReplyId(obj.getInt("replyId"));
+                        Log.e("replyId",obj.getInt("replyId")+"");
+                        reply.setContent(obj.getString("replyDetail"));
+                        reply.setTime(obj.getString("replyDate"));
+                        reply.setCountZan(obj.getInt("replyLikeCount"));
+                        reply.setUserName(obj.getString("userName"));
+                        reply.setUserPhoto(obj.getString("userPhoto"));
+                        if (obj.getString("reReplyName").equals("0")) {
+                            //是针对评论的回复
+                            reply.setCommentId(comment.getCommentId());
+                        } else {
+                            //针对回复的回复
+                            reply.setReReplyName(obj.getString("reReplyName"));
+                        }
+                        replyList.add(reply);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            //设置评论
+            ImageView imageView=findViewById(R.id.iv_image);
+            ImageTask imageTask=new ImageTask(path+comment.getUser().getUserPhotoPath());
+            imageTask.execute(imageView);
+            TextView name=findViewById(R.id.tv_name);
+            name.setText(comment.getUser().getUserName());
+            final TextView content=findViewById(R.id.tv_CommentContent);
+            content.setText(comment.getContent());
+            TextView time=findViewById(R.id.tv_time);
+            time.setText(comment.getCommentTime());
+            TextView count=findViewById(R.id.tv_zanCount);
+            count.setText(comment.getCountZan()+"");
+            TextView sumReply=findViewById(R.id.tv_sumReply);
+            sumReply.setText(replyList.size()+"");
+            //设置Adapter
+            ReplyAdapter replyAdapter=new ReplyAdapter(replyList,R.layout.item_reply,ReplyActivity.this,replylist,user.getUserId(),path);
+            ListView listView=findViewById(R.id.lv_reply);
+            showAllListView(replyAdapter,listView);
+            listView.setAdapter(replyAdapter);
+            //回复指定的回复
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //隐藏软键盘
+                    InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+                    String content=replyList.get(position).getUserName()+":"+replyList.get(position).getContent();
+                    showPopupWindow(content,position);
+                }
+            });
+        }
+    }
+    //添加回复的回复的异步
+    class AddReReplyTask extends AsyncTask{
+        private String path;
+        private String content;
+        public AddReReplyTask(String path,String content) {
+            this.path = path;
+            this.content=content;
+        }
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            URL url = null;
+            try {
+                url = new URL(path);
+                HttpURLConnection connection=(HttpURLConnection)url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("contentType","utf-8");
+                OutputStream os=connection.getOutputStream();
+                BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(os));
+                writer.write("remark=addReReply&replyDetail="+content+"&userId="+user.getUserId()+"&reReplyId="+currentReplyId);
+                Log.e("content",content);
+                writer.flush();
+                writer.close();
+                connection.connect();
+                InputStream is=connection.getInputStream();
+                BufferedReader reader=new BufferedReader(new InputStreamReader(is));
+                Log.e("reReplyDetail",reader.readLine());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            ReplyTask replyTask=new ReplyTask();
+            replyTask.execute();
+        }
     }
     private void showPopupWindow(String content,final int position){
         LinearLayout linearLayout=findViewById(R.id.root);
@@ -128,7 +360,8 @@ public class ReplyActivity extends AppCompatActivity {
                 //根据position得到点击的那个回复，回复指定的回复
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                etReply.setHint("回复"+replies1.get(position).getName()+"…");
+                etReply.setHint("回复"+replyList.get(position).getUserName()+"…");
+                currentReplyId=replyList.get(position).getReplyId();
                 popupWindow.dismiss();
             }
         });
@@ -158,7 +391,7 @@ public class ReplyActivity extends AppCompatActivity {
             listView.setLayoutParams(params);
         }
     }
-    //点赞，赞数加1
+    //点赞评论，赞数加1
     private void clickZan(){
         final ImageView zan=findViewById(R.id.iv_zan);
         final TextView zanCount=findViewById(R.id.tv_zanCount);
@@ -190,5 +423,7 @@ public class ReplyActivity extends AppCompatActivity {
                 ReplyActivity.this.finish();
             }
         });
+
     }
+
 }

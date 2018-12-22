@@ -13,6 +13,11 @@ public class NoteBean {
     private List<CommentBean> comment;
     private int zancount,sharecount,collectcount,pingluncount;
 
+    private String noteImagePath;
+
+    public NoteBean() {
+    }
+
     public NoteBean(int noteImage, String noteDetail, String noteTitle, UserBean user, String noteTime, int zancount, int sharecount, int collectcount, int pingluncount) {
         this.noteImage = noteImage;
         this.noteDetail = noteDetail;
@@ -145,5 +150,13 @@ public class NoteBean {
 
     public void setPingluncount(int pingluncount) {
         this.pingluncount = pingluncount;
+    }
+
+    public String getNoteImagePath() {
+        return noteImagePath;
+    }
+
+    public void setNoteImagePath(String noteImagePath) {
+        this.noteImagePath = noteImagePath;
     }
 }

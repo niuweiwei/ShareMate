@@ -12,6 +12,16 @@ public class UserBean implements Serializable {
     private String userBirth;
     private String userIntroduce;
 
+    private String userPhotoPath;
+
+    public UserBean() {
+    }
+
+    public UserBean(String userName, String userPhotoPath) {
+        this.userName = userName;
+        this.userPhotoPath = userPhotoPath;
+    }
+
     public UserBean(String userName, int userPhoto) {
         this.userName = userName;
         this.userPhoto = userPhoto;
@@ -62,4 +72,12 @@ public class UserBean implements Serializable {
     public String getUserIntroduce() {return userIntroduce;}
 
     public void setUserIntroduce(String userIntroduce) {this.userIntroduce = userIntroduce;}
+
+    public String getUserPhotoPath() {
+        return userPhotoPath;
+    }
+
+    public void setUserPhotoPath(String userPhotoPath) {
+        this.userPhotoPath = userPhotoPath;
+    }
 }
