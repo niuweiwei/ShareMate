@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <!--关注内容-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -17,16 +16,39 @@
             android:layout_height="50dp"
             android:layout_marginLeft="12dp"
             android:layout_gravity="center_vertical"/>
-        <TextView
-            android:id="@+id/tv_note"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_gravity="center_vertical"
-            android:textSize="@dimen/textNoSize"
-            android:textColor="@color/inkGray"/>
         <LinearLayout
-            android:id="@+id/focus"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_note"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/textNoSize"
+                android:textColor="@color/inkGray"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/noteCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/darkGray"/>
+                <TextView
+                    android:id="@+id/fanCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/darkGray"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="35dp">

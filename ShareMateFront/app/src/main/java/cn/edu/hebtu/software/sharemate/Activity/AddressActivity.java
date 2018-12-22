@@ -1,5 +1,6 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,23 +9,31 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 
 public class AddressActivity extends AppCompatActivity {
     private EditText editText;
     private TextView finishText;
     private TextView titleText;
     private TextView alterText;
+    private UserBean userBean;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
+        userBean = (UserBean)getIntent().getSerializableExtra("user");
         editText = findViewById(R.id.content);
         finishText = findViewById(R.id.finish);
         titleText = findViewById(R.id.title);
         alterText = findViewById(R.id.alter);
         alterText.setText("请输入2-40个字符");
         titleText.setText(getIntent().getStringExtra("msg"));
-        editText.setText(getIntent().getStringExtra("content"));
+        if(titleText.getText().equals("常住地")){
+            editText.setText(userBean.getUserAddress());
+        }else{
+            editText.setText(userBean.getUserIntroduce());
+        }
+
         ImageView imageView = findViewById(R.id.back);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,8 +48,14 @@ public class AddressActivity extends AppCompatActivity {
                     alterText.setText("您输入的小于2个字符");
                     alterText.setTextColor(getResources().getColor(R.color.warmRed));
                 }else{
-                    String content = editText.getText().toString();
-                    //把内容存到数据库中
+                    if(titleText.getText().equals("常住地")){
+                        userBean.setUserAddress(editText.getText().toString());
+                    }else{
+                        userBean.setUserIntroduce(editText.getText().toString());
+                    }
+                    Intent intent = new Intent();
+                    intent.putExtra("responseUser",userBean);
+                    setResult(200,intent);
                     AddressActivity.this.finish();
                 }
             }

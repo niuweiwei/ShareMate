@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.MainActivity"/>
+        <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.LikeActivity" />
         <activity android:name=".Activity.FollowedActivity" />
         <activity android:name=".Activity.CommentActivity" />
@@ -39,10 +39,10 @@
         <activity android:name=".Activity.NoteDetailActivity" />
         <activity android:name=".Activity.CommentDetailActivity" />
         <activity android:name=".Activity.ReplyActivity" />
-        <activity android:name=".Activity.StartActivity"/>
-        <activity android:name=".Activity.SelectInterestActivity"/>
-        <activity android:name=".Activity.SelectTopicActivity"/>
-        <activity android:name=".Activity.InputCodeActivity"/>
+        <activity android:name=".Activity.StartActivity" />
+        <activity android:name=".Activity.SelectInterestActivity" />
+        <activity android:name=".Activity.SelectTopicActivity" />
+        <activity android:name=".Activity.InputCodeActivity" />
         <activity android:name=".Activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,11 +50,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.PhonePswdLoginActivity"/>
-        <activity android:name=".Activity.ForgetPasswordActivity"/>
-        <activity android:name=".Activity.VerifyCodeActivity"/>
-        <activity android:name=".Activity.RegisterActivity"/>
-        <activity android:name=".Activity.CountryActivity"/>
+        <activity android:name=".Activity.PhonePswdLoginActivity" />
+        <activity android:name=".Activity.ForgetPasswordActivity" />
+        <activity android:name=".Activity.VerifyCodeActivity" />
+        <activity android:name=".Activity.RegisterActivity" />
+        <activity android:name=".Activity.CountryActivity" />
+        <activity android:name=".Activity.FanActivity"></activity>
     </application>
 
 </manifest>

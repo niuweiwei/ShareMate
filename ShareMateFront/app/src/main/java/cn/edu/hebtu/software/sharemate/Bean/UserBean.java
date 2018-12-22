@@ -2,29 +2,65 @@ package cn.edu.hebtu.software.sharemate.Bean;
 
 import java.io.Serializable;
 
-public class UserBean implements Serializable {
-
-    private String userName;
+public class UserBean implements Serializable{
     private int userPhoto;
-    private int userId;
+    private String userName;
+    private String userPhotoPath;
+    private String userId;
     private String userSex;
     private String userAddress;
     private String userBirth;
     private String userIntroduce;
+    private int followCount;
+    private int fanCount;
+    private int likeCount;
+    private int noteCount;
+    private boolean states;
 
-    public UserBean(String userName, int userPhoto) {
-        this.userName = userName;
+    public UserBean() { }
+
+    public UserBean( String userName,int userPhoto) {
         this.userPhoto = userPhoto;
+        this.userName = userName;
     }
-    public UserBean(int userId, int userPhoto, String userName, String userSex,
-                String userAddress, String userBirth, String userIntroduce) {
+
+    public int getNoteCount() {return noteCount;}
+
+    public void setNoteCount(int noteCount) {this.noteCount = noteCount;}
+
+    public int getFollowCount() {return followCount;}
+
+    public void setFollowCount(int followCount) {this.followCount = followCount;}
+
+    public int getFanCount() {return fanCount;}
+
+    public void setFanCount(int fanCount) {this.fanCount = fanCount;}
+
+    public int getLikeCount() {return likeCount;}
+
+    public void setLikeCount(int likeCount) {this.likeCount = likeCount;}
+    public boolean isStates() {return states;}
+
+    public void setStates(boolean states) {this.states = states;}
+
+    public int getUserPhoto() { return userPhoto; }
+
+    public void setUserPhoto(int userPhoto) { this.userPhoto = userPhoto; }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
         this.userId = userId;
-        this.userPhoto = userPhoto;
-        this.userName = userName;
-        this.userSex = userSex;
-        this.userAddress = userAddress;
-        this.userBirth = userBirth;
-        this.userIntroduce = userIntroduce;
+    }
+
+    public String getUserPhotoPath() {
+        return userPhotoPath;
+    }
+
+    public void setUserPhotoPath(String userPhoto) {
+        this.userPhotoPath= userPhoto;
     }
 
     public String getUserName() {
@@ -35,31 +71,36 @@ public class UserBean implements Serializable {
         this.userName = userName;
     }
 
-    public int getUserPhoto() {
-        return userPhoto;
+    public String getUserSex() {
+        return userSex;
     }
 
-    public void setUserPhoto(int userPhoto) {
-        this.userPhoto = userPhoto;
+    public void setUserSex(String userSex) {
+        this.userSex = userSex;
     }
 
-    public int getUserId() {return userId;}
+    public String getUserAddress() {
+        return userAddress;
+    }
 
-    public void setUserId(int userId) {this.userId = userId;}
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
 
-    public String getUserSex() {return userSex;}
+    public String getUserBirth() {
+        return userBirth;
+    }
 
-    public void setUserSex(String userSex) {this.userSex = userSex;}
+    public void setUserBirth(String userBirth) {
+        this.userBirth = userBirth;
+    }
 
-    public String getUserAddress() {return userAddress;}
+    public String getUserIntroduce() {
+        return userIntroduce;
+    }
 
-    public void setUserAddress(String userAddress) {this.userAddress = userAddress;}
+    public void setUserIntroduce(String userIntroduce) {
+        this.userIntroduce = userIntroduce;
+    }
 
-    public String getUserBirth() {return userBirth;}
-
-    public void setUserBirth(String userBirth) {this.userBirth = userBirth;}
-
-    public String getUserIntroduce() {return userIntroduce;}
-
-    public void setUserIntroduce(String userIntroduce) {this.userIntroduce = userIntroduce;}
 }

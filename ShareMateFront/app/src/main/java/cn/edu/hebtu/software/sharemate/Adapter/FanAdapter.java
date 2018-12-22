@@ -1,6 +1,8 @@
 package cn.edu.hebtu.software.sharemate.Adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,26 +20,25 @@ import java.util.List;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 
-public class FocusAdapter extends BaseAdapter {
-
-    private int itemLayout;
+public class FanAdapter extends BaseAdapter {
     private Context context;
-    private List<UserBean> userList= new ArrayList<>();
+    private int itemLayout;
+    private List<UserBean> fanList = new ArrayList<>();
 
-    public FocusAdapter(int itemLayout, Context context, List<UserBean> userList) {
-        this.itemLayout = itemLayout;
+    public FanAdapter(Context context, int itemLayout, List<UserBean> fanList) {
         this.context = context;
-        this.userList = userList;
+        this.itemLayout = itemLayout;
+        this.fanList = fanList;
     }
 
     @Override
     public int getCount() {
-        return userList.size();
+        return fanList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return userList.get(position);
+        return fanList.get(position);
     }
 
     @Override
@@ -52,19 +53,24 @@ public class FocusAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(itemLayout, null);
         }
         ImageView imageView = convertView.findViewById(R.id.img_content);
-        String photoPath = "http://10.7.89.233:8080/sharemate/"+userList.get(position).getUserPhotoPath();
+        String photoPath = "http://10.7.89.233:8080/sharemate/"+fanList.get(position).getUserPhotoPath();
         RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);
         Glide.with(context).load(photoPath).apply(mRequestOptions).into(imageView);
         TextView textView = convertView.findViewById(R.id.tv_note);
-        textView.setText(userList.get(position).getUserName());
+        textView.setText(fanList.get(position).getUserName());
         TextView followView = convertView.findViewById(R.id.follow);
-        if(userList.get(position).isStates()){
+        if(fanList.get(position).isStates()){
             followView.setText(" 互相关注 ");
         }else{
-            followView.setText(" 已关注 ");
+            followView.setText(" 回粉 ");
+            followView.setTextColor(context.getResources().getColor(R.color.warmRed));
         }
+        TextView noteText = convertView.findViewById(R.id.noteCount);
+        noteText.setText("笔记."+fanList.get(position).getNoteCount());
+        TextView fanText = convertView.findViewById(R.id.fanCount);
+        fanText.setText("粉丝."+fanList.get(position).getFanCount());
         return convertView;
     }
 }

@@ -3,15 +3,16 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,46 +28,45 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.edu.hebtu.software.sharemate.Adapter.FocusAdapter;
+import cn.edu.hebtu.software.sharemate.Adapter.FanAdapter;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 
-
-public class FollowActivity extends AppCompatActivity {
-    //user表示当前用户
+public class FanActivity extends AppCompatActivity {
     private UserBean user;
     private ImageView imageView;
     private ListView listView;
-    private FocusAdapter focusAdapter;
-    //userList是关注的好友
+    private FanAdapter fanAdapter;
     private List<UserBean> userList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_focus);
+        setContentView(R.layout.activity_fan);
         findViews();
-        GetFriend getFriend = new GetFriend();
-        getFriend.execute(user);
+        GetFan getFan = new GetFan();
+        getFan.execute(user);
         setListView(listView);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FollowActivity.this,MainActivity.class);
+                Intent intent = new Intent(FanActivity.this,MainActivity.class);
                 intent.putExtra("flag","my");
                 startActivity(intent);
             }
         });
     }
 
-    //从数据库中取出当前用户关注的好友
-    public class GetFriend extends AsyncTask{
+    //从数据库中取出当前用户的粉丝
+    public class GetFan extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
             UserBean userBean = (UserBean) objects[0];
             int userId = Integer.parseInt(userBean.getUserId());
             try {
-                URL url = new URL("http://10.7.89.233:8080/sharemate/FriendServlet?userId="+userId);
+                URL url = new URL("http://10.7.89.233:8080/sharemate/FanServlet?userId="+userId);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("contentType", "UTF-8");
                 InputStream is = urlConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
                 String res = br.readLine();
@@ -74,16 +74,17 @@ public class FollowActivity extends AppCompatActivity {
                 JSONArray array = new JSONArray(res);
                 for(int i=0 ; i<array.length() ; i++){
                     JSONObject userObject = array.getJSONObject(i);
-                    UserBean friend = new UserBean();
-                    friend.setUserId(userObject.getString("userId"));
-                    friend.setUserName(userObject.getString("userName"));
-                    friend.setUserPhotoPath(userObject.getString("userPhoto"));
-                    friend.setUserIntroduce(userObject.getString("userIntro"));
-                    friend.setFanCount(userObject.getInt("fanCount"));
-                    friend.setLikeCount(userObject.getInt("likeCount"));
-                    friend.setFollowCount(userObject.getInt("followCount"));
-                    friend.setStates(userObject.getBoolean("status"));
-                    userList.add(friend);
+                    UserBean fan = new UserBean();
+                    fan.setUserId(userObject.getString("userId"));
+                    fan.setUserName(userObject.getString("userName"));
+                    fan.setUserPhotoPath(userObject.getString("userPhoto"));
+                    fan.setUserIntroduce(userObject.getString("userIntro"));
+                    fan.setStates(userObject.getBoolean("status"));
+                    fan.setNoteCount(userObject.getInt("noteCount"));
+                    fan.setFanCount(userObject.getInt("fanCount"));
+                    fan.setFollowCount(userObject.getInt("followCount"));
+                    fan.setLikeCount(userObject.getInt("likeCount"));
+                    userList.add(fan);
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -94,21 +95,12 @@ public class FollowActivity extends AppCompatActivity {
             }
             return null;
         }
-
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            focusAdapter = new FocusAdapter(R.layout.focus_item, FollowActivity.this, userList);
-            listView.setAdapter(focusAdapter);
+            fanAdapter = new FanAdapter(FanActivity.this,R.layout.fan_item,userList);
+            listView.setAdapter(fanAdapter);
         }
-    }
-
-    //设置布局控件
-    public void findViews(){
-        user = (UserBean) getIntent().getSerializableExtra("user");
-        listView = findViewById(R.id.root);
-        listView.setEmptyView((findViewById(R.id.empty_view)));
-        imageView = findViewById(R.id.back);
     }
 
     //listView的点击事件
@@ -116,20 +108,34 @@ public class FollowActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                LinearLayout focusLayout = view.findViewById(R.id.focus);
-                focusLayout.setOnClickListener(new View.OnClickListener() {
+                final TextView followView = view.findViewById(R.id.follow);
+                followView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showFocusDialog(position);
+                        if("回粉".equals(followView.getText())){
+                            //把用户加入到我的关注表里
+                            insertFollow inserts = new insertFollow();
+                            inserts.execute(user.getUserId(),userList.get(position).getUserId());
+                            followView.setText("互相关注");
+                        }else if("互相关注".equals(followView.getText())){
+                            showFocusDialog(position);
+                        }
                     }
                 });
                 Intent intent = new Intent();
-                intent.setClass(FollowActivity.this, FriendActivity.class);
+                intent.setClass(FanActivity.this, FriendActivity.class);
                 intent.putExtra("friend", userList.get(position));
                 startActivity(intent);
             }
         });
     }
+    public void findViews(){
+        user = (UserBean) getIntent().getSerializableExtra("user");
+        listView = findViewById(R.id.root);
+        listView.setEmptyView((findViewById(R.id.empty_view)));
+        imageView = findViewById(R.id.back);
+    }
+
     //是否关注选择器
     private void showFocusDialog(final int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -142,7 +148,7 @@ public class FollowActivity extends AppCompatActivity {
                 deleteFollow.execute(user.getUserId(),userList.get(position).getUserId());
                 userList.remove(position);
                 dialog.dismiss();
-                listView.setAdapter(focusAdapter);
+                listView.setAdapter(fanAdapter);
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -154,7 +160,28 @@ public class FollowActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+    //把粉丝加入我的关注表里
+    public class insertFollow extends AsyncTask{
 
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            String followId =(String) objects[0];
+            String userId = (String)objects[1];
+            try {
+                URL url = new URL("http://10.7.89.233:8080/sharemate/InsertFollowServlet?followId="+followId+"&userId="+userId);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                int res = urlConnection.getResponseCode();
+                if(res == 200){
+                    Log.e("test","添加成功！");
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
     //把取消关注的用户从数据库中删除
     public class DeleteFollow extends  AsyncTask{
 

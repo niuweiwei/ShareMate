@@ -61,7 +61,12 @@ public class MainActivity extends AppCompatActivity {
         myView = findViewById(R.id.tv_my);
 
         manager = getSupportFragmentManager();
-        showFragment(indexFragment);
+        if(getIntent().getStringExtra("flag") != null &&
+                "my".equals(getIntent().getStringExtra("flag"))){
+            showFragment(myFragment);
+        }else{
+            showFragment(indexFragment);
+        }
         indexView.setTextSize(TypedValue.COMPLEX_UNIT_SP,24);
         indexView.setTextColor(getResources().getColor(R.color.inkGray));
 

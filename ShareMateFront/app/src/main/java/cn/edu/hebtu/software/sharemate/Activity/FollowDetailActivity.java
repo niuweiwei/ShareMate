@@ -43,17 +43,7 @@ public class FollowDetailActivity extends AppCompatActivity implements CustomAda
             }
         });
         UserBean user=new UserBean("小明",R.drawable.a1);
-        NoteBean st1= new NoteBean(R.drawable.dm10,"路飞手办，路飞公仔。。。。。。。。","笔记一",user,"昨天12:00",88,77,88,99);
-        NoteBean st2= new NoteBean(R.drawable.dm6,"海贼王手办公仔模型Q版","笔记一",user,"昨天12:00",98,77,88,99);
-        NoteBean st3= new NoteBean(R.drawable.dm2,"路飞手办，三个路飞Q版模型","笔记一",user,"昨天12:00",18,77,88,99);
-        NoteBean st4= new NoteBean(R.drawable.dm8,"海贼王手办，路飞公仔全套","笔记一",user,"昨天12:00",28,77,88,99);
-        NoteBean st5= new NoteBean(R.drawable.dm1,"路飞生日礼物全套，onepiece手办模型","笔记一",user,"昨天12:00",48,77,88,99);
         notes = new ArrayList<>();
-        notes.add(st1);
-        notes.add(st2);
-        notes.add(st3);
-        notes.add(st4);
-        notes.add(st5);
         listView = findViewById(R.id.list);
         customAdapter = new CustomAdapter(this,R.layout.list_item,this, notes);
         listView.setAdapter(customAdapter);
@@ -94,7 +84,6 @@ public class FollowDetailActivity extends AppCompatActivity implements CustomAda
             } else {
                 //使EditText触发一次失去焦点事件
                 v.setFocusable(false);
-//                v.setFocusable(true); //这里不需要是因为下面一句代码会同时实现这个功能
                 v.setFocusableInTouchMode(true);
                 return true;
             }

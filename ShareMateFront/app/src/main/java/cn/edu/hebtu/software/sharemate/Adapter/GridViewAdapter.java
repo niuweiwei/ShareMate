@@ -52,7 +52,7 @@ public class GridViewAdapter extends BaseAdapter {
 
         //获取每个item中视图空间对象，设置显示的图片和文字
         ImageView ivPhoto=convertView.findViewById(R.id.iv_photo);
-        ivPhoto.setImageResource(notes.get(position).getNoteImage());
+        //ivPhoto.setImageResource(notes.get(position).getNoteImage());
         TextView text=convertView.findViewById(R.id.note_text);
         text.setText(notes.get(position).getNoteDetail());
         TextView username=convertView.findViewById(R.id.user_name);
