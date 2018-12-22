@@ -22,8 +22,11 @@ public class UpLoadUtil  extends AsyncTask{
         String PREFIX = "--", LINE_END = "\r\n";
         String CONTENT_TYPE = "multipart/form-data";
         File file = new File((String) objects[0]);
+        Log.e("path",file.getPath());
         try {
-            URL url = new URL("http://10.7.89.233:8080/ShareMate/TestServlet");
+            String ip = GetIpConfig.getIp();
+            Log.e("UpLoad_ip",ip);
+            URL url = new URL("http://"+ ip +":8080/sharemate/RegisterImageServlet");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoInput(true); // 允许输入流
             con.setDoOutput(true); // 允许输出流
@@ -56,8 +59,8 @@ public class UpLoadUtil  extends AsyncTask{
             dos.flush();
             int res = con.getResponseCode();
             if (res == 200) {
-                Log.e("test","上传成功");
-            }
+                Log.e("test","头像上传成功");
+        }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -36,6 +36,7 @@ import cn.edu.hebtu.software.sharemate.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int userId;
     private TextView indexView;
     private TextView shoppingView;
     private TextView messageView;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        userId = getIntent().getIntExtra("userId",0);
         indexView = findViewById(R.id.tv_index);
         shoppingView = findViewById(R.id.tv_shopping);
         messageView = findViewById(R.id.tv_message);

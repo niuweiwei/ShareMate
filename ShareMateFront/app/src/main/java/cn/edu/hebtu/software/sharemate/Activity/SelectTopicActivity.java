@@ -10,6 +10,7 @@ import cn.edu.hebtu.software.sharemate.R;
 
 public class SelectTopicActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private int userId;
     //定义一个标记
     private Boolean b_sub_square = false;
     private Button button;
@@ -20,6 +21,7 @@ public class SelectTopicActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_topic);
         findViews();
+        userId = getIntent().getIntExtra("userId",0);
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
@@ -330,6 +332,7 @@ public class SelectTopicActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.button:
                 Intent intent = new Intent(SelectTopicActivity.this,MainActivity.class);
+                intent.putExtra("userId",userId);
                 startActivity(intent);
                 break;
         }

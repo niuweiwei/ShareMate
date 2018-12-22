@@ -5,6 +5,8 @@ import java.io.Serializable;
 public class UserBean implements Serializable {
 
     private String userName;
+    private String userPassword;
+    private String userPhone;
     private int userPhoto;
     private int userId;
     private String userSex;
@@ -12,12 +14,14 @@ public class UserBean implements Serializable {
     private String userBirth;
     private String userIntroduce;
 
+    public UserBean(){}
+    public UserBean(Object object){}
     public UserBean(String userName, int userPhoto) {
         this.userName = userName;
         this.userPhoto = userPhoto;
     }
     public UserBean(int userId, int userPhoto, String userName, String userSex,
-                String userAddress, String userBirth, String userIntroduce) {
+                    String userAddress, String userBirth, String userIntroduce) {
         this.userId = userId;
         this.userPhoto = userPhoto;
         this.userName = userName;
@@ -25,6 +29,34 @@ public class UserBean implements Serializable {
         this.userAddress = userAddress;
         this.userBirth = userBirth;
         this.userIntroduce = userIntroduce;
+    }
+    public UserBean(String userName, String userPassword, String userPhone, int userPhoto,
+                    int userId, String userSex, String userAddress, String userBirth, String userIntroduce) {
+        this.userName = userName;
+        this.userPassword = userPassword;
+        this.userPhone = userPhone;
+        this.userPhoto = userPhoto;
+        this.userId = userId;
+        this.userSex = userSex;
+        this.userAddress = userAddress;
+        this.userBirth = userBirth;
+        this.userIntroduce = userIntroduce;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
     }
 
     public String getUserName() {
@@ -62,4 +94,14 @@ public class UserBean implements Serializable {
     public String getUserIntroduce() {return userIntroduce;}
 
     public void setUserIntroduce(String userIntroduce) {this.userIntroduce = userIntroduce;}
+
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "userName='" + userName + '\'' +
+                ", userPassword='" + userPassword + '\'' +
+                ", userPhone='" + userPhone + '\'' +
+                ", userPhoto=" + userPhoto +
+                '}';
+    }
 }

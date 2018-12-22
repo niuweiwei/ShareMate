@@ -31,11 +31,11 @@ public class IdentifyingCode {
     //验证码个数
     private static final int CODE_LENGTH = 4;
     //字体大小
-    private static final int FONT_SIZE = 70;
+    private static final int FONT_SIZE = 75;
     //线条数
     private static final int LINE_NUMBER = 5;
     //padding,其中base的意思是初始值，而range是变化范围，数值根据自己想要的大小来设置
-    private static final int BASE_PADDING_LEFT = 10,RANGE_PADDING_LEFT=100,
+    private static final int BASE_PADDING_LEFT = 5,RANGE_PADDING_LEFT=80,
             BASE_PADDING_TOP=75,RANGE_PADDING_TOP=50;
     //验证码默认宽高
     private static final int DEFAULT_WIDTH = 400,DEFAULT_HEIGHT = 150;

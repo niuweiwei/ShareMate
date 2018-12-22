@@ -3,6 +3,7 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -10,12 +11,16 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.tools.SexUtil;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -26,21 +31,53 @@ public class StartActivity extends AppCompatActivity {
     private Button btnNext;
     private String birth;
     private PopupWindow popupWindow;
+    private RadioGroup radioGroup;
+    private RadioButton rbMale;
+    private RadioButton rbFemale;
+    private String male;
+    private String female;
+    private UserBean user = new UserBean();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
         findViews();
         btnNext.setOnClickListener(new ButtonClickListener());
         back.setOnClickListener(new backClickListener());
         tv_birth.setOnClickListener(new birthClickListener());
+        radioGroup.setOnCheckedChangeListener(new CheckedChangeListener());
     }
     private void findViews(){
         linearLayout = findViewById(R.id.root);
         tv_birth = findViewById(R.id.tv_birth);
         btnNext = findViewById(R.id.btn_next);
         back = findViewById(R.id.iv_back);
+        radioGroup = findViewById(R.id.radiogroup);
+        rbMale = findViewById(R.id.male);
+        rbFemale = findViewById(R.id.female);
+    }
+
+    /**
+     * 选择男、女
+     */
+    private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener{
+
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId){
+                case R.id.male:
+                    male = rbMale.getText().toString();
+                    Log.e("male",male);
+                    user.setUserSex(male);
+                    break;
+                case R.id.female:
+                    female = rbFemale.getText().toString();
+                    Log.e("female",female);
+                    user.setUserSex(female);
+                    break;
+            }
+        }
     }
     //选择生日
     private class birthClickListener implements View.OnClickListener{
@@ -50,7 +87,6 @@ public class StartActivity extends AppCompatActivity {
             showBirthDialog();
         }
     }
-
     //生日日期选择器
     private void showBirthDialog(){
         popupWindow = new PopupWindow(this);
@@ -80,6 +116,8 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 tv_birth.setText(birth);
+                Log.e("birth", birth);
+                user.setUserBirth(birth);
                 popupWindow.dismiss();
             }
         });
@@ -104,8 +142,9 @@ public class StartActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(StartActivity.this,SelectInterestActivity.class);
-            startActivity(intent);
+            //上传性别和生日
+            SexUtil sexUtil = new SexUtil(StartActivity.this);
+            sexUtil.execute(user);
         }
     }
 }
