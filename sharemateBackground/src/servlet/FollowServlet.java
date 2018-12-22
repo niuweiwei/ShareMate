@@ -1,7 +1,10 @@
 package servlet;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,20 +17,21 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bean.FollowBean;
+import bean.UserBean;
 import dao.FollowDao;
-import dao.NoteDao;
+import dao.UserDao;
 
 /**
- * Servlet implementation class FriendServlet
+ * Servlet implementation class FollowServlet
  */
-@WebServlet("/FriendServlet")
-public class FriendServlet extends HttpServlet {
+@WebServlet("/FollowServlet")
+public class FollowServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public FriendServlet() {
+    public FollowServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -36,28 +40,31 @@ public class FriendServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
-		List<FollowBean> followList = new ArrayList<>();
 		int userId = Integer.parseInt(request.getParameter("userId"));
-		FollowDao followdao = new FollowDao();
-		NoteDao notedao = new NoteDao();
-		followList = followdao.getFollow(userId);
+		FollowDao followDao = new FollowDao();
+		UserDao userDao = new UserDao();
+		HashMap<FollowBean,Boolean> map = followDao.getFollows(userId);
 		JSONArray array = new JSONArray();
-		for(FollowBean follow:followList) {
-			int followCount = followdao.getFollowCount(follow.getUserbean().getUserId());
-			int fanCount = followdao.getFunCount(follow.getUserbean().getUserId());
-			int likeCount = notedao.getLikeCount(follow.getUserbean().getUserId());
+		ArrayList <FollowBean> list = new ArrayList<>(map.keySet());
+		
+		for(FollowBean follow : list) {
 			JSONObject object = new JSONObject();
-			object.put("userId",follow.getUserbean().getUserId());
-			object.put("userName",follow.getUserbean().getUserName());
-			object.put("userPhoto", follow.getUserbean().getUserPhoto());
-			object.put("userIntro", follow.getUserbean().getUserIntro());
-			object.put("status", follow.isStatus());
-			object.put("followCount", followCount);
-			object.put("fanCount", fanCount);
-			object.put("likeCount", likeCount);
-			array.put(object);	
+			UserBean user = userDao.getUserById(follow.getFollowId());
+			//得到该粉丝用户的id
+			object.put("fansId", follow.getFollowId());
+			//得到粉丝用户的昵称
+			object.put("fansName", user.getUserName());
+			//得到粉丝用户的头像路径
+			object.put("fansPhotoPath",user.getUserPhoto());
+			//得到关注的时间
+			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+			object.put("followDate",sdf.format(follow.getDate()));
+			//得到该用户是否关注了该粉丝
+			object.put("isFollow", map.get(follow));
+			array.put(object);
 		}
 		response.getWriter().append(array.toString()).append(request.getContextPath());
 	}

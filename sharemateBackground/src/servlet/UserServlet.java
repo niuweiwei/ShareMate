@@ -49,7 +49,7 @@ public class UserServlet extends HttpServlet {
 		int likeCount = notedao.getLikeCount(uId);
 		UserBean userBean = userdao.getUserById(uId);
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("userId",String.format("%06d", userBean.getUserId()));
+		jsonObject.put("userId",userBean.getUserId());
 		jsonObject.put("userName", userBean.getUserName());
 		jsonObject.put("userPhoto",userBean.getUserPhoto());
 		jsonObject.put("userSex", userBean.getUserSex());

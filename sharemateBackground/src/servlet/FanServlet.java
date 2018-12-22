@@ -50,7 +50,7 @@ public class FanServlet extends HttpServlet {
 			int followCount = followdao.getFollowCount(follow.getUserbean().getUserId());
 			int likeCount = notedao.getLikeCount(follow.getUserbean().getUserId());
 			JSONObject object = new JSONObject();
-			object.put("userId",String.format("%06d",follow.getUserbean().getUserId()));
+			object.put("userId",follow.getUserbean().getUserId());
 			object.put("userName",follow.getUserbean().getUserName());
 			object.put("userPhoto", follow.getUserbean().getUserPhoto());
 			object.put("userIntro", follow.getUserbean().getUserIntro());

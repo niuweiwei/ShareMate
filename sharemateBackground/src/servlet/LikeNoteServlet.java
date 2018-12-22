@@ -1,7 +1,10 @@
 package servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -13,21 +16,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import bean.FollowBean;
-import dao.FollowDao;
-import dao.NoteDao;
+import bean.LikesBean;
+import dao.LikesDao;
 
 /**
- * Servlet implementation class FriendServlet
+ * Servlet implementation class LikeNoteServlet
  */
-@WebServlet("/FriendServlet")
-public class FriendServlet extends HttpServlet {
+@WebServlet("/LikeNoteServlet")
+public class LikeNoteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public FriendServlet() {
+    public LikeNoteServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -36,28 +38,24 @@ public class FriendServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
-		List<FollowBean> followList = new ArrayList<>();
 		int userId = Integer.parseInt(request.getParameter("userId"));
-		FollowDao followdao = new FollowDao();
-		NoteDao notedao = new NoteDao();
-		followList = followdao.getFollow(userId);
+		LikesDao likesDao = new LikesDao();
+		//得到该用户发布的笔记的所有赞
+		List<LikesBean> likeList = likesDao.getLikeList(userId);
+		Collections.sort(likeList, new DateComparator());
 		JSONArray array = new JSONArray();
-		for(FollowBean follow:followList) {
-			int followCount = followdao.getFollowCount(follow.getUserbean().getUserId());
-			int fanCount = followdao.getFunCount(follow.getUserbean().getUserId());
-			int likeCount = notedao.getLikeCount(follow.getUserbean().getUserId());
+		for(LikesBean like:likeList) {
 			JSONObject object = new JSONObject();
-			object.put("userId",follow.getUserbean().getUserId());
-			object.put("userName",follow.getUserbean().getUserName());
-			object.put("userPhoto", follow.getUserbean().getUserPhoto());
-			object.put("userIntro", follow.getUserbean().getUserIntro());
-			object.put("status", follow.isStatus());
-			object.put("followCount", followCount);
-			object.put("fanCount", fanCount);
-			object.put("likeCount", likeCount);
-			array.put(object);	
+			object.put("userPhoto", like.getUser().getUserPhoto());
+			object.put("userName",like.getUser().getUserName());
+			object.put("noteId", like.getNote().getNoteId());
+			object.put("notePhoto", like.getNote().getNoteImage());
+			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+			object.put("likeDate",sdf.format(like.getDate()));
+			array.put(object);
 		}
 		response.getWriter().append(array.toString()).append(request.getContextPath());
 	}
@@ -68,6 +66,23 @@ public class FriendServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+	
+	private class DateComparator implements Comparator<LikesBean>{
+
+		@Override
+		public int compare(LikesBean o1, LikesBean o2) {
+			// TODO Auto-generated method stub
+			Date date1 = o1.getDate();
+			Date date2 = o2.getDate();
+			if(date1.after(date2)) 
+				return -1;
+			else if(date1.before(date2))
+				return 1;
+			else
+				return 0;
+		}
+		
 	}
 
 }
