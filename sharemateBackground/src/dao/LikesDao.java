@@ -114,8 +114,7 @@ public class LikesDao {
 		List<LikesBean> likeList = new ArrayList<>();
 		//1.通过userId查询该用户发过的所有笔记
 		NoteDao noteDao = new NoteDao();
-		UserBean userBean=new UserDao().getUserById(userId);
-		List<NoteBean> noteList = noteDao.getNoteList(userBean);
+		List<NoteBean> noteList = noteDao.getNoteList(userId);
 	
 		Connection conn = DataBase.getConnection();
 		PreparedStatement pstmt = null;

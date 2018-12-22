@@ -110,13 +110,13 @@ public class UserDao {
 	/**
 	 * 修改用户的姓名
 	 */
-	public void setUserName(UserBean userbean,String name) {
+	public void setUserName(int userId,String name) {
 		Connection con = DataBase.getConnection();
 		String sql = "update user set user_name = ? where user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
 			ptmt.setString(1,name);
-			ptmt.setInt(2,userbean.getUserId());
+			ptmt.setInt(2,userId);
 			int row = ptmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

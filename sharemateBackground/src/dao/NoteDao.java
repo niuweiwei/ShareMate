@@ -25,7 +25,7 @@ public class NoteDao {
 		NoteBean  noteBean=new NoteBean();
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="select note_title,note_detail,note_image,note_date,note_comment_count,note_collection_count,note_like_count,type_id,user_id "
+		String sql="select note_title,note_detail,note_image,note_date,type_id,user_id "
 				+ "from note where note_id=?";
 		try {
 			pstmt=conn.prepareStatement(sql);
@@ -34,8 +34,8 @@ public class NoteDao {
 			while(rs.next()) {
 				noteBean.setNoteId(noteId);
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
+//				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
+//				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				
 				//将数据库中时间戳类型转化成符合某种格式的Date对象
@@ -47,7 +47,7 @@ public class NoteDao {
 				
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
+//				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 			}
 		} catch (SQLException e) {
@@ -365,13 +365,13 @@ public class NoteDao {
 	/**
 	 * 获取用户发过的笔记
 	 */
-	public List<NoteBean> getNoteList(UserBean userbean){
+	public List<NoteBean> getNoteList(int userId){
 		List<NoteBean> noteList = new ArrayList<>();
 		Connection con = DataBase.getConnection();
 		String sql = "select note_id from note where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			while(rs.next()) {
 				noteList.add(this.getNoteById(rs.getInt("note_id")));

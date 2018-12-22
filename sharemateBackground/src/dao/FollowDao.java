@@ -161,9 +161,7 @@ public class FollowDao {
 		HashMap  <FollowBean,Boolean> fans = new HashMap<>();
 		Connection conn = DataBase.getConnection();
 		PreparedStatement pstmt = null;
-		PreparedStatement pstmt1 = null;
 		ResultSet result = null;
-		ResultSet result1 = null;
 		
 		try {
 			String sql = "select * from follow where user_id = ? order by follow_date desc";
@@ -175,6 +173,7 @@ public class FollowDao {
 				FollowBean follow = new FollowBean();
 				follow.setFollowId(followId);
 				follow.setUserbean(new UserDao().getUserById(userId));
+				follow.setDate(result.getDate("follow_date"));
 				FollowDao followDao=new FollowDao();
 				boolean isFollow = followDao.eachFollow(follow);
 				

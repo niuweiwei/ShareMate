@@ -58,7 +58,7 @@ public class CommentActivity extends AppCompatActivity {
     private CommentListAdapter adapter = null;
     private final List<CommentBean> comments = new ArrayList<>();
     private ListView listView = null;
-    private String path = "http://172.20.10.4:8080/sharemate/";
+    private String path = null;
     private int currentUserId = 3;//表示当前用户的id
 
     @Override
@@ -68,13 +68,13 @@ public class CommentActivity extends AppCompatActivity {
         root = findViewById(R.id.root);
         replyLayout = findViewById(R.id.rl_reply);
         manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
         listView = findViewById(R.id.lv_comment);
-
+        path = getResources().getString(R.string.server_path);
         //点击 listview 的每一个子项 弹出 popupwindow
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                manager.hideSoftInputFromWindow(CommentActivity.this.getCurrentFocus().getWindowToken(), 0);
                 //将回复框隐藏 关闭软键盘
                 if(replyLayout.getVisibility()==View.VISIBLE) {
                     replyLayout.setVisibility(View.GONE);
