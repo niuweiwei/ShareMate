@@ -223,6 +223,7 @@ public class FollowDao {
 				FollowBean follow = new FollowBean();
 				follow.setFollowId(followId);
 				follow.setUserbean(new UserDao().getUserById(userId));
+				follow.setDate(result.getDate("follow_date"));
 				FollowDao followDao=new FollowDao();
 				boolean isFollow = followDao.eachFollow(follow);
 				
