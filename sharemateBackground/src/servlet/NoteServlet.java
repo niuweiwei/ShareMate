@@ -61,7 +61,7 @@ public class NoteServlet extends HttpServlet {
 			int userId = Integer.parseInt(userid);
 		    user=userDao.getUserById(userId);
 	    	noteLike=like.getLikeNoteList(user);
-	    	System.out.println("notelike"+noteLike.size());
+	    	//System.out.println("notelike"+noteLike.size());
 		}
 		if(userid!=null&&noteid!=null) {
 	    int userId = Integer.parseInt(userid);
@@ -77,20 +77,20 @@ public class NoteServlet extends HttpServlet {
 	    }
 	    //根据typeID获取笔记列表
     	List<NoteBean> noteList=null;
-        if(typeid1!=null&&typeid2!=null&&typeid3!=null){
+        if(typeid1!=null&&typeid2!=null&&typeid3!=null&&typeid4==null&&typeid5==null){
         	int id1 = Integer.parseInt(typeid1);
         	int id2 = Integer.parseInt(typeid2);
         	int id3 = Integer.parseInt(typeid3);
         	noteList=noteDao.getNoteByThreetypeId(id1, id2, id3);
         }
-        else if(typeid1!=null&&typeid2!=null&&typeid3!=null&&typeid4!=null){
+        else if(typeid1!=null&&typeid2!=null&&typeid3!=null&&typeid4!=null&&typeid5==null){
         	int id1 = Integer.parseInt(typeid1);
         	int id2 = Integer.parseInt(typeid2);
         	int id3 = Integer.parseInt(typeid3);
         	int id4 = Integer.parseInt(typeid4);
         	noteList=noteDao.getNoteByFourtypeId(id1, id2, id3, id4);
         }		
-        else if(typeid1!=null&&typeid2!=null&&typeid3!=null&&typeid4!=null&&typeid5!=null){
+        else if(typeid1!=null&&typeid2!=null&&typeid3!=null&&typeid4!=null&&typeid5!=null&&typeid6==null){
         	int id1 = Integer.parseInt(typeid1);
         	int id2 = Integer.parseInt(typeid2);
         	int id3 = Integer.parseInt(typeid3);
@@ -123,8 +123,9 @@ public class NoteServlet extends HttpServlet {
     			note.setLike(ilike);
     			//System.out.println(note.getNoteId()+"islike"+note.isLike());
     		}
-    		Collections.shuffle(noteList);
+    		//Collections.shuffle(noteList);
     		request.setAttribute("noteList", noteList);
+    		System.out.println("notelike"+noteList.size());
     		String jsonString="";
     		jsonString = JsonTools.createJsonString("note",noteList);
     		response.getWriter().append(jsonString).append(request.getContextPath());
