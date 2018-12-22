@@ -58,15 +58,15 @@ public class FollowDao {
 	}
 	
 	/**
-	 * 获得关注的用户数量
+	 * 获得关注的数量
 	 */
-	public int getFollowCount(UserBean userbean) {
+	public int getFollowCount(int userId) {
 		int followCount = 0;
 		Connection con = DataBase.getConnection();
 		String sql = "select count(*) c from follow where follow_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			if(rs.next()) {
 				followCount = rs.getInt("c");
@@ -83,14 +83,14 @@ public class FollowDao {
 	/**
 	 * 获得关注用户的信息
 	 */
-	public List<FollowBean> getFollow(UserBean userbean) {
+	public List<FollowBean> getFollow(int userId) {
 		List<FollowBean> followList = new ArrayList<>();
 		UserDao userdao = new UserDao();
 		Connection con = DataBase.getConnection();
 		String sql = "select * from follow where follow_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			while(rs.next()) {
 				FollowBean followbean = new FollowBean();
@@ -111,15 +111,15 @@ public class FollowDao {
 	}
 	
 	/**
-	 * 获取粉丝的用户数量
+	 * 获取粉丝的数量
 	 */
-	public int getFunCount(UserBean userbean) {
+	public int getFunCount(int userId) {
 		int funCount = 0;
 		Connection con = DataBase.getConnection();
 		String sql = "select count(*) c from follow where user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			if(rs.next()) {
 				funCount = rs.getInt("c");
@@ -132,13 +132,61 @@ public class FollowDao {
 		}
 		return funCount;
 	}
+	/**
+	 * 获得粉丝列表
+	 */
 		
+	public List<FollowBean> getFanList(int userId){
+		List<FollowBean> fanList = new ArrayList<>();
+		UserDao userdao = new UserDao();
+		Connection con = DataBase.getConnection();
+		String sql = "select * from follow where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setInt(1,userId);
+			ResultSet rs = ptmt.executeQuery();
+			while(rs.next()) {
+				FollowBean followbean = new FollowBean();
+				followbean.setUserbean(userdao.getUserById(rs.getInt("follow_id")));
+				followbean.setFollowId(rs.getInt("user_id"));
+				boolean b = this.eachFan(followbean);
+				followbean.setStatus(b);
+				fanList.add(followbean);
+			}
+			rs.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return fanList;
+	}
+	
 	/**
 	 * 判断是否是互相关注
 	 */
 	public boolean eachFollow(FollowBean followbean) {
 		Connection con = DataBase.getConnection();
 		String sql = "select * from follow where user_id = ? and follow_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setInt(1,followbean.getFollowId());
+			ptmt.setInt(2,followbean.getUserbean().getUserId());
+			ResultSet rs = ptmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public boolean eachFan(FollowBean followbean) {
+		Connection con = DataBase.getConnection();
+		System.out.print(followbean.getFollowId()+"  "+followbean.getUserbean().getUserId());
+		String sql = "select * from follow where follow_id = ? and user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
 			ptmt.setInt(1,followbean.getFollowId());

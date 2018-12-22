@@ -340,7 +340,7 @@ public class NoteDao {
 	/**
 	 * 查询用户获得的总赞数
 	 */
-	public int getLikeCount(UserBean userbean) {
+	public int getLikeCount(int userId) {
 		int likeCount = 0;
 		LikesDao likesdao = new LikesDao();
 		Connection con = DataBase.getConnection();
@@ -348,7 +348,7 @@ public class NoteDao {
 		String sql = "select * from note where user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			rs = ptmt.executeQuery();
 			while(rs.next()) {
 				likeCount+= likesdao.selectLike(rs.getInt(1));
@@ -361,17 +361,39 @@ public class NoteDao {
 		}
 		return likeCount;
 	}
-		
+	/**
+	 * 或取用户发过的笔记的数量
+	 */
+	public int getNoteCount(int userId) {
+		int count = 0;
+		Connection con = DataBase.getConnection();
+		ResultSet rs = null;
+		String sql = "select count(*) c from note where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setInt(1,userId);
+			rs = ptmt.executeQuery();
+			while(rs.next()) {
+				count = rs.getInt("c");
+			}
+			rs.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return count;
+	}
 	/**
 	 * 获取用户发过的笔记
 	 */
-	public List<NoteBean> getNoteList(UserBean userbean){
+	public List<NoteBean> getNoteList(int userId){
 		List<NoteBean> noteList = new ArrayList<>();
 		Connection con = DataBase.getConnection();
 		String sql = "select note_id from note where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			while(rs.next()) {
 				noteList.add(this.getNoteById(rs.getInt("note_id")));
@@ -388,13 +410,13 @@ public class NoteDao {
 	/**
 	 * 获得用户收藏的所有的笔记
 	 */
-	public List<NoteBean> getCollectList(UserBean userbean){
+	public List<NoteBean> getCollectList(int userId){
 		List<NoteBean> collectList = new ArrayList<>();
 		Connection con = DataBase.getConnection();
 		String sql = "select note_id from collect where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			while(rs.next()) {
 				collectList.add(this.getNoteById(rs.getInt("note_id")));
@@ -407,4 +429,5 @@ public class NoteDao {
 		}
 		return collectList;
 	}
+
 }

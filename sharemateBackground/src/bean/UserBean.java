@@ -83,6 +83,12 @@ public class UserBean {
 	public void setUserIntro(String userIntro) {
 		this.userIntro = userIntro;
 	}
+	@Override
+	public String toString() {
+		return "UserBean [userId=" + userId + ", userName=" + userName + ", userPassword=" + userPassword
+				+ ", userPhoto=" + userPhoto + ", userSex=" + userSex + ", userPhone=" + userPhone + ", userAddress="
+				+ userAddress + ", userBirth=" + userBirth + ", userIntro=" + userIntro + "]";
+	}
 	
 
 }

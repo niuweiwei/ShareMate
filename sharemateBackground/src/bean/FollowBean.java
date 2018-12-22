@@ -44,5 +44,4 @@ public class FollowBean {
 		this.date = date;
 	}
 	
-	
 }

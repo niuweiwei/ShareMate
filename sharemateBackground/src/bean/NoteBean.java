@@ -19,7 +19,6 @@ public class NoteBean {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
 	public NoteBean(int noteId, String noteTitle, String noteDetail, String noteImage, Date noteDate, TypeBean type, UserBean user) {
 		super();
 		this.noteId = noteId;
