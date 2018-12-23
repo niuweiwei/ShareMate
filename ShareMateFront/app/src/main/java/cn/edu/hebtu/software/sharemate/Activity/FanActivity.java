@@ -78,7 +78,7 @@ public class FanActivity extends AppCompatActivity {
                     UserBean fan = new UserBean();
                     fan.setUserId(userObject.getInt("userId"));
                     fan.setUserName(userObject.getString("userName"));
-                    fan.setUserPhotoPath(userObject.getString("userPhoto"));
+                    fan.setUserPhotoPath(path+userObject.getString("userPhoto"));
                     fan.setUserIntroduce(userObject.getString("userIntro"));
                     fan.setStates(userObject.getBoolean("status"));
                     fan.setNoteCount(userObject.getInt("noteCount"));

@@ -9,9 +9,6 @@ import java.util.List;
 import cn.edu.hebtu.software.sharemate.Fragment.FragmentTypeFirst;
 import cn.edu.hebtu.software.sharemate.Fragment.FragmentTypeSecond;
 
-/**
- * Created by janiszhang on 2016/6/10.
- */
 //继承FragmentStatePagerAdapter
 public class TestFragmentAdapter extends FragmentPagerAdapter {
     private FragmentManager mfragementManager;

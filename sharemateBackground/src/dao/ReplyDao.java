@@ -85,7 +85,6 @@ public class ReplyDao {
 				Date replyTime = time;
 				reply.setReplyTime(replyTime);
 				
-//				reply.setReplyLikeCount(rs.getInt("reply_like_count"));
 				replyList.add(reply);
 			}
 		} catch (SQLException e) {

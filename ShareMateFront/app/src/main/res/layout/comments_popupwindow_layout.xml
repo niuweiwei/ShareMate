@@ -7,8 +7,7 @@
 
     <Button
         android:id="@+id/btn_like"
-        style="@style/popupwindowButtonStyle"
-        android:text="赞" />
+        style="@style/popupwindowButtonStyle" />
     <Button
         android:id="@+id/btn_reply"
         android:layout_marginTop="1dp"

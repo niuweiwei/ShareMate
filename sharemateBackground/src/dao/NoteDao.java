@@ -315,6 +315,7 @@ public class NoteDao {
 		}
 		return likeCount;
 	}
+	
 	/**
 	 * 或取用户发过的笔记的数量
 	 */
@@ -338,6 +339,7 @@ public class NoteDao {
 		}
 		return count;
 	}
+	
 	/**
 	 * 获取用户发过的笔记
 	 */

@@ -51,7 +51,7 @@ public class FanAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(itemLayout, null);
         }
         ImageView imageView = convertView.findViewById(R.id.img_content);
-        String photoPath = "http://10.7.89.233:8080/sharemate/"+fanList.get(position).getUserPhotoPath();
+        String photoPath =fanList.get(position).getUserPhotoPath();
         RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);

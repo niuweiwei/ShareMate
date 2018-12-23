@@ -55,6 +55,7 @@ public class CommentActivity extends AppCompatActivity {
     private InputMethodManager manager = null;
     private Button send = null;
     private EditText text = null;
+    private Button like = null;
     private CommentListAdapter adapter = null;
     private final List<CommentBean> comments = new ArrayList<>();
     private ListView listView = null;
@@ -118,17 +119,16 @@ public class CommentActivity extends AppCompatActivity {
     private void showPopupWindow(RelativeLayout root, final int position){
 
         //获取到要显示的视图
-        if(view == null){
-            view = getLayoutInflater().inflate(R.layout.comments_popupwindow_layout,null);
-        }
+        view = getLayoutInflater().inflate(R.layout.comments_popupwindow_layout,null);
         //通过view获取到各个按钮 并绑定事件监听器
-        final Button like = view.findViewById(R.id.btn_like);
+        like = view.findViewById(R.id.btn_like);
         //根据该用户是否对该评论赞而现实button 中的数据
         if(comments.get(position).isLike()){
             //表示该用户对该评论点赞过
             like.setText("取消赞");
-        }else
+        }else {
             like.setText("赞");
+        }
 
         final Button reply = view.findViewById(R.id.btn_reply);
         Button detail = view.findViewById(R.id.btn_detail);
@@ -145,21 +145,13 @@ public class CommentActivity extends AppCompatActivity {
                 if(like.getText().equals("赞")){
                     int tag = comments.get(position).getTag();
                     int id = comments.get(position).getId();
-                    LikeTask likeTask = new LikeTask();
+                    LikeTask likeTask = new LikeTask(position);
                     likeTask.execute(currentUserId,tag,id,"like");
-                    Toast likeToast = Toast.makeText(CommentActivity.this,"点赞成功",Toast.LENGTH_SHORT);
-                    likeToast.setGravity(Gravity.TOP,0,300);
-                    like.setText("取消赞");
-                    likeToast.show();
                 }else{
                     int tag = comments.get(position).getTag();
                     int id = comments.get(position).getId();
-                    LikeTask likeTask = new LikeTask();
+                    LikeTask likeTask = new LikeTask(position);
                     likeTask.execute(currentUserId,tag,id,"cancel");
-                    like.setText("赞");
-                    Toast cancelToast = Toast.makeText(CommentActivity.this,"取消赞成功",Toast.LENGTH_SHORT);
-                    cancelToast.setGravity(Gravity.TOP,0,300);
-                    cancelToast.show();
                 }
                 window.dismiss();
             }
@@ -361,8 +353,15 @@ public class CommentActivity extends AppCompatActivity {
     //异步：任务赞评论或者是回复
     private class LikeTask extends AsyncTask{
 
+        int position;
+
+        public LikeTask(int position) {
+            this.position = position;
+        }
+
         @Override
         protected Object doInBackground(Object[] objects) {
+            Log.e("CommentActivity","LikeTask");
             int userId = (Integer)objects[0];
             int tag = (Integer)objects[1];
             int id = (Integer)objects[2];
@@ -376,14 +375,32 @@ public class CommentActivity extends AppCompatActivity {
                 connection.setRequestProperty("contentType","utf-8");
 
                 InputStream is = connection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return act;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            String act = (String) o;
+            if(act.equals("like")){
+                comments.get(position).setLike(true);
+                Toast likeToast = Toast.makeText(CommentActivity.this,"点赞成功",Toast.LENGTH_SHORT);
+                likeToast.setGravity(Gravity.TOP,0,300);
+                likeToast.show();
+                Log.e("popupwindow按钮:",like.getText().toString());
+            }else if(act.equals("cancel")){
+                comments.get(position).setLike(false);
+                Toast cancelToast = Toast.makeText(CommentActivity.this,"取消赞成功",Toast.LENGTH_SHORT);
+                cancelToast.setGravity(Gravity.TOP,0,300);
+                cancelToast.show();
+                Log.e("popupwindow按钮:",like.getText().toString());
+            }
         }
     }
 

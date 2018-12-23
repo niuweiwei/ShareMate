@@ -121,7 +121,7 @@ public class FollowedActivity extends AppCompatActivity {
         protected void onPostExecute(Object o) {
 
             Collections.sort(follows,new DateCompare());
-            adapter = new FollowedListAdapter(FollowedActivity.this,R.layout.followed_list_item_layout,follows);
+            adapter = new FollowedListAdapter(FollowedActivity.this,R.layout.followed_list_item_layout,follows,path);
             //点击listView的各个子项  跳转到指定用户的个人首页
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

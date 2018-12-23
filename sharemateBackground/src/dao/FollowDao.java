@@ -183,6 +183,7 @@ public class FollowDao {
 		}
 		return false;
 	}
+	
 	public boolean eachFan(FollowBean followbean) {
 		Connection con = DataBase.getConnection();
 		System.out.print(followbean.getFollowId()+"  "+followbean.getUserbean().getUserId());

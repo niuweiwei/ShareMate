@@ -34,15 +34,16 @@ import cn.edu.hebtu.software.sharemate.tools.RoundImgView;
 
 public class FollowedListAdapter extends BaseAdapter {
 
-    private String path = "http://10.7.89.232:8080/sharemate/";
+    private String path = null;
     private Context context;
     private int item_layout;
     private List<FollowBean> follows = new ArrayList<>();
 
-    public FollowedListAdapter(Context context, int item_layout, List<FollowBean> follows) {
+    public FollowedListAdapter(Context context, int item_layout, List<FollowBean> follows,String path) {
         this.context = context;
         this.item_layout = item_layout;
         this.follows = follows;
+        this.path = path;
     }
 
     @Override
