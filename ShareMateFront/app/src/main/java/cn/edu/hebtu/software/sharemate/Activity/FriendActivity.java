@@ -3,6 +3,7 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -48,10 +49,12 @@ public class FriendActivity extends AppCompatActivity {
     private NoteAdapter noteAdapter;
     private List<NoteBean> collectionList = new ArrayList<>();
     private List<NoteBean> noteList = new ArrayList<>();
+    private String path = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend);
+        path = getResources().getString(R.string.server_path);
         user = (UserBean) getIntent().getSerializableExtra("friend");
         findView();
         setListener();
@@ -76,21 +79,23 @@ public class FriendActivity extends AppCompatActivity {
     }
     public void setContent(){
         gridView.setEmptyView((findViewById(R.id.empty_view)));
-        idView.setText("Share Mate号："+user.getUserId());
+        String userId = String.format("%06d",user.getUserId());
+        idView.setText("Share Mate号："+userId);
         nameView.setText(user.getUserName());
+        followCount.setText(""+user.getFollowCount());
+        fanCount.setText(""+user.getFanCount());
+        likeCount.setText(""+user.getLikeCount());
         if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 20) {
             introView.setText(user.getUserIntroduce());
         } else {
             introView.setText(user.getUserIntroduce().substring(0, 20) + ".....");
         }
-        String photoPath = "http://10.7.89.233:8080/sharemate/" + user.getUserPhotoPath();
+        String photoPath = user.getUserPhotoPath();
         RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);
         Glide.with(this).load(photoPath).apply(mRequestOptions).into(photoView);
-        followCount.setText(""+user.getFollowCount());
-        fanCount.setText(""+user.getFanCount());
-        likeCount.setText(""+user.getLikeCount());
+
     }
     public void setListener(){
         SetOnClickListener listener = new SetOnClickListener();
@@ -127,9 +132,9 @@ public class FriendActivity extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] objects) {
             UserBean userBean = (UserBean) objects[0];
-            int uId = Integer.parseInt(userBean.getUserId());
+            int uId = userBean.getUserId();
             try {
-                URL url = new URL("http://10.7.89.233:8080/sharemate/NoteServlet?userId="+uId);
+                URL url = new URL(path+"NoteServlet?userId="+uId);
                 HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
                 InputStream is = urlConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -141,7 +146,8 @@ public class FriendActivity extends AppCompatActivity {
                     NoteBean noteBean = new NoteBean();
                     noteBean.setNoId(noteObject.getInt("noteId"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
-                    noteBean.setNoteImage(noteObject.getString("notePhoto"));
+                    noteBean.setNoteImagePath(path+noteObject.getString("notePhoto"));
+                    noteBean.setUser(user);
                     noteList.add(noteBean);
                 }
             } catch (MalformedURLException e) {
@@ -170,9 +176,9 @@ public class FriendActivity extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] objects) {
             UserBean userBean = (UserBean) objects[0];
-            int uId = Integer.parseInt(userBean.getUserId());
+            int uId = userBean.getUserId();
             try {
-                URL url = new URL("http://10.7.89.233:8080/sharemate/CollectionServlet?userId="+uId);
+                URL url = new URL(path+"CollectionServlet?userId="+uId);
                 HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
                 InputStream is = urlConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -182,9 +188,13 @@ public class FriendActivity extends AppCompatActivity {
                 for(int i=0; i<array.length(); i++){
                     JSONObject noteObject = array.getJSONObject(i);
                     NoteBean noteBean = new NoteBean();
+                    UserBean user = new UserBean();
                     noteBean.setNoId(noteObject.getInt("noteId"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
-                    noteBean.setNoteImage(noteObject.getString("notePhoto"));
+                    noteBean.setNoteImagePath(path+noteObject.getString("notePhoto"));
+                    user.setUserName(noteObject.getString("userName"));
+                    user.setUserPhotoPath(path+noteObject.getString("userPhoto"));
+                    noteBean.setUser(user);
                     collectionList.add(noteBean);
                 }
             } catch (MalformedURLException e) {

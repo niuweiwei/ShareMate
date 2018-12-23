@@ -35,6 +35,7 @@ import java.util.List;
 
 import cn.edu.hebtu.software.sharemate.Activity.FanActivity;
 import cn.edu.hebtu.software.sharemate.Activity.FollowActivity;
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Activity.NoteDetailActivity;
 import cn.edu.hebtu.software.sharemate.Activity.PersonalActivity;
 import cn.edu.hebtu.software.sharemate.Activity.SettingActivity;
@@ -54,18 +55,18 @@ public class MyFragment extends Fragment {
     private TextView introText;
     private TextView collection;
     private TextView note;
-    private TextView focusView;
-    private TextView fanView;
     private TextView followCount;
     private TextView fanCount;
     private TextView likeCount;
     private ImageView headImg;
     private ImageView settingView;
     private Button button;
+    private String path = null;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        path = getResources().getString(R.string.server_path);
         GetUserDetail getUser = new GetUserDetail();
         getUser.execute(this);
         GetNote getNote = new GetNote();
@@ -78,13 +79,13 @@ public class MyFragment extends Fragment {
         return view;
     }
     //从数据库中取出来笔记
-    public class GetNote extends AsyncTask{
+    public class GetNote extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
             UserBean userBean = (UserBean) objects[0];
-            int uId = Integer.parseInt(userBean.getUserId());
+            int uId = userBean.getUserId();
             try {
-                URL url = new URL("http://10.7.89.233:8080/sharemate/NoteServlet?userId="+uId);
+                URL url = new URL(path+"NoteServlet?userId="+uId);
                 HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
                 InputStream is = urlConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -96,7 +97,8 @@ public class MyFragment extends Fragment {
                     NoteBean noteBean = new NoteBean();
                     noteBean.setNoId(noteObject.getInt("noteId"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
-                    noteBean.setNoteImage(noteObject.getString("notePhoto"));
+                    noteBean.setNoteImagePath(path+noteObject.getString("notePhoto"));
+                    noteBean.setUser(user);
                     noteList.add(noteBean);
                 }
             } catch (MalformedURLException e) {
@@ -116,7 +118,6 @@ public class MyFragment extends Fragment {
             collection.setTextColor(getResources().getColor(R.color.darkGray));
             noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,noteList,user);
             gridView.setAdapter(noteAdapter);
-            setNoteGridView(gridView);
         }
     }
 
@@ -126,9 +127,9 @@ public class MyFragment extends Fragment {
         @Override
         protected Object doInBackground(Object[] objects) {
             UserBean userBean = (UserBean) objects[0];
-            int uId = Integer.parseInt(userBean.getUserId());
+            int uId = userBean.getUserId();
             try {
-                URL url = new URL("http://10.7.89.233:8080/sharemate/CollectionServlet?userId="+uId);
+                URL url = new URL(path+"CollectionServlet?userId="+uId);
                 HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
                 InputStream is = urlConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -138,9 +139,13 @@ public class MyFragment extends Fragment {
                 for(int i=0; i<array.length(); i++){
                     JSONObject noteObject = array.getJSONObject(i);
                     NoteBean noteBean = new NoteBean();
+                    UserBean user = new UserBean();
                     noteBean.setNoId(noteObject.getInt("noteId"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
-                    noteBean.setNoteImage(noteObject.getString("notePhoto"));
+                    noteBean.setNoteImagePath(path+noteObject.getString("notePhoto"));
+                    user.setUserName(noteObject.getString("userName"));
+                    user.setUserPhotoPath(path+noteObject.getString("userPhoto"));
+                    noteBean.setUser(user);
                     collectionList.add(noteBean);
                 }
             } catch (MalformedURLException e) {
@@ -158,7 +163,7 @@ public class MyFragment extends Fragment {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL("http://10.7.89.233:8080/sharemate/UserServlet?userId=1");
+                URL url = new URL(path+"UserServlet?userId=1");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.setRequestProperty("contentType", "UTF-8");
@@ -167,8 +172,8 @@ public class MyFragment extends Fragment {
                 String res = br.readLine();
                 //解析JSON
                 JSONObject jsonObject = new JSONObject(res);
-                user.setUserId(jsonObject.getString("userId"));
-                user.setUserPhotoPath(jsonObject.getString("userPhoto"));
+                user.setUserId(jsonObject.getInt("userId"));
+                user.setUserPhotoPath(path+jsonObject.getString("userPhoto"));
                 user.setUserName(jsonObject.getString("userName"));
                 user.setUserSex(jsonObject.getString("userSex"));
                 user.setUserBirth(jsonObject.getString("userBirth"));
@@ -191,13 +196,14 @@ public class MyFragment extends Fragment {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             nameText.setText(user.getUserName());
-            idText.setText("SahreMate号:" + user.getUserId());
+            String userId = String.format("%06d",user.getUserId());
+            idText.setText("ShareMate号:" + userId);
             if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 20) {
                 introText.setText(user.getUserIntroduce());
             } else {
                 introText.setText(user.getUserIntroduce().substring(0, 20) + ".....");
             }
-            String photoPath = "http://10.7.89.233:8080/sharemate/" + user.getUserPhotoPath();
+            String photoPath = user.getUserPhotoPath();
             RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true);
@@ -215,7 +221,6 @@ public class MyFragment extends Fragment {
         gridView = view.findViewById(R.id.root);
         gridView.setEmptyView((view.findViewById(R.id.empty_view)));
         collection = view.findViewById(R.id.collection);
-        focusView = view.findViewById(R.id.focus);
         note = view.findViewById(R.id.note);
         settingView = view.findViewById(R.id.setting);
         button = view.findViewById(R.id.personal);
@@ -228,7 +233,7 @@ public class MyFragment extends Fragment {
         SetOnclickListener listener = new SetOnclickListener();
         collection.setOnClickListener(listener);
         note.setOnClickListener(listener);
-        focusView.setOnClickListener(listener);
+        followCount.setOnClickListener(listener);
         fanCount.setOnClickListener(listener);
         settingView.setOnClickListener(listener);
         button.setOnClickListener(listener);
@@ -272,7 +277,7 @@ public class MyFragment extends Fragment {
                     gridView.setAdapter(noteAdapter);
                     setCollectGridView(gridView);
                     break;
-                case R.id.focus:
+                case R.id.followCount:
                     Intent focusIntent = new Intent();
                     focusIntent.setClass(getActivity(), FollowActivity.class);
                     focusIntent.putExtra("user",user);

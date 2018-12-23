@@ -76,7 +76,7 @@ public class CustomAdapter extends BaseAdapter implements View.OnClickListener{
             viewHolder = (ViewHolder)convertView.getTag();
         }
         //设置显示的图片和文字
-        //viewHolder.ivPhoto.setImageResource(notes.get(position).getNoteImage());
+        viewHolder.ivPhoto.setImageResource(notes.get(position).getNoteImage());
         viewHolder.noteDetail.setText(notes.get(position).getNoteDetail());
         viewHolder.noteTitle.setText(notes.get(position).getNoteTitle());
         viewHolder.noteTime.setText(notes.get(position).getNoteTime());

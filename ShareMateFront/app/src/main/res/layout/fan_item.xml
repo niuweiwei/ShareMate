@@ -54,6 +54,7 @@
             android:layout_marginLeft="35dp">
             <TextView
                 android:id="@+id/follow"
+                android:focusable="false"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"

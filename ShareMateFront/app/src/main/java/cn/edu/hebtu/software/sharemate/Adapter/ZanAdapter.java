@@ -50,13 +50,12 @@ public class ZanAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(itemLayout,null);
         }
         ImageView view = convertView.findViewById(R.id.zan);
-        String photoPath = "http://10.7.89.233:8080/sharemate/" + list.get(position).getNoteImage();
-        Glide.with(context).load(photoPath).into(view);
+        Glide.with(context).load(list.get(position).getNoteImagePath()).into(view);
         TextView textView = convertView.findViewById(R.id.note);
-        if(list.get(position).getNoteTitle()== null || list.get(position).getNoteTitle().length()<7){
+        if(list.get(position).getNoteTitle() != null && list.get(position).getNoteTitle().length()<6){
             textView.setText(list.get(position).getNoteTitle());
-        }else{
-            textView.setText(list.get(position).getNoteTitle().substring(0,6)+"..");
+        }else {
+            textView.setText(list.get(position).getNoteTitle().substring(0, 6) + "..");
         }
         return convertView;
     }

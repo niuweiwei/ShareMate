@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,11 +33,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.hebtu.software.sharemate.Fragment.MyFragment;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.SaveUser;
 import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
-import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 
 public class PersonalActivity extends AppCompatActivity {
 
@@ -65,11 +63,13 @@ public class PersonalActivity extends AppCompatActivity {
     private static final int CODE_PHOTO_REQUEST = 1;
     private static final int CROP_SMALL_PICTURE = 2;
     private String sign;
+    private String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal);
+        path = getResources().getString(R.string.server_path);
         file = new File(Environment.getExternalStorageDirectory() + "/CoolImage/");
         rootLayout = findViewById(R.id.root);
         user = (UserBean) getIntent().getSerializableExtra("user");
@@ -98,9 +98,10 @@ public class PersonalActivity extends AppCompatActivity {
         tv_address.setText(user.getUserAddress());
         tv_birth.setText(user.getUserBirth());
         tv_sex.setText(user.getUserSex());
-        tv_id.setText(user.getUserId());
+        String userId = String.format("%06d",user.getUserId());
+        tv_id.setText(userId);
         tv_name.setText(user.getUserName());
-        String photoPath = "http://10.7.89.233:8080/sharemate/" + user.getUserPhotoPath();
+        String photoPath = user.getUserPhotoPath();
         RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);

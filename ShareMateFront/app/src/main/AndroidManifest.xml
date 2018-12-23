@@ -4,9 +4,9 @@
     package="cn.edu.hebtu.software.sharemate">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAME_EXTERERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.MainActivity" />
+        <activity android:name=".Activity.MainActivity"/>
         <activity android:name=".Activity.LikeActivity" />
         <activity android:name=".Activity.FollowedActivity" />
         <activity android:name=".Activity.CommentActivity" />
@@ -39,10 +39,11 @@
         <activity android:name=".Activity.NoteDetailActivity" />
         <activity android:name=".Activity.CommentDetailActivity" />
         <activity android:name=".Activity.ReplyActivity" />
-        <activity android:name=".Activity.StartActivity" />
-        <activity android:name=".Activity.SelectInterestActivity" />
-        <activity android:name=".Activity.SelectTopicActivity" />
-        <activity android:name=".Activity.InputCodeActivity" />
+        <activity android:name=".Activity.StartActivity"/>
+        <activity android:name=".Activity.SelectInterestActivity"/>
+        <activity android:name=".Activity.SelectTopicActivity"/>
+        <activity android:name=".Activity.InputCodeActivity"/>
+        <activity android:name=".Activity.FanActivity"/>
         <activity android:name=".Activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,12 +51,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.PhonePswdLoginActivity" />
-        <activity android:name=".Activity.ForgetPasswordActivity" />
-        <activity android:name=".Activity.VerifyCodeActivity" />
-        <activity android:name=".Activity.RegisterActivity" />
-        <activity android:name=".Activity.CountryActivity" />
-        <activity android:name=".Activity.FanActivity"></activity>
+        <activity android:name=".Activity.PhonePswdLoginActivity"/>
+        <activity android:name=".Activity.ForgetPasswordActivity"/>
+        <activity android:name=".Activity.VerifyCodeActivity"/>
+        <activity android:name=".Activity.RegisterActivity"/>
+        <activity android:name=".Activity.CountryActivity"/>
     </application>
 
 </manifest>

@@ -1,7 +1,6 @@
 package cn.edu.hebtu.software.sharemate.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,7 @@ public class NoteAdapter extends BaseAdapter {
     private int itemLayout;
     private List<NoteBean> noteList = new ArrayList<>();
 
-    public NoteAdapter(Context context, int itemLayout, List<NoteBean> noteList,UserBean userBean) {
+    public NoteAdapter(Context context, int itemLayout, List<NoteBean> noteList, UserBean userBean) {
         this.context = context;
         this.itemLayout = itemLayout;
         this.noteList = noteList;
@@ -58,7 +57,7 @@ public class NoteAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(itemLayout,null);
         }
         ImageView imageview = convertView.findViewById(R.id.img_content);
-        String photoPath = "http://10.7.89.233:8080/sharemate/" + noteList.get(position).getNoteImage();
+        String photoPath = noteList.get(position).getNoteImagePath();
         Glide.with(context).load(photoPath).into(imageview);
         TextView textView = convertView.findViewById(R.id.tv_note);
         if(noteList.get(position).getNoteTitle()== null || noteList.get(position).getNoteTitle().length()<8){
@@ -70,10 +69,10 @@ public class NoteAdapter extends BaseAdapter {
         RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);
-        String photo = "http://10.7.89.233:8080/sharemate/" + userBean.getUserPhotoPath();
+        String photo = noteList.get(position).getUser().getUserPhotoPath();
         Glide.with(context).load(photo).apply(mRequestOptions).into(iv_head);
         tv_name = convertView.findViewById(R.id.userName);
-        tv_name.setText(userBean.getUserName());
+        tv_name.setText(noteList.get(position).getUser().getUserName());
         return convertView;
     }
 }

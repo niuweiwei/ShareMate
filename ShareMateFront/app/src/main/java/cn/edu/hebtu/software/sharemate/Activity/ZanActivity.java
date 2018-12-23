@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -34,10 +33,12 @@ public class ZanActivity extends AppCompatActivity {
     private GridView gridView;
     private List<NoteBean> noteList = new ArrayList<>();
     private UserBean userBean;
+    private String path = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zan);
+        path = getResources().getString(R.string.server_path);
         userBean =(UserBean) getIntent().getSerializableExtra("user");
         ZanNote zanNote = new ZanNote();
         zanNote.execute(userBean);
@@ -59,9 +60,9 @@ public class ZanActivity extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] objects) {
             UserBean user = (UserBean)objects[0];
-            int uId =Integer.parseInt(user.getUserId()) ;
+            int uId =user.getUserId() ;
             try {
-                URL url = new URL("http://10.7.89.233:8080/sharemate/ZanServlet?userId="+uId);
+                URL url = new URL(path+"ZanServlet?userId="+uId);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream is = urlConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -71,7 +72,7 @@ public class ZanActivity extends AppCompatActivity {
                 for(int i =0; i<array.length();i++){
                     JSONObject noteObject = array.getJSONObject(i);
                     NoteBean noteBean = new NoteBean();
-                    noteBean.setNoteImage(noteObject.getString("notePhoto"));
+                    noteBean.setNoteImagePath(path+noteObject.getString("notePhoto"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
                     noteList.add(noteBean);
                 }

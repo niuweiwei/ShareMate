@@ -3,14 +3,12 @@ package cn.edu.hebtu.software.sharemate.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
-import cn.edu.hebtu.software.sharemate.Fragment.MyFragment;
 import cn.edu.hebtu.software.sharemate.R;
 
 public class SettingActivity extends AppCompatActivity {

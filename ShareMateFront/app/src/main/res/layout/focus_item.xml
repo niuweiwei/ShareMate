@@ -26,13 +26,12 @@
             android:textSize="@dimen/textNoSize"
             android:textColor="@color/inkGray"/>
         <LinearLayout
-            android:id="@+id/focus"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="35dp">
             <TextView
-                android:id="@+id/follow"
-                android:layout_width="wrap_content"
+                android:id="@+id/focus"
+                android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:gravity="center"

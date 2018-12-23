@@ -2,7 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="80dp">
@@ -62,7 +63,8 @@
             android:background="@drawable/followbutton_style"
             android:text="回粉"
             android:textSize="16sp"
-            android:textColor="@color/brightRed"/>
+            android:textColor="@color/brightRed"
+            android:focusable="false"/>
 
     </RelativeLayout>
 </LinearLayout>

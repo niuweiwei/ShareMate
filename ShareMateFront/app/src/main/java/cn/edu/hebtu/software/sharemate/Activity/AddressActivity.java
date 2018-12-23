@@ -8,8 +8,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
+import cn.edu.hebtu.software.sharemate.R;
 
 public class AddressActivity extends AppCompatActivity {
     private EditText editText;

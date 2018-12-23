@@ -1,17 +1,13 @@
 package cn.edu.hebtu.software.sharemate;
 
 import android.os.AsyncTask;
-import android.renderscript.Sampler;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -27,7 +23,7 @@ public class SaveUser extends AsyncTask {
         UserBean userBean = (UserBean) objects[0];
         try {
             JSONObject userObject = new JSONObject();
-            userObject.put("userId",Integer.parseInt(userBean.getUserId()));
+            userObject.put("userId",userBean.getUserId());
             userObject.put("userName",userBean.getUserName());
             userObject.put("userSex",userBean.getUserSex());
             userObject.put("userBirth",userBean.getUserBirth());

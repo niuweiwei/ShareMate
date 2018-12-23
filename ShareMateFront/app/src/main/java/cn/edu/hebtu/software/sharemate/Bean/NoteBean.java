@@ -4,14 +4,63 @@ import java.util.List;
 
 public class NoteBean {
     private int noId;
-    private String noteImage;
+    private int noPhoto;
+    private String title;
+    private int noteImage;
+    private String noteImagePath;
     private String noteDetail,noteTitle;
     private UserBean user;
     private String noteTime;
     private List<CommentBean> comment;
     private int zancount,sharecount,collectcount,pingluncount;
 
-    public NoteBean() {}
+    public NoteBean(){}
+
+    public NoteBean(int noteImage, String noteDetail, String noteTitle, UserBean user, String noteTime, int zancount, int sharecount, int collectcount, int pingluncount) {
+        this.noteImage = noteImage;
+        this.noteDetail = noteDetail;
+        this.noteTitle = noteTitle;
+        this.user = user;
+        this.noteTime = noteTime;
+        this.zancount = zancount;
+        this.sharecount = sharecount;
+        this.collectcount = collectcount;
+        this.pingluncount = pingluncount;
+    }
+    public NoteBean(int noteImage, String noteDetail, String noteTitle,
+                    UserBean user, String noteTime, List<CommentBean> comment,
+                    int zancount, int sharecount, int collectcount, int pingluncount) {
+        this.noteImage = noteImage;
+        this.noteDetail = noteDetail;
+        this.noteTitle = noteTitle;
+        this.user = user;
+        this.noteTime = noteTime;
+        this.comment = comment;
+        this.zancount = zancount;
+        this.sharecount = sharecount;
+        this.collectcount = collectcount;
+        this.pingluncount = pingluncount;
+    }
+    public NoteBean(int noPhoto, String title) {
+        this.noPhoto = noPhoto;
+        this.title = title;
+    }
+
+    public int getNoPhoto() {
+        return noPhoto;
+    }
+
+    public void setNoPhoto(int noPhoto) {
+        this.noPhoto = noPhoto;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String content) {
+        this.title = content;
+    }
 
     public int getNoId() {
         return noId;
@@ -21,11 +70,11 @@ public class NoteBean {
         this.noId = noId;
     }
 
-    public String getNoteImage() {
+    public int getNoteImage() {
         return noteImage;
     }
 
-    public void setNoteImage(String noteImage) {
+    public void setNoteImage(int noteImage) {
         this.noteImage = noteImage;
     }
 
@@ -99,5 +148,13 @@ public class NoteBean {
 
     public void setPingluncount(int pingluncount) {
         this.pingluncount = pingluncount;
+    }
+
+    public String getNoteImagePath() {
+        return noteImagePath;
+    }
+
+    public void setNoteImagePath(String noteImagePath) {
+        this.noteImagePath = noteImagePath;
     }
 }
