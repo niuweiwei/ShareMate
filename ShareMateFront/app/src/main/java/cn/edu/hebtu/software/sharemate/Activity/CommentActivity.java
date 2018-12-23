@@ -316,8 +316,13 @@ public class CommentActivity extends AppCompatActivity {
                     CommentBean comment = new CommentBean();
                     comment.setTag(object.getInt("tag"));
                     UserBean publisher = new UserBean();
+                    publisher.setUserId(object.getInt("publisherId"));
                     publisher.setUserName(object.getString("publisherName"));
                     publisher.setUserPhotoPath(path+object.getString("publisherPhotoPath"));
+                    publisher.setUserIntroduce(object.getString("publisherIntro"));
+                    publisher.setFanCount(object.getInt("fanCount"));
+                    publisher.setFollowCount(object.getInt("followCount"));
+                    publisher.setLikeCount(object.getInt("likeCount"));
                     comment.setUser(publisher);
                     comment.setUserId(object.getInt("userId"));
                     if(object.getInt("userId")==currentUserId){

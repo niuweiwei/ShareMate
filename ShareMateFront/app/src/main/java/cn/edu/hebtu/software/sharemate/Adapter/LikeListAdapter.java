@@ -1,6 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Bean.LikeBean;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.ImageTask;
 import cn.edu.hebtu.software.sharemate.tools.RoundImgView;
@@ -48,7 +51,7 @@ public class LikeListAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if(convertView==null){
             convertView = LayoutInflater.from(context).inflate(item_layout,null);
         }
@@ -60,6 +63,16 @@ public class LikeListAdapter extends BaseAdapter{
         Object[] objects = new Object[]{portraitView};
         imageTask1.execute(objects);
 
+        //点击头像跳转到目标用户的主页
+        portraitView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,FriendActivity.class);
+                UserBean user = likes.get(position).getUser();
+                intent.putExtra("friend",user);
+                context.startActivity(intent);
+            }
+        });
 
         //获取笔记图片
         String notePhotoPath = likes.get(position).getNotePhotoPath();

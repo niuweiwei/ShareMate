@@ -1,11 +1,14 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -42,13 +45,14 @@ public class FollowedActivity extends AppCompatActivity {
     List<FollowBean> follows = new ArrayList<>();
     ListView listView = null;
     FollowedListAdapter adapter = null;
-
+    private int currentUserId ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followed);
         listView = findViewById(R.id.lv_followed);
         path = getResources().getString(R.string.server_path);
+        currentUserId = 3;
 
         FollowTask followTask = new FollowTask();
         followTask.execute();
@@ -62,7 +66,6 @@ public class FollowedActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     private class FollowTask extends AsyncTask {
@@ -72,7 +75,7 @@ public class FollowedActivity extends AppCompatActivity {
 
             try {
                 //获取连接
-                URL url = new URL(path+"/FollowServlet?userId=3");
+                URL url = new URL(path+"FollowServlet?userId="+currentUserId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("contentType","utf-8");
@@ -83,16 +86,20 @@ public class FollowedActivity extends AppCompatActivity {
                 String res = reader.readLine();
 
                 JSONArray array = new JSONArray(res);
+                Log.e("数据源数组的长度",array.length()+"");
                 for(int i=0;i<array.length();i++){
-
-                    FollowBean follow = new FollowBean();
                     JSONObject object = array.getJSONObject(i);
+                    FollowBean follow = new FollowBean();
                     UserBean fan = new UserBean();
                     fan.setUserId(object.getInt("fansId"));
                     fan.setUserName(object.getString("fansName"));
                     fan.setUserPhotoPath(path+object.getString("fansPhotoPath"));
-                    //假设当前用户的用户id为3
-                    follow.setCurrentUser(3);
+                    fan.setUserIntroduce(object.getString("fansIntroduce"));
+                    fan.setFollowCount(object.getInt("followCount"));
+                    fan.setFanCount(object.getInt("fanCount"));
+                    fan.setLikeCount(object.getInt("likeCount"));
+
+                    follow.setCurrentUser(currentUserId);
                     follow.setUser(fan);
                     follow.setDate(object.getString("followDate"));
                     follow.setFollow(object.getBoolean("isFollow"));
@@ -115,7 +122,16 @@ public class FollowedActivity extends AppCompatActivity {
 
             Collections.sort(follows,new DateCompare());
             adapter = new FollowedListAdapter(FollowedActivity.this,R.layout.followed_list_item_layout,follows);
+            //点击listView的各个子项  跳转到指定用户的个人首页
             listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(FollowedActivity.this,FriendActivity.class);
+                    intent.putExtra("friend",follows.get(position).getUser());
+                    startActivity(intent);
+                }
+            });
         }
     }
 

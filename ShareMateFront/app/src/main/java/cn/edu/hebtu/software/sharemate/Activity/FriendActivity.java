@@ -3,6 +3,7 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -81,19 +82,20 @@ public class FriendActivity extends AppCompatActivity {
         String userId = String.format("%06d",user.getUserId());
         idView.setText("Share Mate号："+userId);
         nameView.setText(user.getUserName());
+        followCount.setText(""+user.getFollowCount());
+        fanCount.setText(""+user.getFanCount());
+        likeCount.setText(""+user.getLikeCount());
         if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 20) {
             introView.setText(user.getUserIntroduce());
         } else {
             introView.setText(user.getUserIntroduce().substring(0, 20) + ".....");
         }
-        String photoPath = path + user.getUserPhotoPath();
+        String photoPath = user.getUserPhotoPath();
         RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);
         Glide.with(this).load(photoPath).apply(mRequestOptions).into(photoView);
-        followCount.setText(""+user.getFollowCount());
-        fanCount.setText(""+user.getFanCount());
-        likeCount.setText(""+user.getLikeCount());
+
     }
     public void setListener(){
         SetOnClickListener listener = new SetOnClickListener();
@@ -145,6 +147,7 @@ public class FriendActivity extends AppCompatActivity {
                     noteBean.setNoId(noteObject.getInt("noteId"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
                     noteBean.setNoteImagePath(noteObject.getString("notePhoto"));
+                    noteBean.setUser(user);
                     noteList.add(noteBean);
                 }
             } catch (MalformedURLException e) {
@@ -185,9 +188,13 @@ public class FriendActivity extends AppCompatActivity {
                 for(int i=0; i<array.length(); i++){
                     JSONObject noteObject = array.getJSONObject(i);
                     NoteBean noteBean = new NoteBean();
+                    UserBean user = new UserBean();
                     noteBean.setNoId(noteObject.getInt("noteId"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
                     noteBean.setNoteImagePath(noteObject.getString("notePhoto"));
+                    user.setUserName(noteObject.getString("userName"));
+                    user.setUserPhotoPath(path+noteObject.getString("userPhoto"));
+                    noteBean.setUser(user);
                     collectionList.add(noteBean);
                 }
             } catch (MalformedURLException e) {

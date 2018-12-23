@@ -69,22 +69,22 @@
                     android:columnCount="3"
                     android:rowCount="2">
                     <TextView
+                        android:id="@+id/followCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
-                        android:text="285"
                         android:textColor="@color/blackGray" />
                     <TextView
+                        android:id="@+id/fanCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="35sp"
-                        android:text="541"
                         android:textColor="@color/blackGray" />
                     <TextView
+                        android:id="@+id/likeCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="40sp"
-                        android:text="1004"
                         android:textColor="@color/blackGray" />
                     <TextView
                         android:layout_width="wrap_content"

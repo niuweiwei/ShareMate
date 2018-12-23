@@ -1,6 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Bean.CommentBean;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.ImageTask;
@@ -45,7 +47,7 @@ public class CommentListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(item_layout, null);
@@ -55,6 +57,15 @@ public class CommentListAdapter extends BaseAdapter {
         ImageView userPhoto = convertView.findViewById(R.id.iv_portrait);
         ImageTask userTaske = new ImageTask(comments.get(position).getUser().getUserPhotoPath());
         userTaske.execute(userPhoto);
+        //为头像绑定点击事件 点击头像进入该用户的主页
+        userPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,FriendActivity.class);
+                intent.putExtra("friend",comments.get(position).getUser());
+                context.startActivity(intent);
+            }
+        });
         //获取相关笔记的图片的布局
         ImageView notePhoto = convertView.findViewById(R.id.iv_note);
         ImageTask noteTask = new ImageTask(comments.get(position).getNotePhotoPath());

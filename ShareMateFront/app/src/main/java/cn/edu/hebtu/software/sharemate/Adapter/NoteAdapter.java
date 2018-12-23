@@ -57,7 +57,7 @@ public class NoteAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(itemLayout,null);
         }
         ImageView imageview = convertView.findViewById(R.id.img_content);
-        String photoPath = "http://10.7.89.233:8080/sharemate/" + noteList.get(position).getNoteImagePath();
+        String photoPath = "http://10.7.89.232:8080/sharemate/" + noteList.get(position).getNoteImagePath();
         Glide.with(context).load(photoPath).into(imageview);
         TextView textView = convertView.findViewById(R.id.tv_note);
         if(noteList.get(position).getNoteTitle()== null || noteList.get(position).getNoteTitle().length()<8){
@@ -69,10 +69,10 @@ public class NoteAdapter extends BaseAdapter {
         RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true);
-        String photo = "http://10.7.89.233:8080/sharemate/" + userBean.getUserPhotoPath();
+        String photo = noteList.get(position).getUser().getUserPhotoPath();
         Glide.with(context).load(photo).apply(mRequestOptions).into(iv_head);
         tv_name = convertView.findViewById(R.id.userName);
-        tv_name.setText(userBean.getUserName());
+        tv_name.setText(noteList.get(position).getUser().getUserName());
         return convertView;
     }
 }

@@ -143,6 +143,9 @@ public class MyFragment extends Fragment {
                     noteBean.setNoId(noteObject.getInt("noteId"));
                     noteBean.setNoteTitle(noteObject.getString("noteTitle"));
                     noteBean.setNoteImagePath(noteObject.getString("notePhoto"));
+                    user.setUserName(noteObject.getString("userName"));
+                    user.setUserPhotoPath(path+noteObject.getString("userPhoto"));
+                    noteBean.setUser(user);
                     collectionList.add(noteBean);
                 }
             } catch (MalformedURLException e) {

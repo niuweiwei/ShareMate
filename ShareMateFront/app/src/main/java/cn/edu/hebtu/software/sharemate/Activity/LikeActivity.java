@@ -81,16 +81,8 @@ public class LikeActivity extends AppCompatActivity {
                 //假设当前的用户id为3
                 URL url = new URL(path+"LikeNoteServlet?userId=3");
                 HttpURLConnection connection = (HttpURLConnection)  url.openConnection();
-                connection.setRequestMethod("POST");
+                connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType","utf-8");
-                //通过输出流传递参数
-                OutputStream os = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
-                writer.write("userId=3");
-                writer.flush();
-                writer.close();
-                //连接
-                connection.connect();
 
                 //接收连接传输过来的流
                 InputStream is = connection.getInputStream();
@@ -113,8 +105,14 @@ public class LikeActivity extends AppCompatActivity {
 
                     //将解析得到的数据放入 LikeBean 对象中
                     UserBean user = new UserBean();
+                    user.setUserId(object.getInt("userId"));
                     user.setUserName(userName);
                     user.setUserPhotoPath(path+userPath);
+                    user.setFanCount(object.getInt("fanCount"));
+                    user.setFollowCount(object.getInt("followCount"));
+                    user.setLikeCount(object.getInt("likeCount"));
+                    user.setUserIntroduce(object.getString("userIntroduce"));
+
                     like.setUser(user);
                     like.setNoteId(noteId);
                     like.setDate(date);

@@ -17,7 +17,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bean.LikesBean;
+import dao.FollowDao;
 import dao.LikesDao;
+import dao.NoteDao;
 
 /**
  * Servlet implementation class LikeNoteServlet
@@ -47,14 +49,24 @@ public class LikeNoteServlet extends HttpServlet {
 		List<LikesBean> likeList = likesDao.getLikeList(userId);
 		Collections.sort(likeList, new DateComparator());
 		JSONArray array = new JSONArray();
+		FollowDao followDao = new FollowDao();
+		NoteDao noteDao = new NoteDao();
 		for(LikesBean like:likeList) {
+			int fanCount = followDao.getFunCount(like.getUser().getUserId());
+			int followCount = followDao.getFollowCount(like.getUser().getUserId());
+			int likeCount = noteDao.getLikeCount(like.getUser().getUserId());
 			JSONObject object = new JSONObject();
 			object.put("userPhoto", like.getUser().getUserPhoto());
+			object.put("userId", like.getUser().getUserId());
 			object.put("userName",like.getUser().getUserName());
 			object.put("noteId", like.getNote().getNoteId());
 			object.put("notePhoto", like.getNote().getNoteImage());
 			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
 			object.put("likeDate",sdf.format(like.getDate()));
+			object.put("fanCount", fanCount);
+			object.put("followCount", followCount);
+			object.put("likeCount", likeCount);
+			object.put("userIntroduce", like.getUser().getUserIntro());
 			array.put(object);
 		}
 		response.getWriter().append(array.toString()).append(request.getContextPath());

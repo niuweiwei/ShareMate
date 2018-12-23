@@ -1,10 +1,7 @@
 package servlet;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -17,22 +14,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bean.FollowBean;
-import bean.UserBean;
 import dao.FollowDao;
 import dao.NoteDao;
-import dao.UserDao;
 
 /**
- * Servlet implementation class FollowServlet
+ * Servlet implementation class FanServlet
  */
-@WebServlet("/FollowServlet")
-public class FollowServlet extends HttpServlet {
+@WebServlet("/FanServlet")
+public class FanServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public FollowServlet() {
+    public FanServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -41,38 +36,29 @@ public class FollowServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		int userId = Integer.parseInt(request.getParameter("userId"));
-		FollowDao followDao = new FollowDao();
-		NoteDao noteDao = new NoteDao();
+		FollowDao followdao = new FollowDao();
+		NoteDao notedao = new NoteDao();
+		List<FollowBean> fanList = new ArrayList<>();
+		fanList = followdao.getFanList(userId);
 		JSONArray array = new JSONArray();
-		HashMap<FollowBean,Boolean> map = followDao.getFollows(userId);
-		ArrayList <FollowBean> list = new ArrayList<>(map.keySet());
-		
-		for(FollowBean follow : list) {
+		for(FollowBean follow:fanList) {
+			int noteCount = notedao.getNoteCount(follow.getUserbean().getUserId());
+			int fanCount = followdao.getFunCount(follow.getUserbean().getUserId());
+			int followCount = followdao.getFollowCount(follow.getUserbean().getUserId());
+			int likeCount = notedao.getLikeCount(follow.getUserbean().getUserId());
 			JSONObject object = new JSONObject();
-			//得到该粉丝用户的id
-			object.put("fansId",follow.getUserbean().getUserId());
-			//得到粉丝用户的昵称
-			object.put("fansName", follow.getUserbean().getUserName());
-			//得到粉丝用户的头像路径
-			object.put("fansPhotoPath",follow.getUserbean().getUserPhoto());
-			//得到粉丝用户的简介
-			object.put("fansIntroduce", follow.getUserbean().getUserIntro());
-			//得到粉丝用户的关注数、粉丝数、赞数
-			int fanCount = followDao.getFunCount(follow.getUserbean().getUserId());
-			int followCount = followDao.getFollowCount(follow.getUserbean().getUserId());
-			int likeCount = noteDao.getLikeCount(follow.getUserbean().getUserId());
+			object.put("userId",follow.getUserbean().getUserId());
+			object.put("userName",follow.getUserbean().getUserName());
+			object.put("userPhoto", follow.getUserbean().getUserPhoto());
+			object.put("userIntro", follow.getUserbean().getUserIntro());
+			object.put("status", follow.isStatus());
+			object.put("noteCount", noteCount);
 			object.put("fanCount", fanCount);
 			object.put("followCount", followCount);
 			object.put("likeCount", likeCount);
-			//得到关注的时间
-			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
-			object.put("followDate",sdf.format(follow.getDate()));
-			//得到该用户是否关注了该粉丝
-			object.put("isFollow", map.get(follow));
 			array.put(object);
 		}
 		response.getWriter().append(array.toString()).append(request.getContextPath());
