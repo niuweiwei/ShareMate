@@ -31,7 +31,27 @@ public class CollectDao {
 		}
 		return count;
 	}
-	
+	/**
+	 * 判断用户是否收藏过某个笔记   (新增)
+	 */
+	public boolean isCollect(int userId,int noteId) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="select * from collect where user_id=? and note_id=?";
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			pstmt.setInt(2, noteId);
+			ResultSet rs=pstmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 	/**
 	 * 增加笔记收藏
 	 */

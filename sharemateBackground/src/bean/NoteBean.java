@@ -15,6 +15,8 @@ public class NoteBean {
 	private TypeBean type;
 	private UserBean user;
 	private List<CommentBean> comment;
+	private int isLike,isCollect,isFollow;
+	private UserBean userContent;
 	public NoteBean() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -116,6 +118,35 @@ public class NoteBean {
 	public void setComment(List<CommentBean> comment) {
 		this.comment = comment;
 	}
-	
-	
+	public int isLike() {
+		return isLike;
+	}
+
+	public void setLike(int isLike) {
+		this.isLike = isLike;
+	}
+
+	public int getIsCollect() {
+		return isCollect;
+	}
+
+	public void setIsCollect(int isCollect) {
+		this.isCollect = isCollect;
+	}
+
+	public int getIsFollow() {
+		return isFollow;
+	}
+
+	public void setIsFollow(int isFollow) {
+		this.isFollow = isFollow;
+	}
+
+	public UserBean getUserContent() {
+		return userContent;
+	}
+
+	public void setUserContent(UserBean userContent) {
+		this.userContent = userContent;
+	}
 }

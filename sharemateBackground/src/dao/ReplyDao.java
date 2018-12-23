@@ -16,9 +16,62 @@ import dao.DataBase;
 import bean.CommentBean;
 import bean.NoteBean;
 import bean.ReplyBean;
+import bean.UserBean;
 
 public class ReplyDao {
-	
+	/**
+	 * 根据回复id得到回复者名称----(新增)-----
+	 */
+	public String getUserNameByReplyId(int replyId) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="select user_id from reply where reply_id=?";
+		String userName=null;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, replyId);
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				int userId=rs.getInt("user_id");
+				UserDao userDao=new UserDao();
+				UserBean user=userDao.getUserById(userId);
+				userName=user.getUserName();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(conn);
+			DataBase.close(pstmt);
+		}
+		return userName;
+	}
+	/**
+	 * 得到某个回复总的赞数(新增)
+	 */
+	public int getLikeCount(int replyId) {
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet res = null;
+		String sql="select count(*) c from like_reply where reply_id=?";
+		int count=0;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, replyId);
+			res=pstmt.executeQuery();
+			if(res.next()) {
+				count=res.getInt("c");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(conn);
+			DataBase.close(pstmt);
+			DataBase.close(res);
+		}
+		return count;
+	}
 	/**
 	 * 根据评论id得到评论的回复列表(包括回复的回复和评论的回复)
 	 */
