@@ -11,56 +11,7 @@ import dao.DataBase;
 import bean.UserBean;
 
 public class UserDao {
-	/**
-	 * 查询用户点赞的所有评论id(新增)
-	 */
-	public List<Integer> getLikeComment(int userId){
-		List<Integer> list=new ArrayList<Integer>();
-		Connection conn = DataBase.getConnection();
-		PreparedStatement pstmt = null;
-		String sql="select comment_id from like_comment where user_id=?";
-		try {
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setInt(1, userId);
-			ResultSet rs=pstmt.executeQuery();
-			while(rs.next()) {
-				list.add(rs.getInt("comment_id"));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			DataBase.close(pstmt);
-			DataBase.close(conn);
-		}
 	
-		return list;
-	}
-	/**
-	 * 查询用户点赞的所有回复id(新增)
-	 */
-	public List<Integer> getLikeReply(int userId){
-		List<Integer> list=new ArrayList<Integer>();
-		Connection conn = DataBase.getConnection();
-		PreparedStatement pstmt = null;
-		String sql="select reply_id from like_reply where user_id=?";
-		try {
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setInt(1, userId);
-			ResultSet rs=pstmt.executeQuery();
-			while(rs.next()) {
-				list.add(rs.getInt("reply_id"));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			DataBase.close(pstmt);
-			DataBase.close(conn);
-		}
-	
-		return list;
-	}
 	/**
 	 * 根据用户id得到用户
 	 */

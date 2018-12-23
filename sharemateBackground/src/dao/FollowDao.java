@@ -221,11 +221,11 @@ public class FollowDao {
 			while(result.next()) {
 				int followId = result.getInt("follow_id");
 				FollowBean follow = new FollowBean();
-				follow.setFollowId(followId);
-				follow.setUserbean(new UserDao().getUserById(userId));
+				follow.setFollowId(userId);
+				follow.setUserbean(new UserDao().getUserById(followId));
 				follow.setDate(result.getDate("follow_date"));
 				FollowDao followDao=new FollowDao();
-				boolean isFollow = followDao.eachFollow(follow);
+				boolean isFollow = followDao.eachFan(follow);
 				
 				fans.put(follow, isFollow);
 			}

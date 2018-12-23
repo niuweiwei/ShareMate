@@ -19,6 +19,8 @@ import org.json.JSONObject;
 import bean.CAndRBean;
 import dao.CAndRDao;
 import dao.CommentDao;
+import dao.FollowDao;
+import dao.NoteDao;
 import dao.ReplyDao;
 
 /**
@@ -45,6 +47,8 @@ public class CAndRServlet extends HttpServlet {
 		response.setCharacterEncoding("utf-8");
 		int userId = Integer.parseInt(request.getParameter("userId"));
 		CAndRDao dao = new CAndRDao();
+		FollowDao followDao = new FollowDao();
+		NoteDao noteDao = new NoteDao();
 		List<CAndRBean> list = dao.getCAndBeanList(userId);
 		Collections.sort(list, new DateComparator());
 		JSONArray array = new JSONArray();
@@ -59,10 +63,19 @@ public class CAndRServlet extends HttpServlet {
 			}else if(tag ==CAndRBean.REPLYCOMMENT || tag==CAndRBean.REPLYREPLY) {
 				isLike = new ReplyDao().isLike(userId, id);
 			}
+	
 			object.put("tag", tag);
 			object.put("id", id);
+			int fanCount = followDao.getFunCount(bean.getPublisher().getUserId());
+			int followCount = followDao.getFollowCount(bean.getPublisher().getUserId());
+			int likeCount = noteDao.getLikeCount(bean.getPublisher().getUserId());
+			object.put("publisherId", bean.getPublisher().getUserId());
 			object.put("publisherName", bean.getPublisher().getUserName());
 			object.put("publisherPhotoPath", bean.getPublisher().getUserPhoto());
+			object.put("publisherIntro", bean.getPublisher().getUserIntro());
+			object.put("fanCount", fanCount);
+			object.put("followCount", followCount);
+			object.put("likeCount", likeCount);
 			object.put("userId", bean.getUser().getUserId());
 			object.put("userName",bean.getUser().getUserName());
 			object.put("noteId", bean.getNoteId());

@@ -44,6 +44,8 @@ public class CollectionServlet extends HttpServlet {
 		JSONArray noteArray = new JSONArray();
 		for(NoteBean noteBean:collectList) {
 			JSONObject noteObject = new JSONObject();
+			noteObject.put("userName",noteBean.getUser().getUserName());
+			noteObject.put("userPhoto", noteBean.getUser().getUserPhoto());
 			noteObject.put("noteId", noteBean.getNoteId());
 			noteObject.put("noteTitle", noteBean.getNoteTitle());
 			noteObject.put("notePhoto", noteBean.getNoteImage());
