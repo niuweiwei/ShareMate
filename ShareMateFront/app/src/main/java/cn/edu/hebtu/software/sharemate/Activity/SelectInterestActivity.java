@@ -22,7 +22,7 @@ public class SelectInterestActivity extends AppCompatActivity {
     private int typeId;
     private int userId;
     private String remark;
-    private List<Integer> type = new ArrayList<>();
+    private ArrayList<Integer> type = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,8 @@ public class SelectInterestActivity extends AppCompatActivity {
                     selectInterest.execute(userId, typeId,remark);
                 }else{
                     remark = "delete";
+                    int i = type.indexOf(3);
+                    type.remove(i);
                     SelectInterestUtil selectInterest = new SelectInterestUtil(SelectInterestActivity.this);
                     selectInterest.execute(userId, typeId,remark);
                 }
@@ -60,6 +62,8 @@ public class SelectInterestActivity extends AppCompatActivity {
                     selectInterest.execute(userId, typeId,remark);
                 }else {
                     remark = "delete";
+                    int i = type.indexOf(2);
+                    type.remove(i);
                     SelectInterestUtil selectInterest = new SelectInterestUtil(SelectInterestActivity.this);
                     selectInterest.execute(userId, typeId,remark);
                 }
@@ -77,6 +81,8 @@ public class SelectInterestActivity extends AppCompatActivity {
                     selectInterest.execute(userId, typeId,remark);
                 }else {
                     remark = "delete";
+                    int i = type.indexOf(5);
+                    type.remove(i);
                     SelectInterestUtil selectInterest = new SelectInterestUtil(SelectInterestActivity.this);
                     selectInterest.execute(userId, typeId,remark);
                 }
@@ -94,6 +100,8 @@ public class SelectInterestActivity extends AppCompatActivity {
                     selectInterest.execute(userId, typeId,remark);
                 }else {
                     remark = "delete";
+                    int i = type.indexOf(1);
+                    type.remove(i);
                     SelectInterestUtil selectInterest = new SelectInterestUtil(SelectInterestActivity.this);
                     selectInterest.execute(userId, typeId,remark);
                 }
@@ -110,7 +118,9 @@ public class SelectInterestActivity extends AppCompatActivity {
                     SelectInterestUtil selectInterest = new SelectInterestUtil(SelectInterestActivity.this);
                     selectInterest.execute(userId, typeId,remark);
                 }else {
-                    remark = "remark";
+                    remark = "delete";
+                    int i = type.indexOf(6);
+                    type.remove(i);
                     SelectInterestUtil selectInterest = new SelectInterestUtil(SelectInterestActivity.this);
                     selectInterest.execute(userId, typeId,remark);
                 }
@@ -128,6 +138,8 @@ public class SelectInterestActivity extends AppCompatActivity {
                     selectInterest.execute(userId, typeId,remark);
                 }else {
                     remark = "delete";
+                    int i = type.indexOf(4);
+                    type.remove(i);
                     SelectInterestUtil selectInterest = new SelectInterestUtil(SelectInterestActivity.this);
                     selectInterest.execute(userId, typeId,remark);
                 }
@@ -152,9 +164,10 @@ public class SelectInterestActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-
+            Log.e("type",type+"");
             Intent intent = new Intent(SelectInterestActivity.this,SelectTopicActivity.class);
             intent.putExtra("userId",userId);
+            intent.putIntegerArrayListExtra("type",type);
             startActivity(intent);
         }
     }

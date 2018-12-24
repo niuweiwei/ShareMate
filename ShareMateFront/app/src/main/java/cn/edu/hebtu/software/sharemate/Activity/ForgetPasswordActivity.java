@@ -1,9 +1,13 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,9 +15,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.ForgetPasswordUtil;
+import cn.edu.hebtu.software.sharemate.tools.GetIpConfig;
 import cn.edu.hebtu.software.sharemate.tools.TelephoneUtils;
 
 public class ForgetPasswordActivity extends AppCompatActivity {
@@ -96,10 +115,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                 boolean resultPhone = TelephoneUtils.isPhone(phoneNum);
                 if (resultPhone == true) {
                     user.setUserPhone(phoneNum);
-//                    Intent intent = new Intent(ForgetPasswordActivity.this,VerifyCodeActivity.class);
-//                    intent.putExtra("phoneNum",phoneNum);
-//                    startActivity(intent);
-                    ForgetPasswordUtil forgetPasswordUtil = new ForgetPasswordUtil(ForgetPasswordActivity.this);
+                    ForgetPasswordUtil forgetPasswordUtil = new ForgetPasswordUtil();
                     forgetPasswordUtil.execute(user);
                 } else {
                     Toast.makeText(ForgetPasswordActivity.this, "请输入正确的电话号码", Toast.LENGTH_SHORT).show();
@@ -110,6 +126,76 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                 etPhoneNum.requestFocus();
             }
 
+        }
+    }
+    /**
+     * 异步任务
+     */
+    public class ForgetPasswordUtil extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            Log.e("ForgetPasswordUtil","异步任务");
+            UserBean user = (UserBean) objects[0];
+            String userPhone = user.getUserPhone();
+            String ip = GetIpConfig.getIp();
+            JSONObject back = null;
+            try {
+                URL url = new URL("http://"+ ip +":8080/sharemate/ForgetPasswordServlet");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                connection.setRequestProperty("Charset","UTF-8");
+                OutputStream os = connection.getOutputStream();
+                OutputStreamWriter osw = new OutputStreamWriter(os);
+                BufferedWriter writer = new BufferedWriter(osw);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("userPhone",userPhone);
+                String str = jsonObject.toString();
+                writer.write(str);
+                writer.flush();
+                writer.close();
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader reader = new BufferedReader(isr);
+                String str2 = reader.readLine();
+                back = new JSONObject(str2);
+                reader.close();
+                isr.close();
+                is.close();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return back;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            JSONObject back = (JSONObject) o;
+            String result = null;
+            try {
+                result = back.getString("msg");
+                Log.e("result",result);
+                if (result.equals("用户存在")){
+                    int userId = back.getInt("userId");
+                    String userPhone = back.getString("userPhone");
+                    Intent intent = new Intent(ForgetPasswordActivity.this,VerifyCodeActivity.class);
+                    intent.putExtra("userId",userId);
+                    intent.putExtra("userPhone",userPhone);
+                    startActivity(intent);
+                }else if(result.equals("用户不存在")){
+                    Toast.makeText(ForgetPasswordActivity.this,"该用户不存在",Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

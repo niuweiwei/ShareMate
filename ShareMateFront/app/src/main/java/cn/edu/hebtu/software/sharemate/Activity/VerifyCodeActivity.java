@@ -33,6 +33,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
     private final String AppKey = "29664f538c740";
     private final String AppSecret = "779a252740ce0b876316a2c8152d1c7d";
     private TimeCount time;
+    private boolean isCode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,10 +148,12 @@ public class VerifyCodeActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            Log.e("2","2");
-            if (!code.equals("")) {
-                Intent intent = new Intent(VerifyCodeActivity.this,MainActivity.class);
-                startActivity(intent);
+            if (!code.equals("") ) {
+                if (isCode == true){
+                    Intent intent = new Intent(VerifyCodeActivity.this,MainActivity.class);
+                    intent.putExtra("userId",userId);
+                    startActivity(intent);
+                }
             }else {
                 Toast.makeText(VerifyCodeActivity.this,"请输入验证码",Toast.LENGTH_SHORT).show();
                 verifyCodeView.requestFocus();
@@ -168,7 +171,8 @@ public class VerifyCodeActivity extends AppCompatActivity {
                 //如果操作成功
                 if(event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE){
                     //校验验证码，返回校验的手机和国家代码
-                    Toast.makeText(VerifyCodeActivity.this, "验证成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(VerifyCodeActivity.this, "验证成功", Toast.LENGTH_SHORT).show();
+                    isCode = true;
                 }else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){
                     //获取验证码成功，true为智能验证，false为普通下发短信
                     Toast.makeText(VerifyCodeActivity.this,"验证码已发送",Toast.LENGTH_SHORT).show();
@@ -182,6 +186,7 @@ public class VerifyCodeActivity extends AppCompatActivity {
                 }else {
                     ((Throwable) data).printStackTrace();
                     Toast.makeText(VerifyCodeActivity.this,"验证码错误",Toast.LENGTH_SHORT).show();
+//                    isCode = false;
                 }
             }
         }

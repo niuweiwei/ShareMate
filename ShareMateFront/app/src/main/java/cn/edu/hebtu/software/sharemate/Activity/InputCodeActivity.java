@@ -34,6 +34,7 @@ public class InputCodeActivity extends AppCompatActivity {
     private TextView tvResend;
 //    private TextView tvPassword;
     private TimeCount time;
+    private boolean isCode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,10 +154,12 @@ public class InputCodeActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             if (!code.equals("")) {
-                //跳到首页
-                Intent intent = new Intent(InputCodeActivity.this,MainActivity.class);
-                intent.putExtra("userId",userId);
-                startActivity(intent);
+                if (isCode == true){
+                    //跳到首页
+                    Intent intent = new Intent(InputCodeActivity.this,MainActivity.class);
+                    intent.putExtra("userId",userId);
+                    startActivity(intent);
+                }
             }else {
                 Toast.makeText(InputCodeActivity.this,"请输入验证码",Toast.LENGTH_SHORT).show();
                 verifyCodeView.requestFocus();
@@ -184,7 +187,8 @@ public class InputCodeActivity extends AppCompatActivity {
                 //如果操作成功
                 if(event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE){
                     //校验验证码，返回校验的手机和国家代码
-                    Toast.makeText(InputCodeActivity.this, "验证成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(InputCodeActivity.this, "验证成功", Toast.LENGTH_SHORT).show();
+                    isCode = true;
                 }else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){
                     //获取验证码成功，true为智能验证，false为普通下发短信
                     Toast.makeText(InputCodeActivity.this,"验证码已发送",Toast.LENGTH_SHORT).show();
@@ -198,6 +202,7 @@ public class InputCodeActivity extends AppCompatActivity {
                 }else {
                     ((Throwable) data).printStackTrace();
                     Toast.makeText(InputCodeActivity.this,"验证码错误",Toast.LENGTH_SHORT).show();
+//                    isCode = false;
                 }
             }
         }

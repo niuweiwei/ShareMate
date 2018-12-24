@@ -1,7 +1,10 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,8 +17,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.tools.GetIpConfig;
 import cn.edu.hebtu.software.sharemate.tools.PasswordUtils;
 import cn.edu.hebtu.software.sharemate.tools.PhonePswdLoginUtil;
 import cn.edu.hebtu.software.sharemate.tools.TelephoneUtils;
@@ -147,10 +165,78 @@ public class PhonePswdLoginActivity extends AppCompatActivity {
             btnLogin.setFocusableInTouchMode(true);
             btnLogin.requestFocus();//要获取焦点
             if (!phone.equals("") && !password.equals("")){
-                PhonePswdLoginUtil phonePswdLoginUtil = new PhonePswdLoginUtil(PhonePswdLoginActivity.this);
+                PhonePswdLoginUtil phonePswdLoginUtil = new PhonePswdLoginUtil();
                 phonePswdLoginUtil.execute(user);
             }else {
                 Toast.makeText(PhonePswdLoginActivity.this,"请输入手机号或密码",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * 异步任务
+     */
+    public class PhonePswdLoginUtil extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            Log.e("PhonePswdLoginUtil", "异步任务");
+            UserBean user = (UserBean) objects[0];
+            String ip = GetIpConfig.getIp();
+            JSONObject back = null;
+            try {
+                URL url = new URL("http://" + ip + ":8080/sharemate/PhonePswdLoginServlet");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                OutputStream os = connection.getOutputStream();
+                OutputStreamWriter osw = new OutputStreamWriter(os);
+                BufferedWriter writer = new BufferedWriter(osw);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("userPhone", user.getUserPhone())
+                        .put("userPassword", user.getUserPassword());
+                String str = jsonObject.toString();
+                writer.write(str);
+                writer.flush();
+                writer.close();
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader reader = new BufferedReader(isr);
+                String str2 = reader.readLine();
+                back = new JSONObject(str2);
+
+                reader.close();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return back;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            JSONObject back = (JSONObject)o;
+            String result = null;
+            try {
+                result = back.getString("msg");
+                Log.e("result", result);
+                if (result.equals("该用户存在")) {
+                    int userId = back.getInt("userId");
+                    Intent intent = new Intent(PhonePswdLoginActivity.this, MainActivity.class);
+                    intent.putExtra("userId", userId);
+                    startActivity(intent);
+                } else if (result.equals("该用户不存在")) {
+                    Toast.makeText(PhonePswdLoginActivity.this, "该用户不存在", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     }

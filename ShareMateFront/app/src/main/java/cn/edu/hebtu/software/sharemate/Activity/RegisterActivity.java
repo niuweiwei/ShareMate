@@ -1,13 +1,16 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -28,11 +31,24 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.mob.MobSDK;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.tools.GetIpConfig;
 import cn.edu.hebtu.software.sharemate.tools.IdentifyingCode;
 import cn.edu.hebtu.software.sharemate.tools.PasswordUtils;
 import cn.edu.hebtu.software.sharemate.tools.RegisterUtil;
@@ -48,8 +64,6 @@ public class RegisterActivity extends AppCompatActivity {
     private static final int RESULT_REQUEST_CODE = 2;
     private ImageView back;
     private Button btnTrue;
-    private Button getCode;
-//    private TimeCount time;
     private ImageView ivCode;
     private EditText etCode;
     private String realCode;
@@ -64,7 +78,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText etUsername;
     private EditText etPassword;
     private EditText etPhone;
-    private EditText etCode2;
     private EditText etConfirmPawd;
     private String userName;
     private String userPassword;
@@ -81,8 +94,6 @@ public class RegisterActivity extends AppCompatActivity {
         file = new File(Environment.getExternalStorageDirectory() + "/CoolImage/");
         findViews();
         back.setOnClickListener(new backClickListener());
-//        time = new TimeCount(30000, 1000);
-//        getCode.setOnClickListener(new getCodeClickListener());
         ivCode.setOnClickListener(new idtfCodeClickListener());
 //        head.setOnClickListener(new photoClickListener());
         judgeForm();
@@ -92,7 +103,6 @@ public class RegisterActivity extends AppCompatActivity {
     private void findViews() {
         back = findViewById(R.id.iv_back);
         btnTrue = findViewById(R.id.btn_true);
-//        getCode = findViewById(R.id.get_verify_code);
         ivCode = findViewById(R.id.iv_showCode);
         etCode = findViewById(R.id.et_phoneCodes);
         head = findViewById(R.id.head);
@@ -187,6 +197,75 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+    /**
+     * 异步任务
+     */
+    public class RegisterUtil extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            Log.e("RegisterUtil", "异步任务");
+            UserBean user = (UserBean) objects[0];
+            String result = null;
+            try {
+                String ip = GetIpConfig.getIp();
+                Log.e("Register_ip", ip);
+                URL url = new URL("http://" + ip + ":8080/sharemate/RegisterFontServlet");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true); // 允许输入流
+                connection.setDoOutput(true); // 允许输出流
+                connection.setRequestMethod("POST");//请求方式
+                connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");//设定传送的内容类型是可序列化的java对象
+                connection.setRequestProperty("Charset", "UTF-8");
+                OutputStream outputStream = connection.getOutputStream();
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+                BufferedWriter writer = new BufferedWriter(outputStreamWriter);
+                JSONObject userJSON = new JSONObject();
+                userJSON.put("userName", user.getUserName())
+                        .put("userPassword", user.getUserPassword())
+                        .put("userPhone", user.getUserPhone());
+                String str = userJSON.toString();
+                writer.write(str);
+                writer.flush();
+                writer.close();
+                //向服务器端发送数据，请求服务端
+                connection.connect();
+                //通过输入流来获取响应
+                InputStream inputStream = connection.getInputStream();
+                //字节流到字符流的转换流
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                //字符缓冲输入流
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                //服务器返回结果
+                result = reader.readLine();
+                reader.close();
+                inputStream.close();
+                inputStream.close();
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            String result = (String)o;
+            Log.e("RegisterUtil",result);
+            if(result.equals("插入成功")){
+                Log.e("RegisterUtil", "文字上传成功");
+                Intent intent = new Intent(RegisterActivity.this, StartActivity.class);
+                startActivity(intent);
+            }else if (result.equals("该用户已注册")){
+                Toast.makeText(RegisterActivity.this,"该用户已注册",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     /**
      * 点击返回
@@ -209,14 +288,14 @@ public class RegisterActivity extends AppCompatActivity {
         public void onClick(View v) {
             String ImageCode = etCode.getText().toString().toLowerCase();
             if (ImageCode.equals(realCode)) {
-                Toast.makeText(RegisterActivity.this, ImageCode + "验证码正确", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(RegisterActivity.this, ImageCode + "验证码正确", Toast.LENGTH_SHORT).show();
 
                 //上传数据
                 btnTrue.setFocusable(true);//设置可以获取焦点，但不一定获得
                 btnTrue.setFocusableInTouchMode(true);
                 btnTrue.requestFocus();//要获取焦点
                 if (!userName.equals("") && !userPassword.equals("") && !userPhone.equals("")) {
-                    RegisterUtil registerUtil = new RegisterUtil(RegisterActivity.this);
+                    RegisterUtil registerUtil = new RegisterUtil();
                     registerUtil.execute(user);
                     Log.e("RegisterActivity", "上传数据");
                 } else {
@@ -227,49 +306,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
     }
-
-    /**
-     * 获取验证码
-     */
-//    private class getCodeClickListener implements View.OnClickListener {
-//
-//        @Override
-//        public void onClick(View v) {
-//            time.start();
-//        }
-//    }
-    /**
-     * 实现验证码倒计时
-     */
-//    public class TimeCount extends CountDownTimer {
-//
-//        /**
-//         * @param millisInFuture    The number of millis in the future from the call
-//         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
-//         *                          is called.
-//         * @param countDownInterval The interval along the way to receive
-//         *                          {@link #onTick(long)} callbacks.
-//         */
-//        public TimeCount(long millisInFuture, long countDownInterval) {
-//            super(millisInFuture, countDownInterval);
-//        }
-//
-//        @Override
-//        public void onTick(long millisUntilFinished) {
-//            getCode.setBackgroundResource(R.drawable.get_verify_code2);
-//            getCode.setClickable(false);
-//            getCode.setText("(" + millisUntilFinished / 1000 + ")秒后重发");
-//            getCode.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
-//        }
-//
-//        @Override
-//        public void onFinish() {
-//            getCode.setText("重新获取");
-//            getCode.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
-//            getCode.setClickable(true);
-//            getCode.setBackgroundResource(R.drawable.get_verify_code);
-//        }
-//    }
 
     /**
      * 生成随机验证码图片
