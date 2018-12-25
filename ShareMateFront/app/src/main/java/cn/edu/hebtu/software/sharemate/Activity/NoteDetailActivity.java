@@ -27,6 +27,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +57,7 @@ import cn.edu.hebtu.software.sharemate.Adapter.CommentNodeAdapter;
 import cn.edu.hebtu.software.sharemate.Bean.Comment;
 import cn.edu.hebtu.software.sharemate.Bean.NoteBean;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
+import cn.edu.hebtu.software.sharemate.Fragment.TuijianFragment;
 import cn.edu.hebtu.software.sharemate.tools.GradationScrollView;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.ImageTask;
@@ -93,15 +98,17 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
 
     private NoteBean note=new NoteBean();
     private String path;//修改------
-    private int userId=2;//当前注册人的id
+    private int userId;//当前注册人的id
+    private int noteId;//当前笔记Id
     private UserBean user=new UserBean();//当前注册人
+    private UserBean noteUser=new UserBean();//发布笔记的user
     private List<Integer> list=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
         getViewById();
-        path="http://"+getResources().getString(R.string.server_path)+":8080/sharemate/";
+        path=getResources().getString(R.string.server_path);
 //        UserLikeComment userLikeComment=new UserLikeComment(path+"UserServlet?userId="+userId+"&remark=userlikeComment");
 //        userLikeComment.execute();
 //        setNote();
@@ -114,7 +121,7 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                    finish();
             }
         });
     }
@@ -204,9 +211,9 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
 
         @Override
         protected NoteBean doInBackground(Object[] objects) {
-//            Intent intent=getIntent();
-//            int nodeId=intent.getIntExtra("noteId",0);
-            int noteId=1;
+            Intent intent=getIntent();
+            noteId=intent.getIntExtra("noteId",0);
+            userId=intent.getIntExtra("userId",0);
             try {
                 URL url=new URL(path+"NoteServlet?noteId="+noteId);
                 Log.e("notePath",path+"NoteServlet?noteId="+noteId);
@@ -243,6 +250,9 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
             //页面修改
             super.onPostExecute(o);
             NoteBean note=(NoteBean) o;
+            Log.e("111",note.getUser().getUserId()+"");
+            GetUserDetail getUserDetail=new GetUserDetail();
+            getUserDetail.execute(note.getUser().getUserId());
             noteTitle.setText(note.getNoteTitle());
             noteDetail.setText(note.getNoteDetail());
             noteTime.setText(note.getNoteTime());
@@ -257,16 +267,29 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
             Object[] objects=new Object[]{banner};
             imageTask.execute(objects);
 
-            ImageTask imageTask1=new ImageTask(path+note.getNoteImagePath());
+            ImageTask imageTask1=new ImageTask(path+note.getUser().getUserPhotoPath());
             Object[] objects1=new Object[]{userPhoto};
             imageTask1.execute(objects1);
+            userPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //点击用户头像跳转到用户主页修改----）
+                    Intent intent=new Intent(NoteDetailActivity.this,FriendActivity.class);
+                    intent.putExtra("friend",noteUser);
+                    startActivity(intent);
+                }
+            });
             //当前注册的用户头像
             GetUserTask getUserTask=new GetUserTask();
             getUserTask.execute();
-
-            //判断是否相互关注
-            JudgeFollowTask judgeFollowTask=new JudgeFollowTask(path+"FollowServlet?remark=judgeFollow&userId="+note.getUser().getUserId()+"&followId="+userId);
-            judgeFollowTask.execute();
+            if (note.getUser().getUserId()==userId){
+                attentionImage.setVisibility(View.INVISIBLE);
+            }else {
+                //判断是否关注
+                JudgeFollowTask judgeFollowTask=new JudgeFollowTask(path+"FollowServlet?remark=judgeFollow&userId="+note.getUser().getUserId()+"&followId="+userId);
+                Log.e("follow",path+"FollowServlet?remark=judgeFollow&userId="+note.getUser().getUserId()+"&followId="+userId);
+                judgeFollowTask.execute();
+            }
             //判断是否点赞
             JudgeLikeTask judgeLikeTask=new JudgeLikeTask(path+"LikesServlet?remark=judgeLike&noteId="+note.getNoId()+"&userId="+userId);
             judgeLikeTask.execute();
@@ -276,6 +299,42 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
         }
     }
 
+    //从数据库中获得UserBean对象
+    public class GetUserDetail extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try {
+                URL url = new URL(path+"UserServlet?userId="+objects[0]);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("contentType", "UTF-8");
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String res = br.readLine();
+                //解析JSON
+                JSONObject jsonObject = new JSONObject(res);
+                noteUser.setUserId(jsonObject.getInt("userId"));
+                noteUser.setUserPhotoPath(path+jsonObject.getString("userPhoto"));
+                noteUser.setUserName(jsonObject.getString("userName"));
+                noteUser.setUserSex(jsonObject.getString("userSex"));
+                noteUser.setUserBirth(jsonObject.getString("userBirth"));
+                noteUser.setUserAddress(jsonObject.getString("userAddress"));
+                noteUser.setUserIntroduce(jsonObject.getString("userIntro"));
+                noteUser.setFollowCount(jsonObject.getInt("followCount"));
+                noteUser.setFanCount(jsonObject.getInt("fanCount"));
+                noteUser.setLikeCount(jsonObject.getInt("likeCount"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+    }
     //得到当前登录的用户的头像和用户名
     class GetUserTask extends AsyncTask{
 
@@ -344,7 +403,12 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
                     comment.setContent(obj.getString("commentDetail"));
                     comment.setCommentTime(obj.getString("commentDate"));
                     comment.setCountZan(obj.getInt("commentLikeCount"));
-                    UserBean user=new UserBean(obj.getString("userName"),obj.getString("userPhoto"));
+                    UserBean user=new UserBean(obj.getString("userName"),path+obj.getString("userPhoto"));
+                    user.setFanCount(obj.getInt("fanCount"));
+                    user.setFollowCount(obj.getInt("followCount"));
+                    user.setLikeCount(obj.getInt("likeCount"));
+                    user.setUserIntroduce(obj.getString("introduce"));
+                    user.setUserId(obj.getInt("userId"));
                     comment.setUser(user);
                     comments.add(comment);
                 }
@@ -434,6 +498,7 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            Log.e("isAttention",isAttention+"");
             if (isAttention){
                 attentionImage.setImageResource(R.drawable.a9);
             }else{
@@ -758,6 +823,15 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
                 if (!commentContent.trim().isEmpty()){
                     AddCommentTask addCommentTask=new AddCommentTask(path+"CommentServlet",commentContent);
                     addCommentTask.execute();
+                    //Toast
+                    Toast toast=Toast.makeText(NoteDetailActivity.this,"评论成功",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.show();
+                }else {
+                    //Toast
+                    Toast toast=Toast.makeText(NoteDetailActivity.this,"评论不能为空",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.show();
                 }
                 //隐藏软键盘
                 InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -765,10 +839,7 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
                 //显示底部,隐藏EditView
                 bottom.setVisibility(View.VISIBLE);
                 lleditComment.setVisibility(View.INVISIBLE);
-                //Toast
-                Toast toast=Toast.makeText(NoteDetailActivity.this,"评论成功",Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER,0,0);
-                toast.show();
+
                 //评论数加1
                 int count=Integer.parseInt(countComment.getText().toString());
                 count++;
@@ -851,10 +922,9 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
         allComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int noteId=1;
                 Intent intent=new Intent(NoteDetailActivity.this,CommentDetailActivity.class);
                 intent.putExtra("noteId",noteId);
-                intent.putExtra("user",user);
+                intent.putExtra("userId",user.getUserId());
                 startActivity(intent);
             }
         });

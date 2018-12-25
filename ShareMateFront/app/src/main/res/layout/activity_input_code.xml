@@ -25,8 +25,8 @@
         android:id="@+id/verify_code_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
         android:layout_marginTop="50dp"/>
 
     <Button
@@ -44,18 +44,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+        <!--<TextView-->
+            <!--android:id="@+id/tv_password"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="密码登录"-->
+            <!--android:textSize="@dimen/TextSize_5"/>-->
         <TextView
             android:id="@+id/tv_resend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="130dp"
             android:text="重新发送"
-            android:textSize="@dimen/TextSize_5"/>
-        <TextView
-            android:id="@+id/tv_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:text="密码登录"
             android:textColor="@color/colorGoLogin"
             android:textSize="@dimen/TextSize_5"/>
     </LinearLayout>

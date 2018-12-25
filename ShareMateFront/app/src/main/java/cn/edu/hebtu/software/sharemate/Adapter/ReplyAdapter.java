@@ -1,6 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Bean.Reply;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.ImageTask;
 
@@ -31,7 +37,7 @@ public class ReplyAdapter extends BaseAdapter {
     private int itemlayout;
     private Context context;
     private String path;
-
+    private UserBean user=new UserBean();
     private List<Integer> replylist;
     private boolean isZan;
     private int userId;
@@ -66,10 +72,18 @@ public class ReplyAdapter extends BaseAdapter {
                 convertView=layoutInflater.inflate(itemlayout,null);
             }
             ImageView image = convertView.findViewById(R.id.iv_image);
-            ImageTask imageTask=new ImageTask(path+replies.get(position).getUserPhoto());
+            ImageTask imageTask=new ImageTask(replies.get(position).getUser().getUserPhotoPath());
             imageTask.execute(image);
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, FriendActivity.class);
+                    intent.putExtra("friend",replies.get(position).getUser());
+                    context.startActivity(intent);
+                }
+            });
             TextView name = convertView.findViewById(R.id.tv_name);
-            name.setText(replies.get(position).getUserName());
+            name.setText(replies.get(position).getUser().getUserName());
             //判断是对评论的回复还是对回复的回复
             if (replies.get(position).getReReplyName() != null) {
                 //是对回复的回复

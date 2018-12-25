@@ -1,5 +1,6 @@
 package cn.edu.hebtu.software.sharemate.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import cn.edu.hebtu.software.sharemate.Activity.LoginActivity;
+import cn.edu.hebtu.software.sharemate.Activity.MainActivity;
 import cn.edu.hebtu.software.sharemate.R;
 
 public class HomeFragment extends Fragment {
@@ -43,6 +46,7 @@ public class HomeFragment extends Fragment {
                 addBackgroundAlpha(0.7f);
             }
         });
+
         //获取tabhost组件
         FragmentTabHost tabHost = view.findViewById(android.R.id.tabhost);
         //初始化Tabhost容器
@@ -110,6 +114,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
         return view;
     }
     private void showPopupWindow(){
@@ -123,11 +128,14 @@ public class HomeFragment extends Fragment {
             }
         });
         View v =getLayoutInflater().inflate(R.layout.more_item,null);
-        ImageView imageView=v.findViewById(R.id.delete);
-        imageView.setOnClickListener(new View.OnClickListener() {
+        //退出登录
+        final Button btnback=v.findViewById(R.id.tuichu);
+        btnback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popupWindow.dismiss();
+                Intent intent=new Intent();
+                intent.setClass(getContext(), LoginActivity.class);
+                startActivity(intent);
             }
         });
         //将自定义的视图添加到 popupWindow 中
@@ -136,6 +144,7 @@ public class HomeFragment extends Fragment {
         popupWindow .setFocusable(true);
         popupWindow .setOutsideTouchable(true);
         popupWindow.showAtLocation(root, Gravity.NO_GRAVITY,0,0);
+
     }
     private View getTabSpecView(String name, String tag){
         LayoutInflater layoutInflater = getLayoutInflater();

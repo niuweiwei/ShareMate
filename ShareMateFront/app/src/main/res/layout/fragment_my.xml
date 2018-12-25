@@ -73,25 +73,28 @@
                         android:columnCount="3"
                         android:rowCount="2">
                         <TextView
+                            android:id="@+id/followCount"
                             android:layout_marginLeft="30dp"
-                            android:layout_width="wrap_content"
+                            android:layout_width="25dp"
+                            android:gravity="center"
                             android:layout_height="wrap_content"
-                            android:text="285"
                             android:textColor="@color/blackGray"/>
                         <TextView
+                            android:id="@+id/fanCount"
                             android:layout_marginLeft="35sp"
-                            android:layout_width="wrap_content"
+                            android:layout_width="25dp"
+                            android:gravity="center"
                             android:layout_height="wrap_content"
-                            android:text="541"
                             android:textColor="@color/blackGray"/>
+
                         <TextView
+                            android:id="@+id/likeCount"
+                            android:layout_width="25dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginLeft="40sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1004"
-                            android:textColor="@color/blackGray"/>
+                            android:gravity="center"
+                            android:textColor="@color/blackGray" />
                         <TextView
-                            android:id="@+id/focus"
                             android:layout_marginLeft="28dp"
                             android:layout_marginTop="5dp"
                             android:clickable="true"
@@ -109,7 +112,7 @@
                             android:layout_marginTop="5dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="获赞与收藏"/>
+                            android:text="收获的赞"/>
                     </GridLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -152,7 +155,6 @@
                     android:layout_marginLeft="8dp"
                     android:src="@drawable/girl"/>
                 <TextView
-                    android:id="@+id/address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"

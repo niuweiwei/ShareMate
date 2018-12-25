@@ -13,6 +13,8 @@ public class Reply implements Parcelable {
     private String content;
     private String time;
     private int countZan;
+    private int userId;
+    private UserBean user;
 
     public Reply() {
     }
@@ -50,6 +52,22 @@ public class Reply implements Parcelable {
             return new Reply[size];
         }
     };
+
+    public UserBean getUser() {
+        return user;
+    }
+
+    public void setUser(UserBean user) {
+        this.user = user;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     public int getReplyId() { return replyId; }
 

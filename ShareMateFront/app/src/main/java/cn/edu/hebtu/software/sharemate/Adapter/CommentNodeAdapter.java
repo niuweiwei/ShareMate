@@ -1,6 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -10,6 +11,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +34,9 @@ import java.util.Map;
 
 import javax.security.auth.login.LoginException;
 
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Bean.Comment;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.ImageTask;
 
@@ -37,6 +47,7 @@ public class CommentNodeAdapter extends BaseAdapter {
     private boolean isZan;
     int userId;//当前登录的用户
     private List<Integer> list;
+    private UserBean user=new UserBean();
 
     private String path;
 
@@ -72,10 +83,17 @@ public class CommentNodeAdapter extends BaseAdapter {
         }
         final Resources res=convertView.getResources();
         ImageView imageView=convertView.findViewById(R.id.iv_image);
-        ImageTask imageTask=new ImageTask(path+comments.get(position).getUser().getUserPhotoPath());
+        ImageTask imageTask=new ImageTask(comments.get(position).getUser().getUserPhotoPath());
         Object[] objects=new Object[]{imageView};
         imageTask.execute(objects);
-
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context, FriendActivity.class);
+                intent.putExtra("friend",comments.get(position).getUser());
+                context.startActivity(intent);
+            }
+        });
         TextView name=convertView.findViewById(R.id.tv_name);
         name.setText(comments.get(position).getUser().getUserName());
         TextView content=convertView.findViewById(R.id.tv_content);

@@ -65,14 +65,14 @@ public class ReplyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply);
-        path="http://"+getResources().getString(R.string.server_path)+":8080/sharemate/";;
+        path=getResources().getString(R.string.server_path);
         send=findViewById(R.id.tv_send);
         etReply=findViewById(R.id.et_reply);
         userPhoto=findViewById(R.id.iv_headimage);
         Bundle b=getIntent().getExtras();
         comment=(Comment)b.getSerializable("comment");
         user=(UserBean)b.getSerializable("user");
-        ImageTask imageTask1=new ImageTask(path+user.getUserPhotoPath());
+        ImageTask imageTask1=new ImageTask(user.getUserPhotoPath());
         Object[] objects1=new Object[]{userPhoto};
         imageTask1.execute(objects1);
 
@@ -250,8 +250,15 @@ public class ReplyActivity extends AppCompatActivity {
                         reply.setContent(obj.getString("replyDetail"));
                         reply.setTime(obj.getString("replyDate"));
                         reply.setCountZan(obj.getInt("replyLikeCount"));
-                        reply.setUserName(obj.getString("userName"));
-                        reply.setUserPhoto(obj.getString("userPhoto"));
+                        UserBean user=new UserBean();
+                        user.setUserId(obj.getInt("userId"));
+                        user.setFanCount(obj.getInt("fanCount"));
+                        user.setFollowCount(obj.getInt("followCount"));
+                        user.setLikeCount(obj.getInt("likeCount"));
+                        user.setUserIntroduce(obj.getString("introduce"));
+                        user.setUserName(obj.getString("userName"));
+                        user.setUserPhotoPath(path+obj.getString("userPhoto"));
+                        reply.setUser(user);
                         if (obj.getString("reReplyName").equals("0")) {
                             //是针对评论的回复
                             reply.setCommentId(comment.getCommentId());
@@ -273,7 +280,7 @@ public class ReplyActivity extends AppCompatActivity {
         protected void onPostExecute(Object o) {
             //设置评论
             ImageView imageView=findViewById(R.id.iv_image);
-            ImageTask imageTask=new ImageTask(path+comment.getUser().getUserPhotoPath());
+            ImageTask imageTask=new ImageTask(comment.getUser().getUserPhotoPath());
             imageTask.execute(imageView);
             TextView name=findViewById(R.id.tv_name);
             name.setText(comment.getUser().getUserName());

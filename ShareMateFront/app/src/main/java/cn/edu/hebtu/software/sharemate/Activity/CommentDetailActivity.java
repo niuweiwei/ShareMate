@@ -20,6 +20,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,11 +61,12 @@ public class CommentDetailActivity extends AppCompatActivity {
     private TextView send;
     private TextView sumComment;
     private ImageView userPhoto;
-    private UserBean user;//当前登录人
+    private int userId;//当前登录人
+    private UserBean user=new UserBean();//当前登录人
     private List<Comment> comments=new ArrayList<>();
     private String path;
     private Map<Integer,ArrayList<Reply>> replyMap=new HashMap<>();
-    private int noteId=1;
+    private int noteId;
     private List<Integer> commentlist=new ArrayList<>();//当前用户点赞过的所有评论id
     private List<Integer> replylist=new ArrayList<>();//当前用户赞过的所有回复id
     private int currentCommentId=0;//当前要回复的评论的Id
@@ -69,20 +74,19 @@ public class CommentDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decomment);
-        path="http://"+getResources().getString(R.string.server_path)+":8080/sharemate/";
+        path=getResources().getString(R.string.server_path);
         listView=findViewById(R.id.lv_comment);
         etComment=findViewById(R.id.et_comment);
         send=findViewById(R.id.tv_send);
         sumComment=findViewById(R.id.tv_sumComment);
+        userPhoto=findViewById(R.id.iv_headimage);
 
         Intent intent=getIntent();
         noteId=intent.getIntExtra("noteId",0);
-        //用户头像
-        userPhoto=findViewById(R.id.iv_headimage);
-        user=(UserBean)intent.getSerializableExtra("user");
-        ImageTask imageTask1=new ImageTask(path+user.getUserPhotoPath());
-        Object[] objects1=new Object[]{userPhoto};
-        imageTask1.execute(objects1);
+        userId=intent.getIntExtra("userId",0);
+        Log.e("userId",userId+"");
+        GetUserDetail getUserDetail=new GetUserDetail();
+        getUserDetail.execute(userId);
 
         //整个页面
         final View contentView=findViewById(R.id.rl_root);
@@ -147,6 +151,50 @@ public class CommentDetailActivity extends AppCompatActivity {
                 imm.hideSoftInputFromWindow(v.getWindowToken(),0);
             }
         });
+    }
+    //从数据库中获得UserBean对象
+    public class GetUserDetail extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try {
+                URL url = new URL(path+"UserServlet?userId="+objects[0]);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("contentType", "UTF-8");
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String res = br.readLine();
+                //解析JSON
+                JSONObject jsonObject = new JSONObject(res);
+                user.setUserId(jsonObject.getInt("userId"));
+                user.setUserPhotoPath(jsonObject.getString("userPhoto"));
+                user.setUserName(jsonObject.getString("userName"));
+                user.setUserSex(jsonObject.getString("userSex"));
+                user.setUserBirth(jsonObject.getString("userBirth"));
+                user.setUserAddress(jsonObject.getString("userAddress"));
+                user.setUserIntroduce(jsonObject.getString("userIntro"));
+                user.setFollowCount(jsonObject.getInt("followCount"));
+                user.setFanCount(jsonObject.getInt("fanCount"));
+                user.setLikeCount(jsonObject.getInt("likeCount"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            //用户头像
+
+            ImageTask imageTask1=new ImageTask(path+user.getUserPhotoPath());
+            Log.e("userPath",path+user.getUserPhotoPath());
+            Object[] objects1=new Object[]{userPhoto};
+            imageTask1.execute(objects1);
+        }
     }
     //查询当前用户点赞过哪些评论
     class UserLikeComment extends AsyncTask{
@@ -295,7 +343,12 @@ public class CommentDetailActivity extends AppCompatActivity {
                     comment.setContent(obj.getString("commentDetail"));
                     comment.setCommentTime(obj.getString("commentDate"));
                     comment.setCountZan(obj.getInt("commentLikeCount"));
-                    UserBean user=new UserBean(obj.getString("userName"),obj.getString("userPhoto"));
+                    UserBean user=new UserBean(obj.getString("userName"),path+obj.getString("userPhoto"));
+                    user.setFanCount(obj.getInt("fanCount"));
+                    user.setFollowCount(obj.getInt("followCount"));
+                    user.setLikeCount(obj.getInt("likeCount"));
+                    user.setUserIntroduce(obj.getString("introduce"));
+                    user.setUserId(obj.getInt("userId"));
                     comment.setUser(user);
                     comments.add(comment);
                 }
@@ -348,8 +401,16 @@ public class CommentDetailActivity extends AppCompatActivity {
                         reply.setContent(obj.getString("replyDetail"));
                         reply.setTime(obj.getString("replyDate"));
                         reply.setCountZan(obj.getInt("replyLikeCount"));
-                        reply.setUserName(obj.getString("userName"));
-                        reply.setUserPhoto(obj.getString("userPhoto"));
+                        UserBean user=new UserBean();
+                        user.setUserId(obj.getInt("userId"));
+                        user.setFanCount(obj.getInt("fanCount"));
+                        user.setFollowCount(obj.getInt("followCount"));
+                        user.setLikeCount(obj.getInt("likeCount"));
+                        user.setUserIntroduce(obj.getString("introduce"));
+                        user.setUserName(obj.getString("userName"));
+                        user.setUserPhotoPath(path+obj.getString("userPhoto"));
+                        reply.setUser(user);
+
                         if (obj.getString("reReplyName").equals("0")) {
                             //是针对评论的回复
                             reply.setCommentId(comment.getCommentId());

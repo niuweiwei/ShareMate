@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Activity.ReplyActivity;
 import cn.edu.hebtu.software.sharemate.Bean.Comment;
 import cn.edu.hebtu.software.sharemate.Bean.Reply;
@@ -95,9 +96,18 @@ public class CommentAdapter extends BaseAdapter {
         }
         final Resources res = convertView.getResources();
         ImageView imageView = convertView.findViewById(R.id.iv_image);
-        ImageTask imageTask = new ImageTask(path + comments.get(position).getUser().getUserPhotoPath());
+        ImageTask imageTask = new ImageTask(comments.get(position).getUser().getUserPhotoPath());
         Object[] objects = new Object[]{imageView};
         imageTask.execute(objects);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent=new Intent(context, FriendActivity.class);
+                intent.putExtra("friend",comments.get(position).getUser());
+                context.startActivity(intent);
+            }
+        });
 
         TextView name = convertView.findViewById(R.id.tv_name);
         name.setText(comments.get(position).getUser().getUserName());

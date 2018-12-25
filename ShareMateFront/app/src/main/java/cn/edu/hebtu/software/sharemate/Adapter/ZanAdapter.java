@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,9 +50,13 @@ public class ZanAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(itemLayout,null);
         }
         ImageView view = convertView.findViewById(R.id.zan);
-        view.setImageResource(list.get(position).getNoPhoto());
+        Glide.with(context).load(list.get(position).getNoteImagePath()).into(view);
         TextView textView = convertView.findViewById(R.id.note);
-        textView.setText(list.get(position).getTitle().substring(0,6)+"..");
+        if(list.get(position).getNoteTitle() != null && list.get(position).getNoteTitle().length()<6){
+            textView.setText(list.get(position).getNoteTitle());
+        }else {
+            textView.setText(list.get(position).getNoteTitle().substring(0, 6) + "..");
+        }
         return convertView;
     }
 }
