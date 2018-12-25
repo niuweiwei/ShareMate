@@ -60,7 +60,7 @@ public class TuijianNoteServlet extends HttpServlet {
 		if(userid!=null) {
 			int userId = Integer.parseInt(userid);
 		    user=userDao.getUserById(userId);
-	    	noteLike=like.getLikeNoteList(user);
+	    	noteLike=like.getLikeNoteList(user.getUserId());
 	    	//System.out.println("notelike"+noteLike.size());
 		}
 		if(userid!=null&&noteid!=null) {
@@ -123,7 +123,7 @@ public class TuijianNoteServlet extends HttpServlet {
     			note.setLike(ilike);
     			//System.out.println(note.getNoteId()+"islike"+note.isLike());
     		}
-    		//Collections.shuffle(noteList);
+    		Collections.shuffle(noteList);
     		request.setAttribute("noteList", noteList);
     		System.out.println("notelike"+noteList.size());
     		String jsonString="";

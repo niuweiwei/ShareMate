@@ -53,7 +53,7 @@ public class BeautNoteServlet extends HttpServlet {
 		if(userid!=null) {
 			int userId = Integer.parseInt(userid);
 		    user=userDao.getUserById(userId);
-	    	noteLike=like.getLikeNoteList(user);
+	    	noteLike=like.getLikeNoteList(user.getUserId());
 	    	System.out.println("notelike"+noteLike.size());
 		}
 		if(userid!=null&&noteid!=null) {

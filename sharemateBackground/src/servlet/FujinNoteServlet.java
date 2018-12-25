@@ -74,9 +74,11 @@ public class FujinNoteServlet extends HttpServlet {
         		if(u.getUserAddress().equals(userAddress)&&u.getUserId()!=user.getUserId()) {
         			System.out.println("一个地方"+u.getUserAddress());
         			List<NoteBean> partnote = noteDao.getNoteList(u.getUserId());
+        			System.out.println("par"+partnote.size());
         			noteList.addAll(partnote);
+        			
         		}
-        	}
+        	}System.out.println("note"+noteList.size());
         }
       
     	//获取笔记的赞评论收藏数	

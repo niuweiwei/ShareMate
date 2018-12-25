@@ -65,7 +65,7 @@ public class FollowNoteServlet extends HttpServlet {
 		int userId = Integer.parseInt(userid);
 		UserBean user = new UserBean();
 		 user=userdao.getUserById(userId);
-		 noteLike=like.getLikeNoteList(user);
+		 noteLike=like.getLikeNoteList(user.getUserId());
 		 noteCollect=collect.getCollectNoteList(user);
 		 //notefollow = follow.getFollow(user);
 	    System.out.println("notelike"+noteLike.size());
@@ -107,7 +107,7 @@ public class FollowNoteServlet extends HttpServlet {
 		      }
 		 }
 		
-		int followcount = follow.getFollowCount(user);
+		int followcount = follow.getFollowCount(user.getUserId());
 		if(followcount>0) {
 		noteList= notedao.getNoteByuserId(userId);
 		List<CommentBean> list = new ArrayList<CommentBean>();
