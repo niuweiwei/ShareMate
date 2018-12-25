@@ -6,10 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 import cn.edu.hebtu.software.sharemate.R;
 
 public class SelectTopicActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private int userId;
+    private ArrayList<Integer> type = new ArrayList<>();
     //定义一个标记
     private Boolean b_sub_square = false;
     private Button button;
@@ -20,6 +24,8 @@ public class SelectTopicActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_topic);
         findViews();
+        userId = getIntent().getIntExtra("userId",0);
+        type = getIntent().getIntegerArrayListExtra("type");
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
@@ -330,6 +336,8 @@ public class SelectTopicActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.button:
                 Intent intent = new Intent(SelectTopicActivity.this,MainActivity.class);
+                intent.putExtra("userId",userId);
+                intent.putIntegerArrayListExtra("type",type);
                 startActivity(intent);
                 break;
         }

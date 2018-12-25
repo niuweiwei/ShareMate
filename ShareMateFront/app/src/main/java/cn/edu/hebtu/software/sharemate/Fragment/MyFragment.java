@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,6 +119,7 @@ public class MyFragment extends Fragment {
             collection.setTextColor(getResources().getColor(R.color.darkGray));
             noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,noteList,user);
             gridView.setAdapter(noteAdapter);
+            setNoteGridView(gridView);
         }
     }
 
@@ -163,7 +165,7 @@ public class MyFragment extends Fragment {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL(path+"UserServlet?userId=1");
+                URL url = new URL(path+"UserServlet?userId=2");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.setRequestProperty("contentType", "UTF-8");
@@ -242,8 +244,11 @@ public class MyFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("111","111");
                 Intent intent = new Intent(getActivity(), NoteDetailActivity.class);
                 intent.putExtra("noteId",noteList.get(position).getNoId());
+                Log.e("noteId",noteList.get(position).getNoId()+"");
+                intent.putExtra("userId",user.getUserId());
                 startActivity(intent);
             }
         });
@@ -252,8 +257,10 @@ public class MyFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("111","111");
                 Intent intent = new Intent(getActivity(), NoteDetailActivity.class);
                 intent.putExtra("noteId",collectionList.get(position).getNoId());
+                intent.putExtra("userId",user.getUserId());
                 startActivity(intent);
             }
         });

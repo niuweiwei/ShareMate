@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Adapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -22,8 +20,6 @@ public class ImageTask extends AsyncTask {
     public ImageTask(String path) {
         this.path = path;
     }
-
-
     @Override
     protected Object doInBackground(Object[] objects) {
 
@@ -46,7 +42,6 @@ public class ImageTask extends AsyncTask {
                 map.put((ImageView) objects[0],bitmap);
                 is.close();
             }
-            conn.disconnect();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -64,3 +59,4 @@ public class ImageTask extends AsyncTask {
             imageView.setImageBitmap(map.get(imageView));
     }
 }
+

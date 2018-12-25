@@ -7,12 +7,15 @@ import java.io.Serializable;
 public class UserBean implements Serializable {
 
     private String userName;
+    private String userPassword;
+    private String userPhone;
     private int userPhoto;
     private int userId;
     private String userSex;
     private String userAddress;
     private String userBirth;
     private String userIntroduce;
+    private Bitmap userImage;
     private String userPhotoPath;
     private int followCount;
     private int fanCount;
@@ -20,7 +23,18 @@ public class UserBean implements Serializable {
     private int noteCount;
     private boolean states;
 
-    public UserBean() { }
+
+    public UserBean() {
+    }
+    public UserBean(Object object){}
+    public UserBean(int userId) {
+        this.userId = userId;
+    }
+
+    public UserBean(String userName, String userPhotoPath) {
+        this.userName = userName;
+        this.userPhotoPath = userPhotoPath;
+    }
 
     public UserBean(String userName, int userPhoto) {
         this.userName = userName;
@@ -35,6 +49,22 @@ public class UserBean implements Serializable {
         this.userAddress = userAddress;
         this.userBirth = userBirth;
         this.userIntroduce = userIntroduce;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
     }
 
     public String getUserName() {
@@ -79,6 +109,14 @@ public class UserBean implements Serializable {
 
     public void setUserPhotoPath(String userPhotoPath) {
         this.userPhotoPath = userPhotoPath;
+    }
+
+    public Bitmap getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(Bitmap userImage) {
+        this.userImage = userImage;
     }
 
     public int getFollowCount() {

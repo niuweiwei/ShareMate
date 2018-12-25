@@ -91,24 +91,24 @@
                         android:gravity="center"
                         android:textColor="@color/blackGray" />
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:layout_marginLeft="28dp"
                         android:layout_marginTop="5dp"
                         android:clickable="true"
-                        android:text="关注" />
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="关注"/>
+                    <TextView
                         android:layout_marginLeft="32sp"
                         android:layout_marginTop="5dp"
-                        android:text="粉丝" />
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="粉丝"/>
+                    <TextView
                         android:layout_marginLeft="28sp"
                         android:layout_marginTop="5dp"
-                        android:text="收获的赞" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="收获的赞"/>
                 </GridLayout>
                 <Button
                     android:id="@+id/personal"

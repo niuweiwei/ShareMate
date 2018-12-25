@@ -1,6 +1,8 @@
 package cn.edu.hebtu.software.sharemate.Bean;
 
-public class Comment {
+import java.io.Serializable;
+
+public class Comment  implements Serializable{
     private int commentId;
     private int nodeId;
     private int headImage;
@@ -8,6 +10,7 @@ public class Comment {
     private String content;
     private String commentTime;
     private int countZan;
+    private UserBean user;
     public Comment() {
     }
 
@@ -76,5 +79,13 @@ public class Comment {
 
     public void setCountZan(int countZan) {
         this.countZan = countZan;
+    }
+
+    public UserBean getUser() {
+        return user;
+    }
+
+    public void setUser(UserBean user) {
+        this.user = user;
     }
 }

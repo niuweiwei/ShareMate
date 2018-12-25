@@ -1,5 +1,6 @@
 package cn.edu.hebtu.software.sharemate.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import cn.edu.hebtu.software.sharemate.Activity.LoginActivity;
+import cn.edu.hebtu.software.sharemate.Activity.MainActivity;
 import cn.edu.hebtu.software.sharemate.R;
 
 public class HomeFragment extends Fragment {
@@ -43,6 +46,16 @@ public class HomeFragment extends Fragment {
                 addBackgroundAlpha(0.7f);
             }
         });
+//        //退出登录
+//        Button btnback=view.findViewById(R.id.tuichu);
+//        btnback.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent=new Intent();
+//                intent.setClass(getContext(), LoginActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         //获取tabhost组件
         FragmentTabHost tabHost = view.findViewById(android.R.id.tabhost);
         //初始化Tabhost容器
@@ -110,6 +123,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
         return view;
     }
     private void showPopupWindow(){

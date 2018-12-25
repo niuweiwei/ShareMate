@@ -24,8 +24,9 @@ public class UpLoadUtil extends AsyncTask{
         String CONTENT_TYPE = "multipart/form-data";
         File file = new File((String) objects[0]);
         Map<String,Object> paramMap= (Map<String, Object>) objects[1];
+        String path=(String)objects[2];
         try {
-            URL url = new URL("http://10.7.89.233:8080/sharemate/HeadServlet");
+            URL url = new URL(path+"HeadServlet");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoInput(true); // 允许输入流
             con.setDoOutput(true); // 允许输出流

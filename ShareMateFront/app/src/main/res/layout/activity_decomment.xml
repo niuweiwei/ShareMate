@@ -35,12 +35,11 @@
                     android:layout_height="match_parent"
                     android:gravity="center">
                     <TextView
-                        android:id="@+id/tv_SumCollection"
+                        android:id="@+id/tv_sumComment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:textSize="22sp"
-                        android:text="124"
                         android:gravity="center"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -54,14 +53,15 @@
         </LinearLayout>
         <ListView
             android:layout_marginTop="5dp"
+            android:layout_marginBottom="50dp"
             android:id="@+id/lv_comment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/white"
             android:focusable="false"
             android:divider="@color/white">
 
-        </ListView>
+        </ListView><!--修改-->
     </LinearLayout>
     <!--bottom-->
     <LinearLayout
@@ -71,12 +71,13 @@
         android:orientation="horizontal"
         android:background="@color/grayishBlue"
         android:gravity="center"
-        android:layout_alignParentBottom="true">
-        <cn.edu.hebtu.software.sharemate.tools.GradationScrollView
+        android:layout_alignParentBottom="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"><!--修改-->
+        <cn.edu.hebtu.software.sharemate.tools.RoundImgView
             android:id="@+id/iv_headimage"
             android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/a7"/>
+            android:layout_height="32dp" />
         <EditText
             android:id="@+id/et_comment"
             android:layout_marginLeft="7dp"

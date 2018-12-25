@@ -1,10 +1,12 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -102,6 +104,33 @@ public class FriendActivity extends AppCompatActivity {
         backView.setOnClickListener(listener);
         note.setOnClickListener(listener);
         collection.setOnClickListener(listener);
+        fanCount.setOnClickListener(listener);
+        followCount.setOnClickListener(listener);
+    }
+    public void setNoteGridView(GridView gridView){
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("111","111");
+                Intent intent = new Intent(FriendActivity.this, NoteDetailActivity.class);
+                intent.putExtra("noteId",noteList.get(position).getNoId());
+                Log.e("noteId",noteList.get(position).getNoId()+"");
+                intent.putExtra("userId",user.getUserId());
+                startActivity(intent);
+            }
+        });
+    }
+    public void setCollectGridView(GridView gridView){
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("111","111");
+                Intent intent = new Intent(FriendActivity.this, NoteDetailActivity.class);
+                intent.putExtra("noteId",collectionList.get(position).getNoId());
+                intent.putExtra("userId",user.getUserId());
+                startActivity(intent);
+            }
+        });
     }
 
     public class SetOnClickListener implements View.OnClickListener{
@@ -112,17 +141,31 @@ public class FriendActivity extends AppCompatActivity {
                 case R.id.back:
                     FriendActivity.this.finish();
                     break;
+                case R.id.followCount:
+                    Intent focusIntent = new Intent();
+                    focusIntent.setClass(FriendActivity.this, FollowActivity.class);
+                    focusIntent.putExtra("user",user);
+                    startActivity(focusIntent);
+                    break;
+                case R.id.fanCount:
+                    Intent fanIntent = new Intent();
+                    fanIntent.setClass(FriendActivity.this, FanActivity.class);
+                    fanIntent.putExtra("user",user);
+                    startActivity(fanIntent);
+                    break;
                 case R.id.note:
                     note.setTextColor(getResources().getColor(R.color.warmRed));
                     collection.setTextColor(getResources().getColor(R.color.darkGray));
                     noteAdapter = new NoteAdapter(FriendActivity.this, R.layout.note_item,noteList,user);
                     gridView.setAdapter(noteAdapter);
+                    setNoteGridView(gridView);
                     break;
                 case R.id.collection:
                     collection.setTextColor(getResources().getColor(R.color.warmRed));
                     note.setTextColor(getResources().getColor(R.color.darkGray));
                     noteAdapter = new NoteAdapter(FriendActivity.this, R.layout.note_item,collectionList,user);
                     gridView.setAdapter(noteAdapter);
+                    setCollectGridView(gridView);
                     break;
             }
         }
@@ -167,6 +210,7 @@ public class FriendActivity extends AppCompatActivity {
             collection.setTextColor(getResources().getColor(R.color.darkGray));
             noteAdapter = new NoteAdapter(FriendActivity.this, R.layout.note_item,noteList,user);
             gridView.setAdapter(noteAdapter);
+            setNoteGridView(gridView);
         }
     }
 

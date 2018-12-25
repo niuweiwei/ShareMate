@@ -78,7 +78,7 @@ public class CommentActivity extends AppCompatActivity {
                 //将回复框隐藏 关闭软键盘
                 if(replyLayout.getVisibility()==View.VISIBLE) {
                     replyLayout.setVisibility(View.GONE);
-                    manager.hideSoftInputFromWindow(CommentActivity.this.getCurrentFocus().getWindowToken(), 0);
+//                    manager.hideSoftInputFromWindow(CommentActivity.this.getCurrentFocus().getWindowToken(), 0);
                 }
                 window = new PopupWindow(root,LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
                 window.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -147,16 +147,16 @@ public class CommentActivity extends AppCompatActivity {
                     int id = comments.get(position).getId();
                     LikeTask likeTask = new LikeTask();
                     likeTask.execute(currentUserId,tag,id,"like");
+                    comments.get(position).setLike(true);
                     Toast likeToast = Toast.makeText(CommentActivity.this,"点赞成功",Toast.LENGTH_SHORT);
                     likeToast.setGravity(Gravity.TOP,0,300);
-                    like.setText("取消赞");
                     likeToast.show();
                 }else{
                     int tag = comments.get(position).getTag();
                     int id = comments.get(position).getId();
                     LikeTask likeTask = new LikeTask();
                     likeTask.execute(currentUserId,tag,id,"cancel");
-                    like.setText("赞");
+                    comments.get(position).setLike(false);
                     Toast cancelToast = Toast.makeText(CommentActivity.this,"取消赞成功",Toast.LENGTH_SHORT);
                     cancelToast.setGravity(Gravity.TOP,0,300);
                     cancelToast.show();
@@ -274,11 +274,13 @@ public class CommentActivity extends AppCompatActivity {
                     //跳转到笔记详情页面
                     Intent intent = new Intent(CommentActivity.this,NoteDetailActivity.class);
                     intent.putExtra("noteId",comments.get(position).getNoteId());
+                    intent.putExtra("userId",currentUserId);
                     startActivity(intent);
                     break;
                 case R.id.btn_commentlist:
                     Intent intent1 = new Intent(CommentActivity.this,CommentDetailActivity.class);
                     intent1.putExtra("noteId",comments.get(position).getNoteId());
+                    intent1.putExtra("userId",currentUserId);
                     startActivity(intent1);
                     break;
                 case R.id.btn_cancel:
@@ -310,6 +312,7 @@ public class CommentActivity extends AppCompatActivity {
                 if(comments.size()!=0)
                     comments.clear();
                 JSONArray array = new JSONArray(result);
+                Log.e("array",array.length()+"");
                 for(int i=0;i<array.length();i++) {
 
                     JSONObject object = array.getJSONObject(i);
@@ -340,7 +343,7 @@ public class CommentActivity extends AppCompatActivity {
                     comment.setArguedId(object.getInt("arguedId"));
                     comments.add(comment);
                 }
-
+                Log.e("size",comments.size()+"");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -353,6 +356,7 @@ public class CommentActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object o) {
+
             adapter = new CommentListAdapter(CommentActivity.this,comments,R.layout.comment_list_item_layout);
             listView.setAdapter(adapter);
         }

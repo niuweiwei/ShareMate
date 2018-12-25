@@ -3,16 +3,18 @@ package cn.edu.hebtu.software.sharemate.Bean;
 import java.util.Date;
 
 public class FollowBean {
-    private int currentUser;//记录当前用户的id
     private UserBean user;
+//    private Date date;
+    private int currentUser;//记录当前用户的id
     private String date;
     private boolean isFollow;
 
-    public FollowBean(){}
+    public FollowBean() {
+    }
 
-    public FollowBean(int currentUser, UserBean user, String date, boolean isFollow) {
-        this.currentUser = currentUser;
+    public FollowBean(UserBean user, int currentUser, String date, boolean isFollow) {
         this.user = user;
+        this.currentUser = currentUser;
         this.date = date;
         this.isFollow = isFollow;
     }
@@ -23,6 +25,14 @@ public class FollowBean {
 
     public void setUser(UserBean user) {
         this.user = user;
+    }
+
+    public int getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(int currentUser) {
+        this.currentUser = currentUser;
     }
 
     public String getDate() {
@@ -39,13 +49,5 @@ public class FollowBean {
 
     public void setFollow(boolean follow) {
         isFollow = follow;
-    }
-
-    public int getCurrentUser() {
-        return currentUser;
-    }
-
-    public void setCurrentUser(int currentUser) {
-        this.currentUser = currentUser;
     }
 }

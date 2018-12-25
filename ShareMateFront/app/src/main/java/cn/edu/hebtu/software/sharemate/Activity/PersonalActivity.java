@@ -162,7 +162,7 @@ public class PersonalActivity extends AppCompatActivity {
                     break;
                 case R.id.back:
                     SaveUser saveUser = new SaveUser();
-                    saveUser.execute(user);
+                    saveUser.execute(user,path);
                     if("my".equals(sign)){
                         Intent myIntent = new Intent(PersonalActivity.this,MainActivity.class);
                         myIntent.putExtra("flag","my");
@@ -197,7 +197,7 @@ public class PersonalActivity extends AppCompatActivity {
                 final Map<String,Object> paramMap = new HashMap<>();
                 paramMap.put("userId",user.getUserId());
                 UpLoadUtil upLoadUtil = new UpLoadUtil();
-                upLoadUtil.execute(cropUri.getPath(),paramMap);
+                upLoadUtil.execute(cropUri.getPath(),paramMap,path);
                 break;
         }
         if(requestCode == 3 && resultCode == 200){
