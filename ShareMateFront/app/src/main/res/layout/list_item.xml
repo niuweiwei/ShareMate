@@ -21,7 +21,7 @@
             android:layout_marginLeft="10dp"
             android:orientation="horizontal">
 
-            <ImageView
+            <cn.edu.hebtu.software.sharemate.tools.RoundImgView
                 android:id="@+id/user_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -47,7 +47,7 @@
         </RelativeLayout>
 
         <ImageView
-            android:layout_marginTop="-20dp"
+            android:layout_marginTop="0dp"
             android:id="@+id/iv_photo"
             android:layout_width="412dp"
             android:layout_height="540dp"
@@ -96,7 +96,7 @@
                         android:layout_height="30dp"
                         android:layout_marginLeft="100dp"
                         android:background="@drawable/xin"
-                         />
+                        />
 
                     <TextView
                         android:id="@+id/z_count"
@@ -188,11 +188,10 @@
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
-                <ImageView
+                <cn.edu.hebtu.software.sharemate.tools.RoundImgView
                     android:id="@+id/user_icon2"
                     android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/dm5" />
+                    android:layout_height="30dp"/>
                 <EditText
                     android:id="@+id/fb"
                     android:layout_width="250dp"

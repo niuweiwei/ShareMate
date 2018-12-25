@@ -51,55 +51,33 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
     private ListTask2 listTask2;
     private ListTask3 listTask3;
     private ZanTask zanTask;
-    private int userId;
-    private String U="http://10.7.89.193:8080/sharemate/";
+    private int userId=2;
+    private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
     private List<Integer>type = new ArrayList<>();
     int typeid1,typeid2,typeid3,typeid4,typeid5,typeid6;
+//    private int position;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view= inflater.inflate(R.layout.note_fragment,container,false);
+        U=getResources().getString(R.string.server_path);
         //typeid需要从activity获取intent的内容，待修改
         type=getActivity().getIntent().getIntegerArrayListExtra("type");
+//        type.add(1);
+//        type.add(2);
+//        type.add(3);
         userId = getActivity().getIntent().getIntExtra("userId",0);
-        Log.e("tuijian userId",userId+"");Log.e("typesize",type.size()+"");
-        if(type.size()==3) {
-            typeid1 =type.get(0);
-            typeid2 =type.get(1);
-            typeid3 =type.get(2);
-            listTask1 = new ListTask1();
-            listTask1.execute();}
-        if(type.size()==4){
-            typeid1 =type.get(0);typeid2 =type.get(1);
-            typeid3 =type.get(2);typeid4=type.get(3);
-            listTask2 = new ListTask2();
-            listTask2.execute();}
-        if(type.size()==5){
-            typeid1 =type.get(0);typeid2 =type.get(1);
-            typeid3 =type.get(2);typeid4=type.get(3);typeid5=type.get(4);
-            listTask3 = new ListTask3();
-            listTask3.execute();}
-        if(type.size()==0||type.size()==6){
-            listTask = new ListTask();
-            listTask.execute();
-        }
-        Log.e("LoginTask", "haha");
         gridView = view.findViewById(R.id.root);
-        //创建Adapter对象
-        gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,this, notes);
-        //设置Adapter
-        gridView.setAdapter(gridViewAdapter);
-        gridView.setHorizontalSpacing(5);
-        gridView.setVerticalSpacing(5);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("点击了", ""+ position);
                 Intent intent = new Intent();
                 int noteid = notes.get(position).getNoId();
                 intent.setClass(getActivity(),NoteDetailActivity.class);
                 intent.putExtra("noteId",noteid);
+                intent.putExtra("userId",userId);
+                intent.putExtra("position",position);
                 startActivity(intent);
             }
         });
@@ -130,8 +108,8 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                 if(!isLike.get(position)){
                     notes.get(position).setIslike(1);
                     notes.get(position).setZan(R.drawable.xihuan2);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c++;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c++;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,true);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"点赞的你颜值超高",Toast.LENGTH_SHORT);
@@ -142,8 +120,8 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                 else{
                     notes.get(position).setIslike(0);
                     notes.get(position).setZan(R.drawable.xin);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c--;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c--;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,false);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"赞取消了哦",Toast.LENGTH_SHORT);
@@ -163,7 +141,6 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
             try {
                 int noteid = (int) objects[0];
                 boolean islike = (boolean) objects[1];
-                Log.e("noteid", noteid+"");Log.e("like", islike+"");
                 URL url = new URL(U+"TuijianNoteServlet?userId="+userId+"&noteId="+noteid+"&islike="+islike);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -220,12 +197,6 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         JSONObject object2 = object.getJSONObject("user");
                         UserBean user = new UserBean();
                         user.setUserName(object2.getString("userName"));
-//                        user.setUserId(object2.getInt("userId"));
-//                        user.setUserSex(object2.getString("userSex"));
-//                        user.setUserBirth(object2.getString("userBirth"));
-//                        user.setUserIntroduce(object2.getString("userIntro"));
-//                        user.setUserAddress(object2.getString("userAddress"));
-                        //user.setUserPhoto(object2.getString("usePhoto"));
                         String userImg = object2.getString("userPhoto");
                         String url3 = U+userImg;
                         URL urluser= new URL(url3);
@@ -236,7 +207,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         //Log.e("islike",""+object.getInt("like"));
@@ -267,6 +238,13 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            //创建Adapter对象
+            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,TuijianFragment.this, notes);
+            //设置Adapter
+            gridView.setAdapter(gridViewAdapter);
+            gridViewAdapter.notifyDataSetChanged();
+            gridView.setHorizontalSpacing(5);
+            gridView.setVerticalSpacing(5);
             gridViewAdapter.notifyDataSetChanged();
         }
     }
@@ -303,12 +281,6 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         JSONObject object2 = object.getJSONObject("user");
                         UserBean user = new UserBean();
                         user.setUserName(object2.getString("userName"));
-//                        user.setUserId(object2.getInt("userId"));
-//                        user.setUserSex(object2.getString("userSex"));
-//                        user.setUserBirth(object2.getString("userBirth"));
-//                        user.setUserIntroduce(object2.getString("userIntro"));
-//                        user.setUserAddress(object2.getString("userAddress"));
-                        //user.setUserPhoto(object2.getString("usePhoto"));
                         String userImg = object2.getString("userPhoto");
                         String url3 = U+userImg;
                         URL urluser= new URL(url3);
@@ -319,7 +291,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         //Log.e("islike",""+object.getInt("like"));
@@ -350,12 +322,20 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            //创建Adapter对象
+            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,TuijianFragment.this, notes);
+            //设置Adapter
+            gridView.setAdapter(gridViewAdapter);
+            gridViewAdapter.notifyDataSetChanged();
+            gridView.setHorizontalSpacing(5);
+            gridView.setVerticalSpacing(5);
             gridViewAdapter.notifyDataSetChanged();
         }
     }
     public class ListTask2 extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
+            notes=new ArrayList<>();
             try {
                 URL url = new URL(U+"TuijianNoteServlet?userId="+userId+"&typeid1="+typeid1+"&typeid2="+typeid2+"&typeid3="+typeid3+"&typeid4="+typeid4);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -385,12 +365,6 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         JSONObject object2 = object.getJSONObject("user");
                         UserBean user = new UserBean();
                         user.setUserName(object2.getString("userName"));
-//                        user.setUserId(object2.getInt("userId"));
-//                        user.setUserSex(object2.getString("userSex"));
-//                        user.setUserBirth(object2.getString("userBirth"));
-//                        user.setUserIntroduce(object2.getString("userIntro"));
-//                        user.setUserAddress(object2.getString("userAddress"));
-                        //user.setUserPhoto(object2.getString("usePhoto"));
                         String userImg = object2.getString("userPhoto");
                         String url3 = U+userImg;
                         URL urluser= new URL(url3);
@@ -401,19 +375,11 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
-                        //Log.e("islike",""+object.getInt("like"));
                         note1.setIslike(object.getInt("like"));
-                        int j;boolean c=true;
-                        for(j=0;j<notes.size();j++){
-                            if(note1.getNoId()==notes.get(j).getNoId()){
-                                c=false;
-                                break;
-                            }
-                        }
-                        if(c) {notes.add(note1);}
+                        notes.add(note1);
                     }
                     //content=persons.get(1).getUserPhoto();
                     //handler.post(runnable);
@@ -432,6 +398,13 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            //创建Adapter对象
+            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,TuijianFragment.this, notes);
+            //设置Adapter
+            gridView.setAdapter(gridViewAdapter);
+            gridViewAdapter.notifyDataSetChanged();
+            gridView.setHorizontalSpacing(5);
+            gridView.setVerticalSpacing(5);
             gridViewAdapter.notifyDataSetChanged();
         }
     }
@@ -467,12 +440,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         JSONObject object2 = object.getJSONObject("user");
                         UserBean user = new UserBean();
                         user.setUserName(object2.getString("userName"));
-//                        user.setUserId(object2.getInt("userId"));
-//                        user.setUserSex(object2.getString("userSex"));
-//                        user.setUserBirth(object2.getString("userBirth"));
-//                        user.setUserIntroduce(object2.getString("userIntro"));
-//                        user.setUserAddress(object2.getString("userAddress"));
-                        //user.setUserPhoto(object2.getString("usePhoto"));
+
                         String userImg = object2.getString("userPhoto");
                         String url3 = U+userImg;
                         URL urluser= new URL(url3);
@@ -483,7 +451,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         //Log.e("islike",""+object.getInt("like"));
@@ -514,6 +482,13 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            //创建Adapter对象
+            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,TuijianFragment.this, notes);
+            //设置Adapter
+            gridView.setAdapter(gridViewAdapter);
+            gridViewAdapter.notifyDataSetChanged();
+            gridView.setHorizontalSpacing(5);
+            gridView.setVerticalSpacing(5);
             gridViewAdapter.notifyDataSetChanged();
         }
     }
@@ -528,6 +503,33 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
             zanTask.cancel(true);
             zanTask = null;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("tuijian userId",userId+"");Log.e("typesize",type.size()+"");
+        if(type.size()==3) {
+            typeid1 =type.get(0);
+            typeid2 =type.get(1);
+            typeid3 =type.get(2);
+            listTask1 = new ListTask1();
+            listTask1.execute();}
+        if(type.size()==4){
+            typeid1 =type.get(0);typeid2 =type.get(1);
+            typeid3 =type.get(2);typeid4=type.get(3);
+            listTask2 = new ListTask2();
+            listTask2.execute();}
+        if(type.size()==5){
+            typeid1 =type.get(0);typeid2 =type.get(1);
+            typeid3 =type.get(2);typeid4=type.get(3);typeid5=type.get(4);
+            listTask3 = new ListTask3();
+            listTask3.execute();}
+        if(type.size()==0||type.size()==6){
+            listTask = new ListTask();
+            listTask.execute();
+        }
+
     }
 }
 

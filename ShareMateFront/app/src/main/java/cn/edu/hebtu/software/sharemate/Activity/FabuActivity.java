@@ -1,27 +1,57 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
+import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import cn.edu.hebtu.software.sharemate.Bean.NoteBean;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.tools.TransObjectToWeb;
+import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 
 public class FabuActivity extends AppCompatActivity {
     private PopupWindow window = null;
     private LinearLayout root = null;
+    private String path=null;
+    private int typeid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +63,13 @@ public class FabuActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView);
         if (code != null) {
             if (code.equals("1")) {
-                byte[] bis = intent.getByteArrayExtra("pic");
-                Bitmap  bitmap1 = BitmapFactory.decodeByteArray(bis, 0, bis.length);
+                String picturePath=intent.getStringExtra("lujing");
+                path=picturePath;
+                Bitmap  bitmap1 = BitmapFactory.decodeFile(picturePath);
                 imageView.setImageBitmap(bitmap1);
             } else if (code.equals("2")) {
                 String picturePath = intent.getStringExtra("pic1");
+                path=picturePath;
                 Log.e("code",code);
                 Bitmap  bitmap2 = BitmapFactory.decodeFile(picturePath);
                 imageView.setImageBitmap(bitmap2);
@@ -75,6 +107,8 @@ public class FabuActivity extends AppCompatActivity {
         });
 
 
+
+
         //获取话题
         LinearLayout linearLayout=findViewById(R.id.btn_topic);
         linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -92,8 +126,55 @@ public class FabuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showPositionPopupWindow();
+
             }
         });
+
+        //发布
+        Button btn=findViewById(R.id.fabu);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //传内容
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //获取发布内容
+                        int userid=1;
+                        UserBean userbean=new UserBean(userid);
+                        EditText EDdetial=(EditText) findViewById(R.id.detial);
+                        String detial=EDdetial.getText().toString();
+                        EditText EDtitle=(EditText)findViewById(R.id.wenzi_title);
+                        String title=EDtitle.getText().toString();
+                        NoteBean noteBean=new NoteBean(detial,title,userbean,typeid);
+                        Log.e("detial",noteBean.getNoteDetail());
+                        TransObjectToWeb toWeb=new TransObjectToWeb(getResources().getString(R.string.server_path));
+                        boolean flag=toWeb.sendToWeb(noteBean);
+                        if (flag){
+                            Looper.prepare();
+                            Log.e("success","对象传输成功");
+                            Looper.loop();
+                        }else{
+                            Looper.prepare();
+                            Log.e("fail","网络繁忙");
+                        }
+                    }
+                }).start();
+                //传图片
+                    UpLoadImage(path);
+                Log.e("fabu_btn",path);
+                //发布提示
+                showtoast();
+                //显示分享界面
+                sharepopupWindow(path);
+                addBackgroundAlpha(0.7f);
+            }
+
+
+        });
+
+
+
     }
 
 
@@ -221,6 +302,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button1.getText().toString();
                 textView.setText(tips);
+                typeid=1;
                 window.dismiss();
             }
         });
@@ -231,6 +313,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button2.getText().toString();
                 textView.setText(tips);
+                typeid=1;
                 window.dismiss();
             }
         });
@@ -241,6 +324,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button3.getText().toString();
                 textView.setText(tips);
+                typeid=1;
                 window.dismiss();
             }
         });
@@ -251,6 +335,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button4.getText().toString();
                 textView.setText(tips);
+                typeid=1;
                 window.dismiss();
             }
         });
@@ -261,6 +346,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button5.getText().toString();
                 textView.setText(tips);
+                typeid=2;
                 window.dismiss();
             }
         });
@@ -271,6 +357,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button6.getText().toString();
                 textView.setText(tips);
+                typeid=2;
                 window.dismiss();
             }
         });
@@ -281,6 +368,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button7.getText().toString();
                 textView.setText(tips);
+                typeid=2;
                 window.dismiss();
             }
         });
@@ -291,6 +379,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button8.getText().toString();
                 textView.setText(tips);
+                typeid=2;
                 window.dismiss();
             }
         });
@@ -301,6 +390,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button9.getText().toString();
                 textView.setText(tips);
+                typeid=3;
                 window.dismiss();
             }
         });
@@ -311,6 +401,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button10.getText().toString();
                 textView.setText(tips);
+                typeid=3;
                 window.dismiss();
             }
         });
@@ -321,6 +412,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button11.getText().toString();
                 textView.setText(tips);
+                typeid=3;
                 window.dismiss();
             }
         });
@@ -332,6 +424,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button12.getText().toString();
                 textView.setText(tips);
+                typeid=4;
                 window.dismiss();
             }
         });
@@ -342,6 +435,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button13.getText().toString();
                 textView.setText(tips);
+                typeid=4;
                 window.dismiss();
             }
         });
@@ -352,6 +446,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button14.getText().toString();
                 textView.setText(tips);
+                typeid=4;
                 window.dismiss();
             }
         });
@@ -362,6 +457,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button15.getText().toString();
                 textView.setText(tips);
+                typeid=4;
                 window.dismiss();
             }
         });
@@ -372,6 +468,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button16.getText().toString();
                 textView.setText(tips);
+                typeid=5;
                 window.dismiss();
             }
         });
@@ -382,6 +479,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button17.getText().toString();
                 textView.setText(tips);
+                typeid=5;
                 window.dismiss();
             }
         });
@@ -392,6 +490,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button18.getText().toString();
                 textView.setText(tips);
+                typeid=5;
                 window.dismiss();
             }
         });
@@ -402,6 +501,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button19.getText().toString();
                 textView.setText(tips);
+                typeid=5;
                 window.dismiss();
             }
         });
@@ -412,6 +512,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button20.getText().toString();
                 textView.setText(tips);
+                typeid=6;
                 window.dismiss();
             }
         });
@@ -422,6 +523,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button21.getText().toString();
                 textView.setText(tips);
+                typeid=6;
                 window.dismiss();
             }
         });
@@ -432,6 +534,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button22.getText().toString();
                 textView.setText(tips);
+                typeid=6;
                 window.dismiss();
             }
         });
@@ -442,6 +545,7 @@ public class FabuActivity extends AppCompatActivity {
                 TextView textView=findViewById(R.id.wenzi_topic);
                 String tips=button23.getText().toString();
                 textView.setText(tips);
+                typeid=6;
                 window.dismiss();
             }
         });
@@ -508,6 +612,76 @@ public class FabuActivity extends AppCompatActivity {
         getWindow().setAttributes(params);
     }
 
+
+
+
+
+
+
+
+
+    //向服务器端发送图片
+    public void UpLoadImage(String path){
+        UpLoadUtil upLoadUtil = new UpLoadUtil();
+        upLoadUtil.execute(path);
+        Log.e("upLoadImage","uploadimage");
+    }
+    //显示toast
+    public void showtoast(){
+        final Toast toastTip1
+                = Toast.makeText(FabuActivity.this,
+                "后台上传中，请稍后……",
+                Toast.LENGTH_LONG);
+        final Toast toastTip2
+                = Toast.makeText(FabuActivity.this,
+                "笔记已成功发布喽",
+                Toast.LENGTH_LONG);
+        toastTip1.setGravity(Gravity.CENTER, 0, 0);
+        toastTip2.setGravity(Gravity.CENTER, 0, 0);
+       toastTip1.show();
+       toastTip2.show();
+    }
+//分享的弹出框
+public void sharepopupWindow(String path){
+    LayoutInflater inflater =getLayoutInflater();
+    View view = inflater.inflate(R.layout.share_popupwindow,null);
+    String picturePath=path;
+    Log.e("picpath",picturePath);
+    final ImageView imageView=view.findViewById(R.id.share_lianjie);
+    final ImageView imageView1=view.findViewById(R.id.share_pic);
+    Bitmap  bitmap2 = BitmapFactory.decodeFile(picturePath);
+    imageView.setImageBitmap(bitmap2);
+    imageView1.setImageBitmap(bitmap2);
+    window.setContentView(view);//将自定义的视图添加到 popupWindow 中
+    //控制 popupwindow 再点击屏幕其他地方时自动消失
+    window.setFocusable(true);
+    window.setOutsideTouchable(true);
+    addBackgroundAlpha(0.7f);
+    final TextView textView=view.findViewById(R.id.quxiao);
+    textView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            addBackgroundAlpha(1f);
+            Intent intent1=new Intent();
+            intent1.setClass(FabuActivity.this,MainActivity.class);
+            intent1.putExtra("show","2");
+            startActivity(intent1);
+        }
+    });
+    window.setOnDismissListener(new PopupWindow.OnDismissListener() {
+        @Override
+        public void onDismiss() {
+            //在弹窗消失时调用
+            addBackgroundAlpha(1f);
+            Intent intent1=new Intent();
+            intent1.setClass(FabuActivity.this,MainActivity.class);
+            intent1.putExtra("show","2");
+            startActivity(intent1);
+        }
+    });
+    //显示 popupWindow 设置 弹出框的位置
+    window.showAtLocation(root, Gravity.BOTTOM,0,0);
+}
 
 
 

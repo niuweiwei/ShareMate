@@ -97,7 +97,7 @@ public class CustomAdapter extends BaseAdapter implements View.OnClickListener{
         viewHolder.Allcount.setText("共"+notes.get(position).getPingluncount()+"条评论");
         viewHolder.userIcon.setImageBitmap(notes.get(position).getUser().getUserImage());
         viewHolder.contentUserIcon.setImageBitmap(notes.get(position).getUserContent().getUserImage());
-        viewHolder.zanCount.setText(notes.get(position).getZancount()+"");
+        viewHolder.zanCount.setText(notes.get(position).getZancount1()+"");
         viewHolder.shouCount.setText(notes.get(position).getCollectcount()+"");
         viewHolder.commentCount.setText(notes.get(position).getPingluncount()+"");
         viewHolder.guanZhu.setBackgroundResource(notes.get(position).getFol());

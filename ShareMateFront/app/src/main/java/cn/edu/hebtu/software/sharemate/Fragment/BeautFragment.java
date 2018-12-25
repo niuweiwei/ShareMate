@@ -50,24 +50,15 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
     private ZanTask zanTask;
     private UserBean user;
     private int userId;
-    private String U="http://10.7.89.193:8080/sharemate/";
+    private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view= inflater.inflate(R.layout.note_fragment,container,false);
+        U=getResources().getString(R.string.server_path);
         userId = getActivity().getIntent().getIntExtra("userId",0);
-        Log.e("beaut userId",userId+"");
-        listTask = new ListTask();
-        //notes=new ArrayList<note>();
-        listTask.execute();
         gridView = view.findViewById(R.id.root);
-        //创建Adapter对象
-        gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,this, notes);
-        //设置Adapter
-        gridView.setAdapter(gridViewAdapter);
-        gridView.setHorizontalSpacing(5);
-        gridView.setVerticalSpacing(5);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -76,6 +67,7 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
                 Intent intent = new Intent();
                 intent.setClass(getActivity(),NoteDetailActivity.class);
                 intent.putExtra("noteId",noteid);
+                intent.putExtra("userId",userId);
                 startActivity(intent);
             }
         });
@@ -106,8 +98,8 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
                 if(!isLike.get(position)){
                     notes.get(position).setIslike(1);
                     notes.get(position).setZan(R.drawable.xihuan2);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c++;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c++;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,true);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"点赞的你颜值超高",Toast.LENGTH_SHORT);
@@ -118,8 +110,8 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
                 else{
                     notes.get(position).setIslike(0);
                     notes.get(position).setZan(R.drawable.xin);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c--;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c--;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,false);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"赞取消了哦",Toast.LENGTH_SHORT);
@@ -179,6 +171,7 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
     public class ListTask extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
+            notes=new ArrayList<>();
             try {
                 URL url = new URL(U+"BeautNoteServlet?userId="+userId);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -208,7 +201,6 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
                         JSONObject object2 = object.getJSONObject("user");
                         UserBean user = new UserBean();
                         user.setUserName(object2.getString("userName"));
-//                        user.setUserName(object2.getString("userName"));
 //                        user.setUserId(object2.getInt("userId"));
 //                        user.setUserSex(object2.getString("userSex"));
 //                        user.setUserBirth(object2.getString("userBirth"));
@@ -225,7 +217,7 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         note1.setIslike(object.getInt("like"));
@@ -238,9 +230,6 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
                         }
                         if(c) {notes.add(note1);}
                     }
-                    //content=persons.get(1).getUserPhoto();
-                    //handler.post(runnable);
-
                     Log.e("LoginTask", notes.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -256,7 +245,20 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            //创建Adapter对象
+            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,BeautFragment.this, notes);
+            //设置Adapter
+            gridView.setAdapter(gridViewAdapter);
+            gridView.setHorizontalSpacing(5);
+            gridView.setVerticalSpacing(5);
             gridViewAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        listTask = new ListTask();
+        listTask.execute();
     }
 }

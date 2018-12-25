@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <RelativeLayout
-        android:layout_width="160dp"
+        android:layout_width="152dp"
         android:layout_height="250dp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10sp"
@@ -14,7 +14,7 @@
             android:id="@+id/img_content"
             android:layout_width="150dp"
             android:layout_height="196dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="1dp"
             android:layout_marginTop="1dp" />
         <TextView
             android:id="@+id/tv_note"
@@ -35,17 +35,17 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/userHead"
                 android:layout_marginTop="1dp"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/heart" />
+                android:layout_height="20dp"/>
 
             <TextView
+                android:id="@+id/userName"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginLeft="3dp"
-                android:text="净汉更多的多多的"
                 android:textColor="@color/inkGray"
                 android:textSize="10sp" />
         </LinearLayout>

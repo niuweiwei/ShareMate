@@ -49,24 +49,16 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
     private ListTask listTask;
     private ZanTask zanTask;
     private int userId;
-    private String U="http://10.7.89.193:8080/sharemate/";
+    private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view= inflater.inflate(R.layout.note_fragment,container,false);
+        U=getResources().getString(R.string.server_path);
         userId = getActivity().getIntent().getIntExtra("userId",0);
         Log.e("Food userId",userId+"");
-        listTask = new ListTask();
-        //notes=new ArrayList<note>();
-        listTask.execute();
         gridView = view.findViewById(R.id.root);
-        //创建Adapter对象
-        gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,this, notes);
-        //设置Adapter
-        gridView.setAdapter(gridViewAdapter);
-        gridView.setHorizontalSpacing(5);
-        gridView.setVerticalSpacing(5);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,6 +67,7 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
                 Intent intent = new Intent();
                 intent.setClass(getActivity(),NoteDetailActivity.class);
                 intent.putExtra("noteId",noteid);
+                intent.putExtra("userId",userId);
                 startActivity(intent);
             }
         });
@@ -90,23 +83,6 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
     @Override
     public void click(View v) {
         switch (v.getId()) {
-            //点击用户头像跳转至用户详情页,待修改
-            case R.id.user_icon:
-                //int position = (int) v.getTag();
-                //待修改，user应从notes中获取，头像问题待解决
-                UserBean userBean =new UserBean();
-                userBean.setUserId(951004);
-                userBean.setUserPhoto(R.drawable.a1);
-                userBean.setUserName("花式帅");
-                userBean.setUserSex("女");
-                userBean.setUserAddress("石家庄市");
-                userBean.setUserBirth("1995-10-04");
-                userBean.setUserIntroduce("hahaha");
-                Intent perIntent = new Intent();
-                perIntent.setClass(getActivity(), PersonalActivity.class);
-                perIntent.putExtra("user",userBean);
-                startActivity(perIntent);
-                break;
             //点赞获取消赞
             case R.id.dianzan:
                 int position = (int) v.getTag();
@@ -122,8 +98,8 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
                 if(!isLike.get(position)){
                     notes.get(position).setIslike(1);
                     notes.get(position).setZan(R.drawable.xihuan2);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c++;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c++;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,true);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"点赞的你颜值超高",Toast.LENGTH_SHORT);
@@ -134,8 +110,8 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
                 else{
                     notes.get(position).setIslike(0);
                     notes.get(position).setZan(R.drawable.xin);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c--;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c--;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,false);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"赞取消了哦",Toast.LENGTH_SHORT);
@@ -196,7 +172,7 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         int j;boolean c=true;
@@ -245,6 +221,7 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
     public class ListTask extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
+            notes=new ArrayList<>();
             try {
                 URL url = new URL(U+"FoodNoteServlet?userId="+userId);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -290,7 +267,7 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         note1.setIslike(object.getInt("like"));
@@ -318,8 +295,21 @@ public class FoodFragment extends Fragment implements GridViewAdapter.Callback,A
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            //创建Adapter对象
+            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,FoodFragment.this, notes);
+            //设置Adapter
+            gridView.setAdapter(gridViewAdapter);
+            gridView.setHorizontalSpacing(5);
+            gridView.setVerticalSpacing(5);
             gridViewAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        listTask = new ListTask();
+        listTask.execute();
     }
 }
 

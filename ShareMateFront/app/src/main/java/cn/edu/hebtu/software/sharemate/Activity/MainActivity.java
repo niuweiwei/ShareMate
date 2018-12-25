@@ -1,10 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,8 +27,15 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cn.edu.hebtu.software.sharemate.Fragment.HomeFragment;
@@ -61,15 +65,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        int userid = getIntent().getIntExtra("userId",0);
-        Log.e("user",userid+"");
+
         indexView = findViewById(R.id.tv_index);
         shoppingView = findViewById(R.id.tv_shopping);
         messageView = findViewById(R.id.tv_message);
         myView = findViewById(R.id.tv_my);
 
         manager = getSupportFragmentManager();
-        showFragment(indexFragment);
+        if(getIntent().getStringExtra("flag") != null &&
+                "my".equals(getIntent().getStringExtra("flag"))){
+            showFragment(myFragment);
+        }else{
+            showFragment(indexFragment);
+        }
+
+
         indexView.setTextSize(TypedValue.COMPLEX_UNIT_SP,24);
         indexView.setTextColor(getResources().getColor(R.color.inkGray));
 
@@ -197,9 +207,15 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.btn_camera:
-                    //打开照相机
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, 1);
+                    String state = Environment.getExternalStorageState();// 获取内存卡可用状态
+                    if (state.equals(Environment.MEDIA_MOUNTED)) {
+// 内存卡状态可用
+                        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                        startActivityForResult(intent, 1);
+                    } else {
+// 不可用
+                        Log.e("sd卡","内存不可用");
+                    }
                     break;
                 case R.id.btn_photos:
                     Intent intent1=new Intent(Intent.ACTION_PICK,
@@ -213,7 +229,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String requestCode1 = String.valueOf(requestCode);
+        Log.e("requestCode", requestCode1);
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             String sdStatus = Environment.getExternalStorageState();
@@ -222,25 +241,48 @@ public class MainActivity extends AppCompatActivity {
                         "SD card is not avaiable/writeable right now.");
                 return;
             }
-            switch(requestCode){
+            switch (requestCode) {
                 case 1:
                     Bundle bundle = data.getExtras();
-                    Bitmap bitmap =(Bitmap) bundle.get("data");// 获取相机返回的数据，并转换为Bitmap图片格式
-                    Intent intent=new Intent();
-                    intent.setClass(MainActivity.this,FabuActivity.class);
-                    ByteArrayOutputStream baos=new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
-                    byte[] bitmapByte=baos.toByteArray();
-                    String code="1";
-                    intent.putExtra("code",code);
-                    intent.putExtra("pic",bitmapByte);
+                    Bitmap bitmap = (Bitmap) bundle.get("data");// 获取相机返回的数据，并转换为Bitmap图片格式
+                    // 获取 SD 卡根目录 生成图片并
+                    String saveDir = Environment
+                            .getExternalStorageDirectory()
+                            + "/DCIM/Camera";
+                    // 新建目录
+                    File dir = new File(saveDir);
+                    if (!dir.exists())
+                        dir.mkdir();
+// 生成文件名
+                    SimpleDateFormat t = new SimpleDateFormat(
+                            "yyyyMMddssSSS");
+                    String filename = "MT" + (t.format(new Date()))
+                            + ".jpg";
+// 新建文件
+                    File file = new File(saveDir, filename);
+                    Log.e("路径", file.getPath());
+                    try {
+                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+                        bos.flush();
+                        bos.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, FabuActivity.class);
+                    String code = "1";
+                    intent.putExtra("code", code);
+                    intent.putExtra("lujing", file.getPath());///storage/emulated/0/DCIM/Camera/MT2018122121428.jpg
                     startActivity(intent);
                     break;
                 case 2:
                     //打开相册并选择照片，这个方式选择单张
                     // 获取返回的数据，这里是android自定义的Uri地址
                     Uri selectedImage = data.getData();
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     // 获取选择照片的数据视图
                     Cursor cursor = getContentResolver().query(selectedImage,
                             filePathColumn, null, null, null);
@@ -248,24 +290,26 @@ public class MainActivity extends AppCompatActivity {
                     // 从数据视图中获取已选择图片的路径
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String picturePath = cursor.getString(columnIndex);
-                    Log.e("PICFILE",picturePath);
+                    Log.e("PICFILE", picturePath);
                     cursor.close();
                     // 将图片显示到界面上
 
                     //加上一个动态获取权限
-                    Intent intent1=new Intent();
-                    String code1="2";
-                    intent1.putExtra("pic1",picturePath);
-                    Log.e("PICFILE",picturePath);
-                    intent1.putExtra("code",code1);
-                    intent1.setClass(MainActivity.this,FabuActivity.class);
+                    Intent intent1 = new Intent();
+                    String code1 = "2";
+                    intent1.putExtra("pic1", picturePath);
+                    Log.e("PICFILE", picturePath);
+                    intent1.putExtra("code", code1);
+                    intent1.setClass(MainActivity.this, FabuActivity.class);
                     startActivity(intent1);
+                    break;
 
             }
 
         }
-
     }
+
+
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
@@ -307,7 +351,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-
 }
 
 

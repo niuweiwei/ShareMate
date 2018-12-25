@@ -1,7 +1,6 @@
 package cn.edu.hebtu.software.sharemate.Bean;
 
 import android.graphics.Bitmap;
-import android.widget.ImageView;
 
 import java.util.List;
 
@@ -10,16 +9,19 @@ import cn.edu.hebtu.software.sharemate.R;
 public class NoteBean {
     private int noId;
     private int noPhoto;
-    private Bitmap noteImage1;
     private String title;
     private int noteImage;
     private String noteDetail,noteTitle;
     private UserBean user;
     private String noteTime;
-    private CommentBean commentBean;
     private List<CommentBean> comment;
-    private int sharecount,collectcount,pingluncount;
-    private String zancount;
+    private int zancount,sharecount,collectcount,pingluncount;
+
+    private String noteImagePath;
+
+    private Bitmap noteImage1;
+    private CommentBean commentBean;
+    private String zancount1;
     private String commentDetail = "";
     private int zan=R.drawable.xin;
     private int col=R.drawable.xingxing;
@@ -28,7 +30,19 @@ public class NoteBean {
     private int iscollect=-1;
     private int isfollow;
     private UserBean userContent;
-    public NoteBean(int noteImage, String noteDetail, String noteTitle, UserBean user, String noteTime, String zancount, int sharecount, int collectcount, int pingluncount) {
+    private int typeid;
+
+    public NoteBean() {
+    }
+
+    public NoteBean(String noteDetail, String noteTitle, UserBean user, int typeid) {
+        this.noteDetail = noteDetail;
+        this.noteTitle = noteTitle;
+        this.user = user;
+        this.typeid = typeid;
+    }
+
+    public NoteBean(int noteImage, String noteDetail, String noteTitle, UserBean user, String noteTime, int zancount, int sharecount, int collectcount, int pingluncount) {
         this.noteImage = noteImage;
         this.noteDetail = noteDetail;
         this.noteTitle = noteTitle;
@@ -39,21 +53,9 @@ public class NoteBean {
         this.collectcount = collectcount;
         this.pingluncount = pingluncount;
     }
-
-    public NoteBean() {
-    }
-
-    public Bitmap getNoteImage1() {
-        return noteImage1;
-    }
-
-    public void setNoteImage1(Bitmap noteImage1) {
-        this.noteImage1 = noteImage1;
-    }
-
     public NoteBean(int noteImage, String noteDetail, String noteTitle,
                     UserBean user, String noteTime, List<CommentBean> comment,
-                    String zancount, int sharecount, int collectcount, int pingluncount) {
+                    int zancount, int sharecount, int collectcount, int pingluncount) {
         this.noteImage = noteImage;
         this.noteDetail = noteDetail;
         this.noteTitle = noteTitle;
@@ -70,12 +72,12 @@ public class NoteBean {
         this.title = title;
     }
 
-    public void setCommentBean(CommentBean commentBean) {
-        this.commentBean = commentBean;
+    public int getTypeid() {
+        return typeid;
     }
 
-    public CommentBean getCommentBean() {
-        return commentBean;
+    public void setTypeid(int typeid) {
+        this.typeid = typeid;
     }
 
     public int getNoPhoto() {
@@ -142,14 +144,6 @@ public class NoteBean {
         this.noteTime = noteTime;
     }
 
-    public String getCommentDetail() {
-        return commentDetail;
-    }
-
-    public void setCommentDetail(String commentDetail) {
-        this.commentDetail = commentDetail;
-    }
-
     public List<CommentBean> getComment() {
         return comment;
     }
@@ -158,11 +152,11 @@ public class NoteBean {
         this.comment = comment;
     }
 
-    public String getZancount() {
+    public int getZancount() {
         return zancount;
     }
 
-    public void setZancount(String zancount) {
+    public void setZancount(int zancount) {
         this.zancount = zancount;
     }
 
@@ -190,13 +184,51 @@ public class NoteBean {
         this.pingluncount = pingluncount;
     }
 
-    public int getZan() {
+    public String getNoteImagePath() {
+        return noteImagePath;
+    }
 
+    public void setNoteImagePath(String noteImagePath) {
+        this.noteImagePath = noteImagePath;
+    }
+
+    public Bitmap getNoteImage1() {
+        return noteImage1;
+    }
+
+    public void setNoteImage1(Bitmap noteImage1) {
+        this.noteImage1 = noteImage1;
+    }
+
+    public CommentBean getCommentBean() {
+        return commentBean;
+    }
+
+    public void setCommentBean(CommentBean commentBean) {
+        this.commentBean = commentBean;
+    }
+
+    public String getZancount1() {
+        return zancount1;
+    }
+
+    public void setZancount1(String zancount1) {
+        this.zancount1 = zancount1;
+    }
+
+    public String getCommentDetail() {
+        return commentDetail;
+    }
+
+    public void setCommentDetail(String commentDetail) {
+        this.commentDetail = commentDetail;
+    }
+
+    public int getZan() {
         return zan;
     }
 
     public void setZan(int zan) {
-
         this.zan = zan;
     }
 
@@ -204,12 +236,12 @@ public class NoteBean {
         return col;
     }
 
-    public int getFol() {
-        return fol;
-    }
-
     public void setCol(int col) {
         this.col = col;
+    }
+
+    public int getFol() {
+        return fol;
     }
 
     public void setFol(int fol) {
@@ -223,16 +255,17 @@ public class NoteBean {
     public void setIslike(int islike) {
         this.islike = islike;
     }
+
     public int getIscollect() {
         return iscollect;
     }
 
-    public int getIsfollow() {
-        return isfollow;
-    }
-
     public void setIscollect(int iscollect) {
         this.iscollect = iscollect;
+    }
+
+    public int getIsfollow() {
+        return isfollow;
     }
 
     public void setIsfollow(int isfollow) {

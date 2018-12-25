@@ -1,6 +1,9 @@
 package cn.edu.hebtu.software.sharemate.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +16,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Bean.LikeBean;
+import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.tools.ImageTask;
 import cn.edu.hebtu.software.sharemate.tools.RoundImgView;
 
 public class LikeListAdapter extends BaseAdapter{
@@ -45,23 +51,41 @@ public class LikeListAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if(convertView==null){
             convertView = LayoutInflater.from(context).inflate(item_layout,null);
         }
 
-        RoundImgView portraitView = convertView.findViewById(R.id.iv_portrait);
-        portraitView.setImageResource(likes.get(position).getUser().getUserPhoto());
+        //获取用户的头像
+        ImageView portraitView = convertView.findViewById(R.id.iv_portrait);
+        String userPhotoPath = likes.get(position).getUser().getUserPhotoPath();
+        ImageTask imageTask1 = new ImageTask(userPhotoPath);
+        Object[] objects = new Object[]{portraitView};
+        imageTask1.execute(objects);
+
+        //点击头像跳转到目标用户的主页
+        portraitView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,FriendActivity.class);
+                UserBean user = likes.get(position).getUser();
+                intent.putExtra("friend",user);
+                context.startActivity(intent);
+            }
+        });
+
+        //获取笔记图片
+        String notePhotoPath = likes.get(position).getNotePhotoPath();
+        ImageView noteView = convertView.findViewById(R.id.iv_note);
+        ImageTask imageTask2 = new ImageTask(notePhotoPath);
+        imageTask2.execute(new Object[]{noteView});
+
+
         TextView nameView = convertView.findViewById(R.id.tv_name);
         nameView.setText(likes.get(position).getUser().getUserName());
-        ImageView noteView = convertView.findViewById(R.id.iv_note);
-        noteView.setImageResource(likes.get(position).getNoteId());
         //将对象的 date 属性 转化成字符串
-        Date date = likes.get(position).getDate();
-        String time = new SimpleDateFormat("yyyy-MM-dd").format(date);
         TextView dateView = convertView.findViewById(R.id.tv_date);
-        dateView.setText(time);
+        dateView.setText(likes.get(position).getDate());
         return convertView;
     }
 }

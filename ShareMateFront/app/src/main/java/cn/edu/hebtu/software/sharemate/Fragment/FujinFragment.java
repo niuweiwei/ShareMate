@@ -56,20 +56,19 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
     private int image = R.drawable.meng;
     private Handler handler=null;
 
-    private String U="http://10.7.89.193:8080/sharemate/";
+    private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view= inflater.inflate(R.layout.note_fragment,container,false);
+        U=getResources().getString(R.string.server_path);
         userId = getActivity().getIntent().getIntExtra("userId",0);
-        Log.e("附近 userId",userId+"");
         textView = view.findViewById(R.id.text);
         imageView = view.findViewById(R.id.img);
         handler = new Handler();
         listTask = new ListTask();
         listTask.execute();
-        Log.e("note",notes.size()+"");
         gridView = view.findViewById(R.id.root);
         //创建Adapter对象
         gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,this, notes);
@@ -85,6 +84,7 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
                 Intent intent = new Intent();
                 intent.setClass(getActivity(),NoteDetailActivity.class);
                 intent.putExtra("noteId",noteid);
+                intent.putExtra("userId",userId);
                 startActivity(intent);
             }
         });
@@ -106,6 +106,7 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
     public class ListTask extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
+            notes=new ArrayList<>();
             try {
                 URL url = new URL(U+"FujinNoteServlet?userId="+userId);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -119,11 +120,10 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
                 try {
                     JSONObject jsonObject = new JSONObject(res);
                     JSONArray array = jsonObject.getJSONArray("note");
+                    Log.e("array",array.length()+"");
                     for (int i = 0; i < array.length(); i++){
                         JSONObject object = array.getJSONObject(i);
                         NoteBean note1 = new NoteBean();
-                        //User user = new User();
-                        //note1.setNoteImage(R.drawable.dm5);
                         String img = object.getString("noteImage");
                         String url1 = U+img;
                         URL url2= new URL(url1);
@@ -147,23 +147,16 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(object2.getString("userAddress"));
+                        note1.setZancount1(object2.getString("userAddress"));
                         note1.setZan(R.drawable.weizhi);
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
-                        int j;boolean c=true;
-                        for(j=0;j<notes.size();j++){
-                            if(note1.getNoId()==notes.get(j).getNoId()){
-                                c=false;
-                                break;
-                            }
-                        }
-                        if(c) {notes.add(note1);}
+                        notes.add(note1);
                     }
                     if(notes.size()==0){
                         handler.post(runnableUi);
                     }
-                    Log.e("LoginTask", notes.toString());
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -178,6 +171,7 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            Log.e("111", notes.size()+"");
             gridViewAdapter.notifyDataSetChanged();
         }
     }

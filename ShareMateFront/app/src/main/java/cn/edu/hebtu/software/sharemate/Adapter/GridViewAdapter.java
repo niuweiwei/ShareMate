@@ -66,7 +66,7 @@ public class GridViewAdapter extends BaseAdapter implements View.OnClickListener
         ImageView icon=convertView.findViewById(R.id.user_icon);
         icon.setImageBitmap(notes.get(position).getUser().getUserImage());
         final TextView count=convertView.findViewById(R.id.zan_count);
-        count.setText(notes.get(position).getZancount()+"");
+        count.setText(notes.get(position).getZancount1()+"");
         final Button button = convertView.findViewById(R.id.dianzan);
         if(notes.get(position).isIslike()==1){
             notes.get(position).setZan(R.drawable.xihuan2);

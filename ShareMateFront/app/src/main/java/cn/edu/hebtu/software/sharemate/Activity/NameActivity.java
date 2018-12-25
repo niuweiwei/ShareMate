@@ -22,19 +22,23 @@ public class NameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_name);
         msgText = findViewById(R.id.msg);
         msgText.setText("请输入2-8个字符");
+        msgText.setTextColor(getResources().getColor(R.color.darkGray));
         editText = findViewById(R.id.content);
         finishText = findViewById(R.id.finish);
         Intent intent = getIntent();
-        UserBean user = (UserBean) intent.getSerializableExtra("user");
+        final UserBean user = (UserBean) intent.getSerializableExtra("user");
             editText.setText(user.getUserName());
         finishText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(editText.length()<2){
                     msgText.setText("您输入的小于2个字符");
+                    msgText.setTextColor(getResources().getColor(R.color.warmRed));
                 }else{
-                    String content = editText.getText().toString();
-                    //把内容存到数据库中
+                    user.setUserName(editText.getText().toString());
+                    Intent intent1 = new Intent();
+                    intent1.putExtra("responseUser",user);
+                    setResult(200,intent1);
                     NameActivity.this.finish();
                 }
             }

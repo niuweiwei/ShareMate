@@ -1,13 +1,30 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,52 +33,32 @@ import cn.edu.hebtu.software.sharemate.Adapter.LikeListAdapter;
 import cn.edu.hebtu.software.sharemate.Bean.LikeBean;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.tools.ImageTask;
 
 public class LikeActivity extends AppCompatActivity {
 
+    private List<LikeBean> likes = new ArrayList<>();
+    private String path = null;
+    private ListView listView = null;
+    private LikeListAdapter adapter = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like);
+        listView = findViewById(R.id.lv_like);
+        path = getResources().getString(R.string.server_path);
 
-        //将设置的日期进行格式化 将String类型转化成日期类型
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date date1 = new Date();
-        Date date2 = new Date();
-        Date date3 = new Date();
-        Date date4 = new Date();
-        Date date5 = new Date();
-        Date date6 = new Date();
-        try {
-             date1 = format.parse("2018-4-30");
-             date2 = format.parse("2018-5-1");
-             date3 = format.parse("2018-7-25");
-             date4 = format.parse("2018-9-6");
-             date5 = format.parse("2018-10-30");
-             date6 = format.parse("2018-11-28");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        LikeNoteTask task = new LikeNoteTask();
+        task.execute();
 
-        //准备Adapter的数据源
-        List<LikeBean> likes = new ArrayList<>();
-        UserBean user1 = new UserBean("小仙女",R.drawable.niuweiwei);
-        UserBean user2 = new UserBean("小菲菲",R.drawable.mengfeifei);
-        UserBean user3 = new UserBean("狗莹",R.drawable.sunliying);
-        UserBean user4 = new UserBean("我昭",R.drawable.wangzhao);
-        UserBean user5 = new UserBean("低调的仙女姐姐",R.drawable.wangou);
-        UserBean user6 = new UserBean("白头鞋老",R.drawable.baijingting);
-        likes.add(new LikeBean(user1,date1,R.drawable.note1));
-        likes.add(new LikeBean(user2,date2,R.drawable.note1));
-        likes.add(new LikeBean(user3,date3,R.drawable.note2));
-        likes.add(new LikeBean(user4,date4,R.drawable.note3));
-        likes.add(new LikeBean(user5,date5,R.drawable.note4));
-        likes.add(new LikeBean(user6,date6,R.drawable.note1));
-
-        //绑定Adapter
-        LikeListAdapter adapter = new LikeListAdapter(this,likes,R.layout.like_list_item_layout);
-        ListView listView = findViewById(R.id.lv_like);
-        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(LikeActivity.this,NoteDetailActivity.class);
+                intent.putExtra("noteId",likes.get(position).getNoteId());
+                startActivity(intent);
+            }
+        });
 
         //获取返回按钮
         Button back = findViewById(R.id.btn_back);
@@ -73,4 +70,76 @@ public class LikeActivity extends AppCompatActivity {
         });
 
     }
+    private class LikeNoteTask extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+
+            //与服务器端建立连接
+            try {
+
+                //假设当前的用户id为3
+                URL url = new URL(path+"LikeNoteServlet?userId=3");
+                HttpURLConnection connection = (HttpURLConnection)  url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("contentType","utf-8");
+
+                //接收连接传输过来的流
+                InputStream is = connection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(is);
+                BufferedReader buffer = new BufferedReader(reader);
+                String res = buffer.readLine();
+
+                JSONArray array = new JSONArray(res);
+               for(int i=0;i<array.length();i++){
+
+                    LikeBean like = new LikeBean();
+
+                    //解析JSON 数据
+                    JSONObject object = array.getJSONObject(i);
+                    String userPath = object.getString("userPhoto");
+                    String userName = object.getString("userName");
+                    int noteId = object.getInt("noteId");
+                    String notePath = object.getString("notePhoto");
+                    String date = object.getString("likeDate");
+
+                    //将解析得到的数据放入 LikeBean 对象中
+                    UserBean user = new UserBean();
+                    user.setUserId(object.getInt("userId"));
+                    user.setUserName(userName);
+                    user.setUserPhotoPath(path+userPath);
+                    user.setFanCount(object.getInt("fanCount"));
+                    user.setFollowCount(object.getInt("followCount"));
+                    user.setLikeCount(object.getInt("likeCount"));
+                    user.setUserIntroduce(object.getString("userIntroduce"));
+
+                    like.setUser(user);
+                    like.setNoteId(noteId);
+                    like.setDate(date);
+                    like.setNotePhotoPath(path+notePath);
+
+                    likes.add(like);
+                }
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return likes;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            adapter = new LikeListAdapter(LikeActivity.this,likes,R.layout.like_list_item_layout);
+            //绑定Adapter
+            listView.setAdapter(adapter);
+
+        }
+    }
+
 }

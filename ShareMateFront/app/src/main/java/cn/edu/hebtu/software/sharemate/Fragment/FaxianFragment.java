@@ -270,4 +270,5 @@ public class FaxianFragment extends Fragment {
         TabspecViews.put(tag,view);
         return view;
     }
+
 }

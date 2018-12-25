@@ -69,7 +69,7 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
     private String content=null;
     private int image = R.drawable.meng;
     private Handler handler=null;
-    private String U="http://10.7.89.193:8080/sharemate/";
+    private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
     private Map<Integer,Boolean> isFollow=new HashMap<>();
     private Map<Integer,Boolean> isCollect=new HashMap<>();
@@ -79,16 +79,15 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.note_fragment, container, false);
+        U=getResources().getString(R.string.server_path);
         textView = view.findViewById(R.id.text);
         imageView = view.findViewById(R.id.img);
         handler = new Handler();
         userId = getActivity().getIntent().getIntExtra("userId",0);
         Log.e("关注 userId",userId+"");
-        listTask = new ListTask();
-        listTask.execute();
+
         listView = view.findViewById(R.id.list);
-        customAdapter = new CustomAdapter(getActivity(), R.layout.list_item, this, notes);
-        listView.setAdapter(customAdapter);
+
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -165,8 +164,8 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 if(!isLike.get(position)){
                     notes.get(position).setIslike(1);
                     notes.get(position).setZan(R.drawable.xihuan2);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c++;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c++;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,true);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"点赞的你颜值超高",Toast.LENGTH_SHORT);
@@ -177,8 +176,8 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 else{
                     notes.get(position).setIslike(0);
                     notes.get(position).setZan(R.drawable.xin);
-                    int c = Integer.parseInt(notes.get(position).getZancount());c--;
-                    notes.get(position).setZancount(c+"");
+                    int c = Integer.parseInt(notes.get(position).getZancount1());c--;
+                    notes.get(position).setZancount1(c+"");
                     isLike.put(position,false);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"赞取消了哦",Toast.LENGTH_SHORT);
@@ -245,9 +244,19 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
             //点击评论图标跳转至评论页面
             case R.id.pinglun:
                 int c=(int)v.getTag();
+                UserBean user =new UserBean();
+                user.setUserId(notes.get(c).getUserContent().getUserId());
+                user.setUserPhotoPath(notes.get(c).getUserContent().getUserPhotoPath());
+                Log.e("userPath",notes.get(c).getUserContent().getUserPhotoPath());
+                user.setUserName(notes.get(c).getUserContent().getUserName());
+                user.setUserSex(notes.get(c).getUserContent().getUserSex());
+                user.setUserAddress(notes.get(c).getUserContent().getUserAddress());
+                user.setUserBirth(notes.get(c).getUserContent().getUserBirth());
+                user.setUserIntroduce(notes.get(c).getUserContent().getUserIntroduce());
                 int noteId = notes.get(c).getNoId();
                 Intent intent=new Intent(getActivity(),CommentDetailActivity.class);
                 intent.putExtra("noteId",noteId);
+                intent.putExtra("user",user);
                 startActivity(intent);
                 break;
         }
@@ -310,6 +319,8 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            listTask = new ListTask();
+            listTask.execute();
             customAdapter.notifyDataSetChanged();
         }
     }
@@ -392,7 +403,7 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         int j;boolean c=true;
@@ -428,6 +439,7 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
     public class ListTask extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
+            notes=new ArrayList<>();
             try {
                 URL url = new URL(U+"FollowNoteServlet?userId="+userId);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -500,19 +512,12 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                         note1.setUserContent(user2);
                         note1.setCommentBean(notecomment);
                         note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount(String.valueOf(object.getInt("noteLikeCount")));
+                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         note1.setIslike(object.getInt("like"));
                         note1.setIscollect(object.getInt("isCollect"));
-                        int j;boolean c=true;
-                        for(j=0;j<notes.size();j++){
-                            if(note1.getNoId()==notes.get(j).getNoId()){
-                                c=false;
-                                break;
-                            }
-                        }
-                        if(c) {notes.add(note1);}
+                       notes.add(note1);
                     }
                     if(notes.size()==0){
                         handler.post(runnableUi);
@@ -532,6 +537,8 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            customAdapter = new CustomAdapter(getActivity(), R.layout.list_item, FollowFragment.this, notes);
+            listView.setAdapter(customAdapter);
             customAdapter.notifyDataSetChanged();
         }
     }
@@ -569,4 +576,11 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
             imageView.setMaxHeight(100);imageView.setMaxWidth(100);
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        listTask = new ListTask();
+        listTask.execute();
+    }
 }

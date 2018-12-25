@@ -1,28 +1,42 @@
 package cn.edu.hebtu.software.sharemate.Fragment;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.edu.hebtu.software.sharemate.Activity.AddressActivity;
+import cn.edu.hebtu.software.sharemate.Activity.FanActivity;
 import cn.edu.hebtu.software.sharemate.Activity.FollowActivity;
+import cn.edu.hebtu.software.sharemate.Activity.FriendActivity;
 import cn.edu.hebtu.software.sharemate.Activity.NoteDetailActivity;
 import cn.edu.hebtu.software.sharemate.Activity.PersonalActivity;
 import cn.edu.hebtu.software.sharemate.Activity.SettingActivity;
@@ -32,159 +46,270 @@ import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 
 public class MyFragment extends Fragment {
-    private PopupWindow popupWindow = null;
-    private LinearLayout root;
+    private GridView gridView;
+    private NoteAdapter noteAdapter;
+    private List<NoteBean> collectionList = new ArrayList<>();
+    private List<NoteBean> noteList = new ArrayList<>();
+    private UserBean user = new UserBean() ;
     private TextView nameText;
     private TextView idText;
     private TextView introText;
-    private ImageView headImg;
-    private GridView gridView;
-    private NoteAdapter noteAdapter;
-    private List<cn.edu.hebtu.software.sharemate.Bean.NoteBean> collectionList = new ArrayList<>();
-    private List<cn.edu.hebtu.software.sharemate.Bean.NoteBean> noteList = new ArrayList<>();
-    private UserBean user ;
     private TextView collection;
     private TextView note;
-    private TextView focusView;
-    private TextView addView;
+    private TextView followCount;
+    private TextView fanCount;
+    private TextView likeCount;
+    private ImageView headImg;
     private ImageView settingView;
-    private Button more;
     private Button button;
+    private String path = null;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        user = new UserBean(951004, R.drawable.heart,"净汉的小迷妹","女",
-               "黑龙江省双鸭山市","1995-10-04","今天是个好日子，心想的事儿都能成");
+        path = getResources().getString(R.string.server_path);
+        GetUserDetail getUser = new GetUserDetail();
+        getUser.execute(this);
+        GetNote getNote = new GetNote();
+        getNote.execute(user);
+        GetCollection getCollection = new GetCollection();
+        getCollection.execute(user);
         View view = inflater.inflate(R.layout.fragment_my,container,false);
-        root = view.findViewById(R.id.root1);
         findView(view);
         setListener();
-        noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,noteList);
-        gridView.setAdapter(noteAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), NoteDetailActivity.class);
-                startActivity(intent);
-            }
-        });
         return view;
     }
-    private void showPopupWindow(){
-        popupWindow = new PopupWindow(getContext());
-        popupWindow.setWidth(850);
-        popupWindow.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                addBackgroundAlpha(1f);
+    //从数据库中取出来笔记
+    public class GetNote extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            UserBean userBean = (UserBean) objects[0];
+            int uId = userBean.getUserId();
+            try {
+                URL url = new URL(path+"NoteServlet?userId="+uId);
+                HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String res = br.readLine();
+                //解析JSON
+                JSONArray array = new JSONArray(res);
+                for(int i=0; i<array.length(); i++){
+                    JSONObject noteObject = array.getJSONObject(i);
+                    NoteBean noteBean = new NoteBean();
+                    noteBean.setNoId(noteObject.getInt("noteId"));
+                    noteBean.setNoteTitle(noteObject.getString("noteTitle"));
+                    noteBean.setNoteImagePath(path+noteObject.getString("notePhoto"));
+                    noteBean.setUser(user);
+                    noteList.add(noteBean);
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        });
-        View view =getLayoutInflater().inflate(R.layout.more_item,null);
-        ImageView imageView=view.findViewById(R.id.delete);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            note.setTextColor(getResources().getColor(R.color.warmRed));
+            collection.setTextColor(getResources().getColor(R.color.darkGray));
+            noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,noteList,user);
+            gridView.setAdapter(noteAdapter);
+            setNoteGridView(gridView);
+        }
+    }
+
+    //从数据库中取出收藏
+    public class GetCollection extends AsyncTask{
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            UserBean userBean = (UserBean) objects[0];
+            int uId = userBean.getUserId();
+            try {
+                URL url = new URL(path+"CollectionServlet?userId="+uId);
+                HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String res = br.readLine();
+                //解析JSON
+                JSONArray array = new JSONArray(res);
+                for(int i=0; i<array.length(); i++){
+                    JSONObject noteObject = array.getJSONObject(i);
+                    NoteBean noteBean = new NoteBean();
+                    UserBean user = new UserBean();
+                    noteBean.setNoId(noteObject.getInt("noteId"));
+                    noteBean.setNoteTitle(noteObject.getString("noteTitle"));
+                    noteBean.setNoteImagePath(path+noteObject.getString("notePhoto"));
+                    user.setUserName(noteObject.getString("userName"));
+                    user.setUserPhotoPath(path+noteObject.getString("userPhoto"));
+                    noteBean.setUser(user);
+                    collectionList.add(noteBean);
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        });
-        //将自定义的视图添加到 popupWindow 中
-        popupWindow.setContentView(view);
-        //控制 popupwindow 再点击屏幕其他地方时自动消失
-        popupWindow .setFocusable(true);
-        popupWindow .setOutsideTouchable(true);
-        popupWindow.showAtLocation(root, Gravity.LEFT,0,0);
+            return null;
+        }
+    }
+    //从数据库中获得UserBean对象
+    public class GetUserDetail extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try {
+                URL url = new URL(path+"UserServlet?userId=2");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("contentType", "UTF-8");
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String res = br.readLine();
+                //解析JSON
+                JSONObject jsonObject = new JSONObject(res);
+                user.setUserId(jsonObject.getInt("userId"));
+                user.setUserPhotoPath(path+jsonObject.getString("userPhoto"));
+                user.setUserName(jsonObject.getString("userName"));
+                user.setUserSex(jsonObject.getString("userSex"));
+                user.setUserBirth(jsonObject.getString("userBirth"));
+                user.setUserAddress(jsonObject.getString("userAddress"));
+                user.setUserIntroduce(jsonObject.getString("userIntro"));
+                user.setFollowCount(jsonObject.getInt("followCount"));
+                user.setFanCount(jsonObject.getInt("fanCount"));
+                user.setLikeCount(jsonObject.getInt("likeCount"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            nameText.setText(user.getUserName());
+            String userId = String.format("%06d",user.getUserId());
+            idText.setText("ShareMate号:" + userId);
+            if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 20) {
+                introText.setText(user.getUserIntroduce());
+            } else {
+                introText.setText(user.getUserIntroduce().substring(0, 20) + ".....");
+            }
+            String photoPath = user.getUserPhotoPath();
+            RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true);
+            Glide.with(getActivity()).load(photoPath).apply(mRequestOptions).into(headImg);
+            followCount.setText(""+user.getFollowCount());
+            fanCount.setText(""+user.getFanCount());
+            likeCount.setText(""+user.getLikeCount());
+        }
     }
     public void findView(View view){
         nameText = view.findViewById(R.id.userName);
-        nameText.setText(user.getUserName());
         idText = view.findViewById(R.id.userId);
-        idText.setText("Share mate号:"+user.getUserId());
         introText = view.findViewById(R.id.userIntro);
-        introText.setText(user.getUserIntroduce());
         headImg = view.findViewById(R.id.userPhoto);
-        headImg.setImageResource(user.getUserPhoto());
         gridView = view.findViewById(R.id.root);
         gridView.setEmptyView((view.findViewById(R.id.empty_view)));
         collection = view.findViewById(R.id.collection);
-        focusView = view.findViewById(R.id.focus);
-        addView = view.findViewById(R.id.address);
         note = view.findViewById(R.id.note);
         settingView = view.findViewById(R.id.setting);
         button = view.findViewById(R.id.personal);
-        more = view.findViewById(R.id.more);
-        note.setTextColor(getResources().getColor(R.color.warmRed));
-        collection.setTextColor(getResources().getColor(R.color.darkGray));
+        followCount = view.findViewById(R.id.followCount);
+        fanCount = view.findViewById(R.id.fanCount);
+        likeCount = view.findViewById(R.id.likeCount);
     }
 
     public void setListener(){
         SetOnclickListener listener = new SetOnclickListener();
         collection.setOnClickListener(listener);
         note.setOnClickListener(listener);
-        focusView.setOnClickListener(listener);
-        addView.setOnClickListener(listener);
+        followCount.setOnClickListener(listener);
+        fanCount.setOnClickListener(listener);
         settingView.setOnClickListener(listener);
         button.setOnClickListener(listener);
-        more.setOnClickListener(listener);
+    }
+    public void setNoteGridView(GridView gridView){
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("111","111");
+                Intent intent = new Intent(getActivity(), NoteDetailActivity.class);
+                intent.putExtra("noteId",noteList.get(position).getNoId());
+                Log.e("noteId",noteList.get(position).getNoId()+"");
+                intent.putExtra("userId",user.getUserId());
+                startActivity(intent);
+            }
+        });
+    }
+    public void setCollectGridView(GridView gridView){
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("111","111");
+                Intent intent = new Intent(getActivity(), NoteDetailActivity.class);
+                intent.putExtra("noteId",collectionList.get(position).getNoId());
+                intent.putExtra("userId",user.getUserId());
+                startActivity(intent);
+            }
+        });
     }
     public class SetOnclickListener implements View.OnClickListener{
 
         @Override
         public void onClick(View v) {
             switch(v.getId()){
-                case R.id.address:
-                    Intent intent = new Intent();
-                    intent.setClass(getActivity(), AddressActivity.class);
-                    intent.putExtra("msg","常住地");
-                    intent.putExtra("content",user.getUserAddress());
-                    //从数据库中取出当前用户
-                    startActivity(intent);
-                    break;
                 case R.id.note:
                     note.setTextColor(getResources().getColor(R.color.warmRed));
                     collection.setTextColor(getResources().getColor(R.color.darkGray));
-                    noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,noteList);
+                    noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,noteList,user);
                     gridView.setAdapter(noteAdapter);
+                    setNoteGridView(gridView);
                     break;
                 case R.id.collection:
                     collection.setTextColor(getResources().getColor(R.color.warmRed));
                     note.setTextColor(getResources().getColor(R.color.darkGray));
-                    cn.edu.hebtu.software.sharemate.Bean.NoteBean collection1 = new NoteBean(R.drawable.e,"明星资讯随时看");
-                    cn.edu.hebtu.software.sharemate.Bean.NoteBean collection2 = new NoteBean(R.drawable.f,"旅游时笔芯狂魔");
-                    collectionList.add(collection1);
-                    collectionList.add(collection2);
-                    noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,collectionList);
+                    noteAdapter = new NoteAdapter(getActivity(), R.layout.note_item,collectionList,user);
                     gridView.setAdapter(noteAdapter);
+                    setCollectGridView(gridView);
+                    break;
+                case R.id.followCount:
+                    Intent focusIntent = new Intent();
+                    focusIntent.setClass(getActivity(), FollowActivity.class);
+                    focusIntent.putExtra("user",user);
+                    startActivity(focusIntent);
+                    break;
+                case R.id.fanCount:
+                    Intent fanIntent = new Intent();
+                    fanIntent.setClass(getActivity(), FanActivity.class);
+                    fanIntent.putExtra("user",user);
+                    startActivity(fanIntent);
                     break;
                 case R.id.personal:
                     Intent perIntent = new Intent();
                     perIntent.setClass(getActivity(), PersonalActivity.class);
                     perIntent.putExtra("user",user);
-                    startActivity(perIntent);
-                    break;
-                case R.id.focus:
-                    Intent focusIntent = new Intent();
-                    focusIntent.setClass(getActivity(), FollowActivity.class);
-                    startActivity(focusIntent);
+                    perIntent.putExtra("sign","my");
+                    startActivityForResult(perIntent,1);
                     break;
                 case R.id.setting:
                     Intent setIntent = new Intent();
                     setIntent.setClass(getActivity(), SettingActivity.class);
                     setIntent.putExtra("user",user);
-                    startActivity(setIntent);
-                    break;
-                case R.id.more:
-                    showPopupWindow();
-                    addBackgroundAlpha(0.7f);
+                    startActivityForResult(setIntent,2);
                     break;
             }
         }
-    }
-    // 弹出选项框时为背景加上透明度
-    private void addBackgroundAlpha(float alpha){
-        WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
-        params.alpha = alpha;
-        getActivity().getWindow().setAttributes(params);
     }
 }
