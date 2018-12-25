@@ -61,7 +61,7 @@ public class CommentDao {
 		List<CommentBean> commentList=new ArrayList<CommentBean>();
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="select comment_id,comment_detail,comment_date,user_id from comment where note_id=?";
+		String sql="select comment_id,comment_detail,comment_date,user_id from comment where note_id=? order by comment_date desc";
 		ResultSet rs=null;
 		try {
 			pstmt=conn.prepareStatement(sql);
@@ -124,7 +124,7 @@ public class CommentDao {
 	}
 	
 	/**
-	 * 添加评论
+	 * 添加评论(修改)
 	 */
 	public void addComment(CommentBean comment) {
 		Connection conn=DataBase.getConnection();
@@ -167,12 +167,12 @@ public class CommentDao {
 	}
 
 	/**
-	 * 点赞评论
+	 * 点赞评论(修改)
 	 */
 	public void clickLike(int userId,int commentId) {
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="insert into like_comment(user_id,comment_id) values(?,?)"	;
+		String sql="insert into like_comment(user_id,comment_id) values(?,?)";
 		try {
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1,userId);
@@ -188,7 +188,7 @@ public class CommentDao {
 	}
 	
 	/**
-	 * 取消评论点赞
+	 * 取消评论点赞(修改)
 	 */
 	public void cancelLike(int userId,int commentId) {
 		Connection conn=DataBase.getConnection();
@@ -207,7 +207,6 @@ public class CommentDao {
 			DataBase.close(conn);
 		}
 	}
-	
 	/**
 	 * 查看该用户是否点赞了该评论
 	 * */
@@ -235,4 +234,32 @@ public class CommentDao {
 		}
 		return is;
 	}
+
+	/**
+	 * 得到某个评论总的赞数(新增)
+	 */
+	public int getLikeCount(int commentId) {
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet res = null;
+		String sql="select count(*) c from like_comment where comment_id=?";
+		int count=0;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, commentId);
+			res=pstmt.executeQuery();
+			if(res.next()) {
+				count=res.getInt("c");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			DataBase.close(res);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return count;
+	}
+	
 }

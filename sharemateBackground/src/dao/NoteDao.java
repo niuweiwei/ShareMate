@@ -59,6 +59,31 @@ public class NoteDao {
 		}
 		return noteBean;
 	}
+	
+	/**
+	 * 添加笔记
+	 */
+	public void addNote1(NoteBean notebean) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		//笔记插入时去除那三列
+		String sql="insert into note(note_id,note_title,note_detail,note_image,note_date,type_id,user_id) values (0,?,?,?,NOW(),?,?)";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, notebean.getNoteTitle());
+			pstmt.setString(2, notebean.getNoteDetail());
+			pstmt.setString(3, notebean.getNoteImage());
+			pstmt.setInt(4, notebean.getType().getTypeId());
+			pstmt.setInt(5, notebean.getUser().getUserId());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
 
 	/**
 	 * 得到所有笔记
@@ -315,8 +340,9 @@ public class NoteDao {
 		}
 		return likeCount;
 	}
+	
 	/**
-	 * 或取用户发过的笔记的数量
+	 * 获取用户发过的笔记的数量
 	 */
 	public int getNoteCount(int userId) {
 		int count = 0;
@@ -338,6 +364,8 @@ public class NoteDao {
 		}
 		return count;
 	}
+
+		
 	/**
 	 * 获取用户发过的笔记
 	 */
@@ -383,5 +411,75 @@ public class NoteDao {
 		}
 		return collectList;
 	}
+	/**
+	 * 获取最后一条信息的id
+	 */
+	public int findid() {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		int noteid = 0;
+		String sql="select max(note_id) m from note";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				NoteBean noteBean=new NoteBean();
+				noteBean.setNoteId(rs.getInt("m"));
+				noteid=noteBean.getNoteId();
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return noteid;
+	}
+	/**
+	 * 分享时调用的addnote方法添加照片
+	 */
+	public void addNotePic(String picpath,int noteid) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		//绗旇鎻掑叆鏃跺幓闄ら偅涓夊垪
+		String sql="update note set note_image='"+picpath+"' where note_id="+noteid;
+		System.out.println("sql"+sql);
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
+	/**
+	 *分享时调用的addnote方法添加除照片以外信息
+	 */
+	public void addNoteshare(NoteBean notebean) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="insert into note(note_id,note_title,note_detail,note_date,type_id,user_id) values (0,?,?,NOW(),?,?)";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, notebean.getNoteTitle());
+			pstmt.setString(2, notebean.getNoteDetail());
+			
+			pstmt.setInt(3, notebean.getType().getTypeId());
+			pstmt.setInt(4, notebean.getUser().getUserId());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
+
 
 }

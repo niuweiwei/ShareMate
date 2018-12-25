@@ -92,9 +92,11 @@ public class CAndRServlet extends HttpServlet {
 			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
 			String date = sdf.format(bean.getDate());
 			object.put("date", date);
+//			System.out.println(object.toString());
 			array.put(object);
 		}
-	
+		System.out.println(array.length());
+
 		response.getWriter().append(array.toString());
 	}
 

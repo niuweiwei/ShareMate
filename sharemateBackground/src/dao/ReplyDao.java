@@ -16,9 +16,62 @@ import dao.DataBase;
 import bean.CommentBean;
 import bean.NoteBean;
 import bean.ReplyBean;
+import bean.UserBean;
 
 public class ReplyDao {
-	
+	/**
+	 * 根据回复id得到回复者名称----(新增)-----
+	 */
+	public String getUserNameByReplyId(int replyId) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="select user_id from reply where reply_id=?";
+		String userName=null;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, replyId);
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				int userId=rs.getInt("user_id");
+				UserDao userDao=new UserDao();
+				UserBean user=userDao.getUserById(userId);
+				userName=user.getUserName();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(conn);
+			DataBase.close(pstmt);
+		}
+		return userName;
+	}
+	/**
+	 * 得到某个回复总的赞数(新增)
+	 */
+	public int getLikeCount(int replyId) {
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet res = null;
+		String sql="select count(*) c from like_reply where reply_id=?";
+		int count=0;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, replyId);
+			res=pstmt.executeQuery();
+			if(res.next()) {
+				count=res.getInt("c");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(conn);
+			DataBase.close(pstmt);
+			DataBase.close(res);
+		}
+		return count;
+	}
 	/**
 	 * 根据评论id得到评论的回复列表(包括回复的回复和评论的回复)
 	 */
@@ -26,7 +79,7 @@ public class ReplyDao {
 		List<ReplyBean> replyList=new ArrayList<ReplyBean>();
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="select reply_id,user_id,reply_detail,reply_time from reply where comment_id=?";
+		String sql="select reply_id,user_id,reply_detail,reply_time from reply where comment_id=? order by reply_time desc";
 		try {
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1, commentId);
@@ -44,7 +97,6 @@ public class ReplyDao {
 				Date replyTime = time;
 				reply.setReplyTime(replyTime);
 				
-//				reply.setReplyLikeCount(rs.getInt("reply_like_count"));
 				replyList.add(reply);
 				
 				getRepliesByreplyId(rs.getInt("reply_id"),replyList);
@@ -55,42 +107,6 @@ public class ReplyDao {
 		}finally {
 			DataBase.close(pstmt);
 			DataBase.close(conn);
-		}
-		return replyList;
-	}
-	
-	/**
-	 * 根据评论仅查询针对该评论的回复
-	 * */
-	public List<ReplyBean> getRepliesList(int commentId){
-		List <ReplyBean> replyList = new ArrayList<>();
-		Connection conn=DataBase.getConnection();
-		PreparedStatement pstmt=null;
-		String sql="select reply_id,user_id,reply_detail,reply_time from reply where comment_id=?";
-		
-		try {
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setInt(1, commentId);
-			ResultSet rs=pstmt.executeQuery();
-			while(rs.next()) {
-				ReplyBean reply=new ReplyBean();
-				reply.setReplyId(rs.getInt("reply_id"));
-				CommentDao commentDao=new CommentDao();
-				reply.setComment(commentDao.getCommentBycommentId(commentId));
-				reply.setUser(new UserDao().getUserById(rs.getInt("user_id")));
-				reply.setReplyDetail(rs.getString("reply_detail"));
-				
-				//将数据库中时间戳类型转化成符合某种格式的Date对象
-				Timestamp time = rs.getTimestamp("reply_time");
-				Date replyTime = time;
-				reply.setReplyTime(replyTime);
-				
-//				reply.setReplyLikeCount(rs.getInt("reply_like_count"));
-				replyList.add(reply);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return replyList;
 	}
@@ -118,7 +134,6 @@ public class ReplyDao {
 				date=timestamp;
 				reply.setReplyTime(date);
 				
-//				reply.setReplyLikeCount(rs.getInt("reply_like_count"));
 				replyList.add(reply);
 				 getRepliesByreplyId(rs.getInt("reply_id"),replyList);
 			}
@@ -213,7 +228,7 @@ public class ReplyDao {
 	}
 	
 	/**
-	 * 添加评论的回复
+	 * 添加评论的回复(修改)
 	 */
 	public void addCommentReply(ReplyBean reply) {
 		Connection conn=DataBase.getConnection();
@@ -235,7 +250,7 @@ public class ReplyDao {
 	}
 	
 	/**
-	 * 添加回复的回复
+	 * 添加回复的回复(修改)
 	 */
 	public void addReReply(ReplyBean reply) {
 		Connection conn=DataBase.getConnection();
@@ -278,12 +293,12 @@ public class ReplyDao {
 	}
 	
 	/**
-	 * 点赞回复
+	 * 点赞回复(修改)
 	 */
 	public void clickLike(int userId,int replyId) {
 			Connection conn=DataBase.getConnection();
 			PreparedStatement pstmt=null;
-			String sql="insert into like_reply(user_id,reply_id) values(?,?)"	;
+			String sql="insert into like_reply(user_id,reply_id) values(?,?)";
 			try {
 				pstmt=conn.prepareStatement(sql);
 				pstmt.setInt(1,userId);
@@ -299,12 +314,12 @@ public class ReplyDao {
 	}
 	
 	/**
-	 * 取消回复点赞
+	 * 取消回复点赞(修改)
 	 */
 	public void cancelLike(int userId,int replyId) {
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="delete from like_reply where user_id=? and reply_id=?"	;
+		String sql="delete from like_reply where user_id=? and reply_id=?";
 		try {
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1,userId);
@@ -318,7 +333,6 @@ public class ReplyDao {
 			DataBase.close(conn);
 		}
 	}
-
 	/**
 	 * 查询该用户是否点赞回复
 	 * */
@@ -347,4 +361,41 @@ public class ReplyDao {
 		
 		return is;
 	}
+	/**
+	 * 根据评论仅查询针对该评论的回复
+	 * */
+	public List<ReplyBean> getRepliesList(int commentId){
+		List <ReplyBean> replyList = new ArrayList<>();
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="select reply_id,user_id,reply_detail,reply_time from reply where comment_id=?";
+		
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, commentId);
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				ReplyBean reply=new ReplyBean();
+				reply.setReplyId(rs.getInt("reply_id"));
+				CommentDao commentDao=new CommentDao();
+				reply.setComment(commentDao.getCommentBycommentId(commentId));
+				reply.setUser(new UserDao().getUserById(rs.getInt("user_id")));
+				reply.setReplyDetail(rs.getString("reply_detail"));
+				
+				//将数据库中时间戳类型转化成符合某种格式的Date对象
+				Timestamp time = rs.getTimestamp("reply_time");
+				Date replyTime = time;
+				reply.setReplyTime(replyTime);
+				
+//				reply.setReplyLikeCount(rs.getInt("reply_like_count"));
+				replyList.add(reply);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return replyList;
+	}
+
+
 }

@@ -162,13 +162,11 @@ public class FollowDao {
 		
 		return fanList;
 	}
-	
-	/**
-	 * 判断是否是互相关注
-	 */
-	public boolean eachFollow(FollowBean followbean) {
+
+	public boolean eachFan(FollowBean followbean) {
 		Connection con = DataBase.getConnection();
-		String sql = "select * from follow where user_id = ? and follow_id = ?";
+		System.out.print(followbean.getFollowId()+"  "+followbean.getUserbean().getUserId());
+		String sql = "select * from follow where follow_id = ? and user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
 			ptmt.setInt(1,followbean.getFollowId());
@@ -183,16 +181,22 @@ public class FollowDao {
 		}
 		return false;
 	}
-	public boolean eachFan(FollowBean followbean) {
+
+		
+	/**
+	 * 判断是否是互相关注
+	 */
+	public boolean eachFollow(FollowBean followbean) {
 		Connection con = DataBase.getConnection();
-		System.out.print(followbean.getFollowId()+"  "+followbean.getUserbean().getUserId());
-		String sql = "select * from follow where follow_id = ? and user_id = ?";
+		String sql = "select * from follow where user_id = ? and follow_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,followbean.getFollowId());
-			ptmt.setInt(2,followbean.getUserbean().getUserId());
+			ptmt.setInt(1,followbean.getUserbean().getUserId());
+			ptmt.setInt(2,followbean.getFollowId());
 			ResultSet rs = ptmt.executeQuery();
 			if(rs.next()) {
+				System.out.println("user_id"+followbean.getUserbean().getUserId());
+				System.out.println("follow_id"+followbean.getFollowId());
 				return true;
 			}
 		} catch (SQLException e) {
@@ -239,4 +243,5 @@ public class FollowDao {
 		}
 		return fans;
 	}
+
 }

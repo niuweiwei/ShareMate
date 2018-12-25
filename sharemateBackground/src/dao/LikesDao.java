@@ -14,7 +14,27 @@ import bean.UserBean;
 import dao.DataBase;
 
 public class LikesDao {
-	
+	/**
+	 * 判断某个用户是否赞过某个笔记
+	 */
+	public boolean judgeLike(int userId,int noteId) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="select * from likes where note_id=? and user_id=?";
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, noteId);
+			pstmt.setInt(2, userId);
+			ResultSet rs=pstmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 	/**
 	 * 查询某个笔记的赞的数量
 	 */

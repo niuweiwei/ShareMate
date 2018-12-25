@@ -46,7 +46,56 @@ public class UserDao {
 		    }
 		return user;
 	}
+	/**
+	 * 查询用户点赞的所有评论id(新增)
+	 */
+	public List<Integer> getLikeComment(int userId){
+		List<Integer> list=new ArrayList<Integer>();
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		String sql="select comment_id from like_comment where user_id=?";
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				list.add(rs.getInt("comment_id"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
 	
+		return list;
+	}
+	/**
+	 * 查询用户点赞的所有回复id(新增)
+	 */
+	public List<Integer> getLikeReply(int userId){
+		List<Integer> list=new ArrayList<Integer>();
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		String sql="select reply_id from like_reply where user_id=?";
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				list.add(rs.getInt("reply_id"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	
+		return list;
+	}
 	/**
 	 * 得到所有用户
 	 */
@@ -108,20 +157,88 @@ public class UserDao {
 	}
 	
 	/**
-	 * 修改用户的信息
+	 * 修改用户的姓名
 	 */
-	public void setUserInfom(UserBean user) {
+	public void setUserName(UserBean userbean,String name) {
 		Connection con = DataBase.getConnection();
-		String sql = "update user set user_name = ?,user_sex=?,user_birth=?,user_address=?,user_intro=? where user_id = ?";
+		String sql = "update user set user_name = ? where user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setString(1,user.getUserName());
-			ptmt.setString(2,user.getUserSex());
-			ptmt.setDate(3, (Date)user.getUserBirth());
-			ptmt.setString(4, user.getUserAddress());
-			ptmt.setString(5, user.getUserIntro());
-			ptmt.setInt(6, user.getUserId());
+			ptmt.setString(1,name);
+			ptmt.setInt(2,userbean.getUserId());
 			int row = ptmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 修改用户的性别
+	 */
+	public void setUserSex(UserBean userbean,String sex) {
+		Connection con = DataBase.getConnection();
+		String sql = "update user set user_sex = ? where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setString(1,sex);
+			ptmt.setInt(2,userbean.getUserId());
+			int row = ptmt.executeUpdate();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 修改用户的生日
+	 */
+	public void setUserBirth(UserBean userbean,Date date) {
+		Connection con = DataBase.getConnection();
+		String sql = "update user set user_birth = ? where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setDate(1,new java.sql.Date(date.getTime()));
+			ptmt.setInt(2,userbean.getUserId());
+			int row = ptmt.executeUpdate();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 修改用户的地址
+	 */
+	public void setUserAddress(UserBean userbean,String address) {
+		Connection con = DataBase.getConnection();
+		String sql = "update user set user_address = ? where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setString(1,address);
+			ptmt.setInt(2,userbean.getUserId());
+			int row = ptmt.executeUpdate();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 修改用户的个性签名o
+	 */
+	public void setUserIntro(UserBean userbean,String intro) {
+		Connection con = DataBase.getConnection();
+		String sql = "update user set user_intro = ? where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setString(1,intro);
+			ptmt.setInt(2,userbean.getUserId());
+			int row = ptmt.executeUpdate();
+			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -145,4 +262,281 @@ public class UserDao {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * 修改用户的信息
+	 */
+	public void setUserInfom(UserBean user) {
+		Connection con = DataBase.getConnection();
+		String sql = "update user set user_name = ?,user_sex=?,user_birth=?,user_address=?,user_intro=? where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setString(1,user.getUserName());
+			ptmt.setString(2,user.getUserSex());
+			ptmt.setDate(3, (Date)user.getUserBirth());
+			ptmt.setString(4, user.getUserAddress());
+			ptmt.setString(5, user.getUserIntro());
+			ptmt.setInt(6, user.getUserId());
+			int row = ptmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 得到用户数量
+	 */
+	public int getUserCount() {
+		int count = 0;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select count(*) u from user";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				count = rs.getInt("u");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(rs);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return count;
+	}
+	/**
+	 * 得到新插入的用户的userId
+	 */
+	public int getLastUserId() {
+		int userId = 0;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select max(user_id) from user";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				userId = rs.getInt("max(user_id)");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(rs);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return userId;
+	}
+	/**
+	 * 根据得到的新插入用户的userId插入
+	 */
+	public void insertUserNext(UserBean user,int userId) {
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		String sql = "update user set user_sex=?,user_birth=? where user_id=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, user.getUserSex());
+			pstmt.setDate(2, new java.sql.Date(user.getUserBirth().getTime()));
+			pstmt.setInt(3, userId);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
+	/**
+	 * 根据用户名和手机号判断用户是否注册过; 注册过返回true，没有注册过返回false
+	 */
+	public boolean isRegisterByNameOrPhone(UserBean user) {
+		int userId = 0;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select user_id from user where user_name=? or user_phone=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, user.getUserName());
+			pstmt.setString(2, user.getUserPhone());
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				userId = rs.getInt("user_id");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(rs);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		if(userId != 0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	/**
+	 * 根据输入的手机号查询用户是否存在
+	 */
+	public boolean isUserExistByPhone(String userPhone) {
+		int userId = 0;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select user_id from user where user_phone=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userPhone);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				userId = rs.getInt("user_id");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(rs);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		if(userId != 0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	/**
+	 * 根据输入的手机号和密码查询用户是否存在
+	 */
+	public boolean isUserExistByPhoneAndPassword(String userPhone,String userPassword) {
+		int userId = 0;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select user_id from user where user_phone=? and user_password=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userPhone);
+			pstmt.setString(2, userPassword);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				userId = rs.getInt("user_id");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(rs);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		if(userId != 0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	/**
+	 * 往title表中插入数据
+	 */
+	public void insertTitle(int userId,int typeId) {
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		String sql = "insert into title(user_id,type_id) values(?,?)";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			pstmt.setInt(2, typeId);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
+	/**
+	 * 根据输入的手机号查询userId
+	 */
+	public int getUserIdByPhone(String userPhone) {
+		int userId = 0;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select user_id from user where user_phone=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userPhone);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				userId = rs.getInt("user_id");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(rs);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return userId;
+	}
+	/**
+	 * 根据输入的手机号和密码查询userId
+	 */
+	public int getUserIdByPhoneAndPassword(String userPhone,String userPassword) {
+		int userId = 0;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select user_id from user where user_phone=? and user_password=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userPhone);
+			pstmt.setString(2, userPassword);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				userId = rs.getInt("user_id");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(rs);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return userId;
+	}
+	/**
+	 * 删除Title表中的数据
+	 */
+	public void deleteTitle(int userId,int typeId) {
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		String sql = "delete from title where user_id=? and type_id=?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			pstmt.setInt(2, typeId);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
 }
+
