@@ -68,9 +68,12 @@ public class MyFragment extends Fragment {
     private ImageView headImg;
     private ImageView settingView;
     private Button button;
+<<<<<<< HEAD
     private String path = null;
     PopupWindow popupWindow=null;
     private LinearLayout root;
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 
     @Nullable
     @Override
@@ -330,12 +333,21 @@ public class MyFragment extends Fragment {
                     Intent setIntent = new Intent();
                     setIntent.setClass(getActivity(), SettingActivity.class);
                     setIntent.putExtra("user",user);
+<<<<<<< HEAD
                     setIntent.putIntegerArrayListExtra("type",type);
                     startActivityForResult(setIntent,2);
+=======
+                    startActivity(setIntent);
+                    break;
+                case R.id.more:
+                    showPopupWindow();
+                    addBackgroundAlpha(0.7f);
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
                     break;
             }
         }
     }
+<<<<<<< HEAD
 
     private void showPopupWindow(){
         popupWindow = new PopupWindow(getContext());
@@ -363,6 +375,8 @@ public class MyFragment extends Fragment {
         popupWindow.showAtLocation(root, Gravity.NO_GRAVITY,0,0);
     }
 
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
     // 弹出选项框时为背景加上透明度
     private void addBackgroundAlpha(float alpha){
         WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();

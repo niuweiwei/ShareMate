@@ -3,9 +3,15 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+<<<<<<< HEAD
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+=======
+import android.os.Build;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -24,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+<<<<<<< HEAD
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +47,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
+=======
+import java.io.File;
+import java.io.IOException;
+
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.IdentifyingCode;
 import cn.edu.hebtu.software.sharemate.tools.PasswordUtils;
@@ -64,6 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
     private File file;
     private Uri cropUri;
     private File cropFile;
+<<<<<<< HEAD
     private EditText etUsername;
     private EditText etPassword;
     private EditText etPhone;
@@ -73,16 +86,27 @@ public class RegisterActivity extends AppCompatActivity {
     private String userPhone;
     private String confirmPawd;
     private UserBean user;
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         //创建保存图片的路径
         file = new File(Environment.getExternalStorageDirectory() + "/CoolImage/");
         findViews();
         back.setOnClickListener(new backClickListener());
+<<<<<<< HEAD
+=======
+        btnTrue.setOnClickListener(new ButtonClickListener());
+        time = new TimeCount(30000, 1000);
+        getCode.setOnClickListener(new getCodeClickListener());
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         ivCode.setOnClickListener(new idtfCodeClickListener());
 //        head.setOnClickListener(new photoClickListener());
         judgeForm();
@@ -111,6 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
 
+<<<<<<< HEAD
                 } else {
                     userName = etUsername.getText().toString();
                     //判断用户名格式,限16个字符，支持中英文、数字、减号或下划线
@@ -185,6 +210,13 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+=======
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
     }
     /**
      * 异步任务
@@ -192,6 +224,7 @@ public class RegisterActivity extends AppCompatActivity {
     public class RegisterUtil extends AsyncTask {
 
         @Override
+<<<<<<< HEAD
         protected Object doInBackground(Object[] objects) {
             Log.e("RegisterUtil", "异步任务");
             UserBean user = (UserBean) objects[0];
@@ -239,6 +272,14 @@ public class RegisterActivity extends AppCompatActivity {
             }
             return result;
         }
+=======
+        public void onClick(View v) {
+            String code = etCode.getText().toString().toLowerCase();
+//            String msg = "生成的验证码："+realCode+"输入的验证码："+code;
+//            Toast.makeText(RegisterActivity.this,msg,Toast.LENGTH_LONG).show();
+            if(code.equals(realCode)){
+                Toast.makeText(RegisterActivity.this,code + "验证码正确",Toast.LENGTH_SHORT).show();
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 
         @Override
         protected void onPostExecute(Object o) {
@@ -253,7 +294,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
     }
-
     /**
      * 点击返回
      */
@@ -265,7 +305,6 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
     /**
      * 点击确定按钮
      */
@@ -293,7 +332,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
     }
-
     /**
      * 生成随机验证码图片
      */
@@ -305,12 +343,15 @@ public class RegisterActivity extends AppCompatActivity {
             realCode = IdentifyingCode.getInstance().getCode().toLowerCase();
         }
     }
+<<<<<<< HEAD
 
 
     /**
      * 以下方法在实现头像文字一起上传前先不实现
      */
 
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
     /**
      * 上传头像
      */
@@ -356,6 +397,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
         switch (requestCode) {
+<<<<<<< HEAD
             //从相册中获取到图片了，才执行裁剪动作
             case OPEN_ALBUM:
                 if (data != null) {
@@ -372,13 +414,33 @@ public class RegisterActivity extends AppCompatActivity {
                 String path = cropUri.getPath();
                 getUpLoadUtil(path);
                 Log.e("RegisterActivity", "上传头像");
+=======
+            //                //从相册中获取到图片了，才执行裁剪动作
+            case OPEN_ALBUM:
+                if (data != null) {
+                    startPhotoZoom(data.getData());
+                }
+                Log.e("data", data.getData().getPath() + "");
+                Log.e("DATA", data + "");
+                break;
+            //裁剪后的返回值
+            case RESULT_REQUEST_CODE:
+                if (data != null) {
+                    setImageToHeadView(data);
+                }
+                String path = cropUri.getPath();
+                getUploadUtil(path);
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
                 break;
         }
     }
 
     /**
      * 对图片进行裁剪
+<<<<<<< HEAD
      *
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
      * @param uri
      */
     private void startPhotoZoom(Uri uri) {
@@ -419,7 +481,10 @@ public class RegisterActivity extends AppCompatActivity {
         intent.putExtra("noFaceDetection", true); // no face detection
         startActivityForResult(intent, RESULT_REQUEST_CODE);//这里的RESULT_REQUEST_CODE是在startActivityForResult里使用的返回值。
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
     /**
      * 提取保存裁剪之后的图片数据，并设置头像部分的view
      */
@@ -431,8 +496,12 @@ public class RegisterActivity extends AppCompatActivity {
             Glide.with(this).load(cropUri).apply(mRequestOptions).into(head);
         }
     }
+<<<<<<< HEAD
 
     private void getUpLoadUtil(String path) {
+=======
+    private void getUploadUtil(String path){
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         UpLoadUtil uploadUtil = new UpLoadUtil();
         uploadUtil.execute(path);
     }

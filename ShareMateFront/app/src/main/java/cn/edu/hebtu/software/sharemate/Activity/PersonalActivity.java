@@ -35,6 +35,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+<<<<<<< HEAD
+=======
+import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.Fragment.MyFragment;
 import cn.edu.hebtu.software.sharemate.R;
@@ -60,6 +64,7 @@ public class PersonalActivity extends AppCompatActivity {
     private LinearLayout layoutAddress;
     private LinearLayout layoutIntro;
     private LinearLayout rootLayout;
+<<<<<<< HEAD
     private String sex;
     private String birth;
     private UserBean user;
@@ -68,6 +73,15 @@ public class PersonalActivity extends AppCompatActivity {
     private String sign;
     private String path;
     private ArrayList<Integer> type = new ArrayList<>();
+=======
+    private String name;
+    private String sex;
+    private String birth;
+    //user应该从数据库中获得
+    private UserBean user;
+    private static final int CODE_PHOTO_REQUEST = 1;
+    private static final int CROP_SMALL_PICTURE = 2;
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,15 +103,28 @@ public class PersonalActivity extends AppCompatActivity {
         iv_head = findViewById(R.id.head);
         tv_name = findViewById(R.id.user);
         tv_id = findViewById(R.id.num);
+<<<<<<< HEAD
+=======
+        tv_id.setText("" + user.getUserId());
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         tv_sex = findViewById(R.id.sex);
         tv_birth = findViewById(R.id.birth);
         tv_address = findViewById(R.id.address);
         tv_introduce = findViewById(R.id.introduction);
+<<<<<<< HEAD
+=======
+        if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 7) {
+            tv_introduce.setText(user.getUserIntroduce());
+        } else {
+            tv_introduce.setText(user.getUserIntroduce().substring(0, 6) + "...");
+        }
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         layoutName = findViewById(R.id.ly_name);
         layoutAddress = findViewById(R.id.ly_address);
         layoutBirth = findViewById(R.id.ly_birth);
         layoutIntro = findViewById(R.id.ly_intro);
         layoutSex = findViewById(R.id.ly_sex);
+<<<<<<< HEAD
     }
     public void setContent(){
         tv_address.setText(user.getUserAddress());
@@ -116,13 +143,19 @@ public class PersonalActivity extends AppCompatActivity {
         } else {
             tv_introduce.setText(user.getUserIntroduce().substring(0, 6) + "...");
         }
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
     }
 
     private void setListener() {
         perOnClickListener listener = new perOnClickListener();
         iv_head.setOnClickListener(listener);
         iv_back.setOnClickListener(listener);
+<<<<<<< HEAD
         layoutName.setOnClickListener(listener);
+=======
+        iv_head.setOnClickListener(listener);
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         layoutSex.setOnClickListener(listener);
         layoutIntro.setOnClickListener(listener);
         layoutBirth.setOnClickListener(listener);
@@ -133,7 +166,14 @@ public class PersonalActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
+<<<<<<< HEAD
             switch (v.getId()) {
+=======
+            switch (v.getId()){
+                case R.id.back:
+                    PersonalActivity.this.finish();
+                    break;
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
                 case R.id.head:
                     Intent intent = new Intent(Intent.ACTION_PICK, null);
                     intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
@@ -316,6 +356,7 @@ public class PersonalActivity extends AppCompatActivity {
         getWindow().setAttributes(params);
     }
 
+<<<<<<< HEAD
 
     //修改头像    对图片进行裁剪
     private void startPhotoZoom(Uri uri) {
@@ -326,6 +367,43 @@ public class PersonalActivity extends AppCompatActivity {
         if (cropFile.exists()) {
             cropFile.delete();
         }else{
+=======
+    //修改头像
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case CODE_PHOTO_REQUEST:
+                if (data != null) {
+                    startPhotoZoom(data.getData());
+                }
+                break;
+            case CROP_SMALL_PICTURE:
+                if (data != null) {
+                    if (!cropUri.equals("")) {
+                        RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true);
+                        Glide.with(this).load(cropUri).apply(mRequestOptions).into(iv_head);
+                    }
+                }
+                UpLoadUtil upLoadUtil = new UpLoadUtil();
+                upLoadUtil.execute(cropUri.getPath());
+                break;
+        }
+    }
+
+    //对图片进行裁剪
+    private void startPhotoZoom(Uri uri) {
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        //保存裁剪后的图片
+        cropFile = new File(Environment.getExternalStorageDirectory() + "/CoolImage", System.currentTimeMillis() + ".jpg");
+        if (cropFile.exists()) {
+            cropFile.delete();
+            Log.e("delete", "delete");
+        } else {
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
             try {
                 cropFile.createNewFile();
             } catch (IOException e) {
@@ -346,6 +424,10 @@ public class PersonalActivity extends AppCompatActivity {
         intent.putExtra("scale", true);
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+<<<<<<< HEAD
+=======
+        Log.e("cropUri = ", cropUri.toString());
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
         startActivityForResult(intent, CROP_SMALL_PICTURE);
