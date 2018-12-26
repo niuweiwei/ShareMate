@@ -14,7 +14,27 @@ import bean.UserBean;
 import dao.DataBase;
 
 public class LikesDao {
-	
+	/**
+	 * 判断某个用户是否赞过某个笔记
+	 */
+	public boolean judgeLike(int userId,int noteId) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="select * from likes where note_id=? and user_id=?";
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, noteId);
+			pstmt.setInt(2, userId);
+			ResultSet rs=pstmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 	/**
 	 * 查询某个笔记的赞的数量
 	 */
@@ -85,7 +105,7 @@ public class LikesDao {
 	/**
 	 * 查询用户点赞过的所有笔记
 	 */
-	public List<NoteBean> getLikeNoteList(UserBean userbean){
+	public List<NoteBean> getLikeNoteList(int userId){
 		List<NoteBean> noteList = new ArrayList<NoteBean>();
 		NoteDao notedao = new NoteDao();
 		Connection con = DataBase.getConnection();
@@ -93,7 +113,7 @@ public class LikesDao {
 		String sql = "select note_id from likes where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			rs = ptmt.executeQuery();
 			while(rs.next()) {
 				noteList.add(notedao.getNoteById(rs.getInt("note_id")));
@@ -114,8 +134,7 @@ public class LikesDao {
 		List<LikesBean> likeList = new ArrayList<>();
 		//1.通过userId查询该用户发过的所有笔记
 		NoteDao noteDao = new NoteDao();
-		UserBean userBean=new UserDao().getUserById(userId);
-		List<NoteBean> noteList = noteDao.getNoteList(userBean);
+		List<NoteBean> noteList = noteDao.getNoteList(userId);
 	
 		Connection conn = DataBase.getConnection();
 		PreparedStatement pstmt = null;

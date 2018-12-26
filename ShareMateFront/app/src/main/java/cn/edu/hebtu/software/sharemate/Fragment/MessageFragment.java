@@ -63,14 +63,17 @@ public class MessageFragment extends Fragment {
                 switch (position){
                     case 0:
                         Intent likeIntent = new Intent(getActivity(), LikeActivity.class);
+                        likeIntent.putExtra("userId",getActivity().getIntent().getIntExtra("userId",0));
                         startActivity(likeIntent);
                         break;
                     case 1:
                         Intent commentIntent = new Intent(getActivity(), CommentActivity.class);
+                        commentIntent .putExtra("userId",getActivity().getIntent().getIntExtra("userId",0));
                         startActivity(commentIntent);
                         break;
                     case 2:
                         Intent followedIntent = new Intent(getActivity(), FollowedActivity.class);
+                        followedIntent.putExtra("userId",getActivity().getIntent().getIntExtra("userId",0));
                         startActivity(followedIntent);
                         break;
                     case 3:

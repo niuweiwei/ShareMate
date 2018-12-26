@@ -4,14 +4,19 @@ import java.util.Date;
 
 public class LikeBean {
 
-   private  UserBean user;
-    private Date date;
+    private  UserBean user;
+    private String date;
     private int noteId;
+    private String notePhotoPath;
 
-    public LikeBean(UserBean user, Date date, int noteId) {
+    public LikeBean() {
+    }
+
+    public LikeBean(UserBean user, String date, int noteId, String notePhotoPath) {
         this.user = user;
         this.date = date;
         this.noteId = noteId;
+        this.notePhotoPath = notePhotoPath;
     }
 
     public UserBean getUser() {
@@ -22,12 +27,20 @@ public class LikeBean {
         this.user = user;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getNotePhotoPath() {
+        return notePhotoPath;
+    }
+
+    public void setNotePhotoPath(String notePhotoPath) {
+        this.notePhotoPath = notePhotoPath;
     }
 
     public int getNoteId() {

@@ -9,7 +9,7 @@
     android:background="@color/lightgray"
     >
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,20 +47,22 @@
                         android:id="@+id/meizhuang1"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:text="#秋冬必备口红"
+                        android:padding="10dp"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/meizhuang2"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#新手化妆必备"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -72,20 +74,22 @@
                         android:id="@+id/meizhuang3"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#日常眼妆教程"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/meizhuang4"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#国产美妆好物"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -122,20 +126,22 @@
                         android:id="@+id/lvxing1"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#穷游攻略"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/lvxing2"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#周边游好去处"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -147,20 +153,22 @@
                         android:id="@+id/lvxing3"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#小众旅行地"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/lvxing4"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#海岛旅游攻略"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -197,20 +205,22 @@
                         android:id="@+id/yundong1"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#瑜伽动作分享"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/yundong2"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#健身必备单品"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -222,10 +232,11 @@
                         android:id="@+id/yundong3"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#高效瘦腿攻略"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -262,20 +273,22 @@
                         android:id="@+id/meishi1"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#网红火锅"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/meishi2"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#吃货分享"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -297,10 +310,11 @@
                         android:id="@+id/meishi4"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#人气奶茶"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -337,20 +351,22 @@
                         android:id="@+id/keji1"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#高性价比安卓手机"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/keji2"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#苹果产品实测"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -362,20 +378,22 @@
                         android:id="@+id/keji3"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#人工智能"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/keji4"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#笔记本电脑"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -412,20 +430,22 @@
                         android:id="@+id/dongman1"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#动漫热番推荐"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/dongman2"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#校园青春动漫"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>
@@ -437,20 +457,22 @@
                         android:id="@+id/dongman3"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#汉服美人图鉴"
                         android:background="@drawable/yuanjiaobutton"/>
                     <Button
                         android:id="@+id/dongman4"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="41dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginLeft="20dp"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
+                        android:padding="10dp"
                         android:text="#COS场照大公开"
                         android:background="@drawable/yuanjiaobutton"/>
                 </LinearLayout>

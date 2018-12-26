@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80012
 File Encoding         : 65001
 
-Date: 2018-12-04 17:31:07
+Date: 2018-12-22 16:51:23
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -50,8 +50,10 @@ INSERT INTO `follow` VALUES ('2', '9', '2018-06-19');
 INSERT INTO `follow` VALUES ('2', '15', '2018-08-14');
 INSERT INTO `follow` VALUES ('2', '17', '2018-09-18');
 INSERT INTO `follow` VALUES ('3', '2', '2018-12-01');
-INSERT INTO `follow` VALUES ('3', '5', '2018-09-30');
+INSERT INTO `follow` VALUES ('3', '5', '2018-12-09');
+INSERT INTO `follow` VALUES ('3', '7', '2018-12-17');
 INSERT INTO `follow` VALUES ('3', '8', '2018-05-14');
+INSERT INTO `follow` VALUES ('3', '12', '2018-12-09');
 INSERT INTO `follow` VALUES ('3', '18', '2018-03-21');
 INSERT INTO `follow` VALUES ('3', '20', '2018-04-24');
 INSERT INTO `follow` VALUES ('4', '5', '2017-09-21');
@@ -64,7 +66,7 @@ INSERT INTO `follow` VALUES ('4', '19', '2018-04-10');
 INSERT INTO `follow` VALUES ('4', '20', '2018-09-09');
 INSERT INTO `follow` VALUES ('5', '1', '2018-01-16');
 INSERT INTO `follow` VALUES ('5', '2', '2018-02-14');
-INSERT INTO `follow` VALUES ('5', '3', '2018-02-16');
+INSERT INTO `follow` VALUES ('5', '3', '2018-10-19');
 INSERT INTO `follow` VALUES ('5', '4', '2018-02-17');
 INSERT INTO `follow` VALUES ('5', '6', '2018-02-21');
 INSERT INTO `follow` VALUES ('6', '7', '2018-08-08');

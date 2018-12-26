@@ -38,6 +38,7 @@
             android:textSize="@dimen/TextSize_4"
             android:textColor="@color/colorText"/>
         <RadioGroup
+            android:id="@+id/radiogroup"
             android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

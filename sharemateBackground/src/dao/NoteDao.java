@@ -25,7 +25,7 @@ public class NoteDao {
 		NoteBean  noteBean=new NoteBean();
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="select note_title,note_detail,note_image,note_date,note_comment_count,note_collection_count,note_like_count,type_id,user_id "
+		String sql="select note_title,note_detail,note_image,note_date,type_id,user_id "
 				+ "from note where note_id=?";
 		try {
 			pstmt=conn.prepareStatement(sql);
@@ -34,8 +34,6 @@ public class NoteDao {
 			while(rs.next()) {
 				noteBean.setNoteId(noteId);
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				
 				//将数据库中时间戳类型转化成符合某种格式的Date对象
@@ -47,7 +45,6 @@ public class NoteDao {
 				
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 			}
 		} catch (SQLException e) {
@@ -103,8 +100,6 @@ public class NoteDao {
 				NoteBean  noteBean=new NoteBean();
 				noteBean.setNoteId(rs.getInt("note_id"));
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				
 				//将数据库中时间戳类型转化成符合某种格式的Date对象
@@ -116,7 +111,6 @@ public class NoteDao {
 				
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 				notelist.add(noteBean);
 			}
@@ -151,13 +145,10 @@ public class NoteDao {
 				NoteBean  noteBean=new NoteBean();
 				noteBean.setNoteId(rs.getInt("note_id"));
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				noteBean.setNoteDate(rs.getDate("note_date"));
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 				notelist.add(noteBean);
 			}
@@ -191,13 +182,10 @@ public class NoteDao {
 				NoteBean  noteBean=new NoteBean();
 				noteBean.setNoteId(rs.getInt("note_id"));
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				noteBean.setNoteDate(rs.getDate("note_date"));
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 				notelist.add(noteBean);
 			}
@@ -232,13 +220,10 @@ public class NoteDao {
 				NoteBean  noteBean=new NoteBean();
 				noteBean.setNoteId(rs.getInt("note_id"));
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				noteBean.setNoteDate(rs.getDate("note_date"));
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 				notelist.add(noteBean);
 			}
@@ -274,13 +259,10 @@ public class NoteDao {
 				NoteBean  noteBean=new NoteBean();
 				noteBean.setNoteId(rs.getInt("note_id"));
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				noteBean.setNoteDate(rs.getDate("note_date"));
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 				notelist.add(noteBean);
 			}
@@ -315,13 +297,10 @@ public class NoteDao {
 				NoteBean  noteBean=new NoteBean();
 				noteBean.setNoteId(rs.getInt("note_id"));
 				noteBean.setNoteImage(rs.getString("note_image"));
-				noteBean.setNoteCollectionCount(rs.getInt("note_collection_count"));
-				noteBean.setNoteCommentCount(rs.getInt("note_comment_count"));
 				noteBean.setNoteTitle(rs.getString("note_title"));
 				noteBean.setNoteDate(rs.getDate("note_date"));
 				noteBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				noteBean.setNoteDetail(rs.getString("note_detail"));
-				noteBean.setNoteLikeCount(rs.getInt("note_like_count"));
 				noteBean.setType(new TypeDao().getTypeById(rs.getInt("type_id")));
 				commentlist=com.getCommentsBynoteId(rs.getInt("note_id"));
 				noteBean.setComment(commentlist);
@@ -340,7 +319,7 @@ public class NoteDao {
 	/**
 	 * 查询用户获得的总赞数
 	 */
-	public int getLikeCount(UserBean userbean) {
+	public int getLikeCount(int userId) {
 		int likeCount = 0;
 		LikesDao likesdao = new LikesDao();
 		Connection con = DataBase.getConnection();
@@ -348,7 +327,7 @@ public class NoteDao {
 		String sql = "select * from note where user_id = ?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			rs = ptmt.executeQuery();
 			while(rs.next()) {
 				likeCount+= likesdao.selectLike(rs.getInt(1));
@@ -361,17 +340,42 @@ public class NoteDao {
 		}
 		return likeCount;
 	}
+	
+	/**
+	 * 获取用户发过的笔记的数量
+	 */
+	public int getNoteCount(int userId) {
+		int count = 0;
+		Connection con = DataBase.getConnection();
+		ResultSet rs = null;
+		String sql = "select count(*) c from note where user_id = ?";
+		try {
+			PreparedStatement ptmt = con.prepareStatement(sql);
+			ptmt.setInt(1,userId);
+			rs = ptmt.executeQuery();
+			while(rs.next()) {
+				count = rs.getInt("c");
+			}
+			rs.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return count;
+	}
+
 		
 	/**
 	 * 获取用户发过的笔记
 	 */
-	public List<NoteBean> getNoteList(UserBean userbean){
+	public List<NoteBean> getNoteList(int userId){
 		List<NoteBean> noteList = new ArrayList<>();
 		Connection con = DataBase.getConnection();
 		String sql = "select note_id from note where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			while(rs.next()) {
 				noteList.add(this.getNoteById(rs.getInt("note_id")));
@@ -388,13 +392,13 @@ public class NoteDao {
 	/**
 	 * 获得用户收藏的所有的笔记
 	 */
-	public List<NoteBean> getCollectList(UserBean userbean){
+	public List<NoteBean> getCollectList(int userId){
 		List<NoteBean> collectList = new ArrayList<>();
 		Connection con = DataBase.getConnection();
 		String sql = "select note_id from collect where user_id=?";
 		try {
 			PreparedStatement ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1,userbean.getUserId());
+			ptmt.setInt(1,userId);
 			ResultSet rs = ptmt.executeQuery();
 			while(rs.next()) {
 				collectList.add(this.getNoteById(rs.getInt("note_id")));
@@ -407,4 +411,75 @@ public class NoteDao {
 		}
 		return collectList;
 	}
+	/**
+	 * 获取最后一条信息的id
+	 */
+	public int findid() {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		int noteid = 0;
+		String sql="select max(note_id) m from note";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			ResultSet rs=pstmt.executeQuery();
+			while(rs.next()) {
+				NoteBean noteBean=new NoteBean();
+				noteBean.setNoteId(rs.getInt("m"));
+				noteid=noteBean.getNoteId();
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return noteid;
+	}
+	/**
+	 * 分享时调用的addnote方法添加照片
+	 */
+	public void addNotePic(String picpath,int noteid) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		//绗旇鎻掑叆鏃跺幓闄ら偅涓夊垪
+		String sql="update note set note_image='"+picpath+"' where note_id="+noteid;
+		System.out.println("sql"+sql);
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
+	/**
+	 *分享时调用的addnote方法添加除照片以外信息
+	 */
+	public void addNoteshare(NoteBean notebean) {
+		Connection conn=DataBase.getConnection();
+		PreparedStatement pstmt=null;
+		String sql="insert into note(note_id,note_title,note_detail,note_date,type_id,user_id) values (0,?,?,NOW(),?,?)";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, notebean.getNoteTitle());
+			pstmt.setString(2, notebean.getNoteDetail());
+			
+			pstmt.setInt(3, notebean.getType().getTypeId());
+			pstmt.setInt(4, notebean.getUser().getUserId());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+	}
+
+
 }

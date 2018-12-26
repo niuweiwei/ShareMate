@@ -32,8 +32,10 @@ public class CAndRDao {
 			item.setPublisher(comment.getUser());
 			item.setContent(comment.getCommentDetail());
 			item.setUser(new UserDao().getUserById(comment.getNote().getUser().getUserId()));//设置被回复的人
+			item.setNoteId(comment.getNote().getNoteId());
 			item.setNoteImage(comment.getNote().getNoteImage());
 			item.setDate(comment.getCommentDate());
+			item.setArguedId(0);//表示是对笔记进行评论
 			item.setArgued(null);
 		}
 		
@@ -59,10 +61,10 @@ public class CAndRDao {
 			result = pstmt.executeQuery();
 			if(result.next()) {
 				item = new CAndRBean();
-				item.setTag(CAndRBean.REPLY);
 				item.setId(replyId);
 				item.setPublisher(new UserDao().getUserById(result.getInt("user_id")));
 				item.setContent(result.getString("reply_detail"));
+				item.setNoteId(new ReplyDao().getReplyNote(replyId).getNoteId());
 				item.setNoteImage(new ReplyDao().getReplyNote(replyId).getNoteImage());
 				
 				//从数据库中得到发布笔记的时间 Timestamp类型转化成Date对象
@@ -74,6 +76,8 @@ public class CAndRDao {
 				//查询被回复的内容以及用户
 				if(reReplyId != 0 && commentId ==0) {
 					//当回复的是回复时
+					item.setTag(CAndRBean.REPLYREPLY);
+					item.setArguedId(reReplyId);
 					String sql1 = "select * from reply where reply_id = ?";
 					pstmt1 = conn.prepareStatement(sql1);
 					pstmt1.setInt(1, reReplyId);
@@ -84,6 +88,8 @@ public class CAndRDao {
 					}
 				}else if(commentId !=0 && reReplyId == 0){
 					//当回复的是评论时
+					item.setTag(CAndRBean.REPLYCOMMENT);
+					item.setArguedId(commentId);
 					CommentDao commentDao = new CommentDao();
 					item.setUser(new UserDao().getUserById(commentDao.getCommentBycommentId(commentId).getUser().getUserId()));
 					item.setArgued(commentDao.getCommentBycommentId(commentId).getCommentDetail());
@@ -121,7 +127,7 @@ public class CAndRDao {
 			result = pstmt.executeQuery();
 			while(result.next()) {
 				CAndRBean item = new CAndRBean();
-				item.setTag(CAndRBean.REPLY);
+				item.setTag(CAndRBean.REPLYREPLY);
 				item.setId(result.getInt("reply_id"));
 				item.setPublisher(new UserDao().getUserById(result.getInt("user_id")));
 				item.setContent(result.getString("reply_detail"));
@@ -183,8 +189,7 @@ public class CAndRDao {
 	public List<CAndRBean> getCAndBeanList(int userId){
 		List <CAndRBean> list = new ArrayList<>();
 		//获得该用户发布过的所有笔记
-		UserBean user=new UserDao().getUserById(userId);
-		List<NoteBean> noteList = new NoteDao().getNoteList(user);
+		List<NoteBean> noteList = new NoteDao().getNoteList(userId);
 		for(NoteBean note : noteList) {
 			//获得每一个笔记下的所有的评论
 			List<CommentBean> commentList = new CommentDao().getCommentsBynoteId(note.getNoteId());
@@ -193,9 +198,9 @@ public class CAndRDao {
 				CAndRBean commentItem = getCAndRBeanByComment(commentId); 
 				list.add(commentItem);
 				//获得每个评论下的所有回复
-				List<ReplyBean> replyList = new ReplyDao().getRepliesBycommentId(commentId);
+				List<ReplyBean> replyList = new ReplyDao().getRepliesList(commentId);
 				for(ReplyBean reply : replyList) {
-					//每一条回复的所有回复
+					//获得每一条回复的所有回复
 					int replyId = reply.getReplyId();
 					CAndRBean replyItem = getCAndRBeanByReply(replyId);
 					list.add(replyItem);
@@ -209,6 +214,14 @@ public class CAndRDao {
 		for(ReplyBean reply:replys) {
 			//针对每一条回复 找到回复该回复的所有回复
 			getCAndRBeanList(reply,list);
+		}
+		for(int i = 0;i<list.size();i++) {
+			CAndRBean bean = list.get(i);
+			if(bean.getPublisher().getUserId()==userId) {
+				int tmp = i;
+				list.remove(i);
+				i = tmp-1;
+			}	
 		}
 		return list;
 	}
