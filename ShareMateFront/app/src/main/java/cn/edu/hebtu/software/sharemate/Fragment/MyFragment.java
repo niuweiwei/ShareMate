@@ -7,13 +7,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -65,6 +69,8 @@ public class MyFragment extends Fragment {
     private ImageView settingView;
     private Button button;
     private String path = null;
+    PopupWindow popupWindow=null;
+    private LinearLayout root;
 
     @Nullable
     @Override
@@ -72,6 +78,7 @@ public class MyFragment extends Fragment {
         userId = getActivity().getIntent().getIntExtra("userId",0);
         type = getActivity().getIntent().getIntegerArrayListExtra("type");
         path = getResources().getString(R.string.server_path);
+
         GetUserDetail getUser = new GetUserDetail();
         getUser.execute(userId);
         GetNote getNote = new GetNote();
@@ -80,6 +87,15 @@ public class MyFragment extends Fragment {
         getCollection.execute(user);
         View view = inflater.inflate(R.layout.fragment_my,container,false);
         findView(view);
+        root = view.findViewById(R.id.root1);
+        Button more=view.findViewById(R.id.more);
+        more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupWindow();
+                addBackgroundAlpha(0.7f);
+            }
+        });
         setListener();
         return view;
     }
@@ -319,5 +335,38 @@ public class MyFragment extends Fragment {
                     break;
             }
         }
+    }
+
+    private void showPopupWindow(){
+        popupWindow = new PopupWindow(getContext());
+        popupWindow.setWidth(850);
+        popupWindow.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                addBackgroundAlpha(1f);
+            }
+        });
+        View v =getLayoutInflater().inflate(R.layout.more_item,null);
+        ImageView imageView=v.findViewById(R.id.delete);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+        //将自定义的视图添加到 popupWindow 中
+        popupWindow.setContentView(v);
+        //控制 popupwindow 再点击屏幕其他地方时自动消失
+        popupWindow .setFocusable(true);
+        popupWindow .setOutsideTouchable(true);
+        popupWindow.showAtLocation(root, Gravity.NO_GRAVITY,0,0);
+    }
+
+    // 弹出选项框时为背景加上透明度
+    private void addBackgroundAlpha(float alpha){
+        WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
+        params.alpha = alpha;
+        getActivity().getWindow().setAttributes(params);
     }
 }

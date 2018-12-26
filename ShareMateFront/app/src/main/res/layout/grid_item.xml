@@ -8,16 +8,16 @@
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"
-        android:background="@drawable/background"
         android:orientation="vertical">
         <ImageView
             android:layout_gravity="center_horizontal"
             android:id="@+id/iv_photo"
-            android:layout_width="170dp"
-            android:layout_height="222dp"
+            android:layout_width="200dp"
+            android:layout_height="261dp"
             />
         <LinearLayout
             android:layout_marginTop="10dp"
@@ -32,7 +32,6 @@
                 android:maxEms="8"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:text="路飞手办，路飞公仔"
                 android:id="@+id/note_text"
                 />
             <RelativeLayout
@@ -58,7 +57,6 @@
                         android:maxEms="4"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:text="小明"
                         android:textColor="@android:color/black"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -67,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:gravity="center"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="15dp"
                     android:orientation="horizontal">
                     <Button
                         android:id="@+id/dianzan"
@@ -79,9 +77,9 @@
                         android:id="@+id/zan_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
+                        android:layout_marginLeft="2dp"
                         android:maxEms="3"
-                        android:maxLines="2"
+                        android:maxLines="1"
                         android:ellipsize="end"
                         android:textColor="@color/textcolor"
                         android:textSize="12sp" />

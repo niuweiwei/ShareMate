@@ -81,18 +81,18 @@ public class FabuActivity extends AppCompatActivity {
                 }
             }
         });
-        Button btnShare1 = findViewById(R.id.cuncaogao);
-        btnShare1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(window.isShowing()){
-                    window.dismiss();
-                }else{
-                    showPopupWindow(root);
-                    addBackgroundAlpha(0.7f);
-                }
-            }
-        });
+//        Button btnShare1 = findViewById(R.id.cuncaogao);
+//        btnShare1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(window.isShowing()){
+//                    window.dismiss();
+//                }else{
+//                    showPopupWindow(root);
+//                    addBackgroundAlpha(0.7f);
+//                }
+//            }
+//        });
 
 
 

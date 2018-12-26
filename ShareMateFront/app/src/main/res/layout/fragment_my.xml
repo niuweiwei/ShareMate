@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="70dp"
+                android:layout_marginLeft="80dp"
                 android:layout_marginBottom="5dp"
                 android:orientation="vertical">
                 <TextView
@@ -40,7 +40,7 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginLeft="65dp"
+                android:layout_marginLeft="75dp"
                 android:layout_marginTop="14dp"
                 android:src="@drawable/share" />
         </LinearLayout>
@@ -60,21 +60,22 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginLeft="5dp"/>
+                    android:layout_marginLeft="20dp"/>
                 <LinearLayout
                     android:layout_width="260dp"
                     android:layout_height="100dp"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="35dp"
                     android:orientation="vertical">
                     <GridLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:layout_marginLeft="10dp"
                         android:columnCount="3"
                         android:rowCount="2">
                         <TextView
                             android:id="@+id/followCount"
-                            android:layout_marginLeft="30dp"
+                            android:layout_marginLeft="35dp"
                             android:layout_width="25dp"
                             android:gravity="center"
                             android:layout_height="wrap_content"
@@ -91,18 +92,18 @@
                             android:id="@+id/likeCount"
                             android:layout_width="25dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="40sp"
+                            android:layout_marginLeft="40dp"
                             android:gravity="center"
                             android:textColor="@color/blackGray" />
                         <TextView
-                            android:layout_marginLeft="28dp"
+                            android:layout_marginLeft="35dp"
                             android:layout_marginTop="5dp"
                             android:clickable="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="关注"/>
                         <TextView
-                            android:layout_marginLeft="32sp"
+                            android:layout_marginLeft="35dp"
                             android:layout_marginTop="5dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -118,6 +119,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginTop="8dp"
+                        android:layout_marginLeft="5dp"
                         android:orientation="horizontal">
                         <Button
                             android:id="@+id/personal"
@@ -146,7 +148,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="15dp"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
                 <ImageView
@@ -173,8 +175,7 @@
                 android:id="@+id/userIntro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="12dp" />
+                android:layout_marginLeft="20dp"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -214,7 +215,8 @@
             android:id="@+id/root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:numColumns="2">
+            android:numColumns="2"
+            android:columnWidth="10dp">
         </GridView>
         <ImageView
             android:id="@+id/empty_view"

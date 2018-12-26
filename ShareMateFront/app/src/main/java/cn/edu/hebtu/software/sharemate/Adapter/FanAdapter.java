@@ -189,7 +189,7 @@ public class FanAdapter extends BaseAdapter {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             TextView followView = (TextView) o;
-            followView.setText("回粉");
+            followView.setText(" 回粉 ");
             followView.setTextColor(context.getResources().getColor(R.color.warmRed));
         }
     }

@@ -129,7 +129,7 @@ public class HomeFragment extends Fragment {
         });
         View v =getLayoutInflater().inflate(R.layout.more_item,null);
         //退出登录
-        final Button btnback=v.findViewById(R.id.tuichu);
+        final TextView btnback=v.findViewById(R.id.tuichu);
         btnback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

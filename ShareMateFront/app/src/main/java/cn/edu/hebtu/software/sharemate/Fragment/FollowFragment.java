@@ -66,8 +66,6 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
     private int userId;
     private TextView textView;
     private ImageView imageView;
-    private String content=null;
-    private int image = R.drawable.meng;
     private Handler handler=null;
     private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
@@ -136,17 +134,17 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 followTask = new FollowTask();
                 followTask.execute(noteid1,isFollow.get(p));
                 if(!isFollow.get(p)){
-                    notes.get(p).setFol(R.drawable.yiguanzhu);
-                    isFollow.put(p,true);
+                    notes.get(p).setFol(1);
                     customAdapter.notifyDataSetChanged();
+                    isFollow.put(p,true);
                 } else {
-                    notes.get(p).setFol(R.drawable.guanzhu);
+                    notes.get(p).setFol(-1);
+                    customAdapter.notifyDataSetChanged();
                     isFollow.put(p,false);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"取消关注啦",Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER,0,0);
                     toast.show();
-                    customAdapter.notifyDataSetChanged();
                 }
                 break;
             //点赞获取消赞
@@ -517,6 +515,8 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         note1.setIslike(object.getInt("like"));
                         note1.setIscollect(object.getInt("isCollect"));
+                        note1.setIsfollow(1);
+                        note1.setFol(R.drawable.cancelfollowedbutton_style);
                        notes.add(note1);
                     }
                     if(notes.size()==0){

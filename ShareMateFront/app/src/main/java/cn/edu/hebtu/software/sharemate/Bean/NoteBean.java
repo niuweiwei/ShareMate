@@ -25,13 +25,12 @@ public class NoteBean {
     private String commentDetail = "";
     private int zan=R.drawable.xin;
     private int col=R.drawable.xingxing;
-    private int fol=R.drawable.yiguanzhu;
+    private int fol=R.drawable.cancelfollowedbutton_style;
     private int islike=-1;
     private int iscollect=-1;
-    private int isfollow;
+    private int isfollow;//1表示关注了该用户 -1表示未关注该用户
     private UserBean userContent;
     private int typeid;
-
     public NoteBean() {
     }
 
@@ -279,4 +278,5 @@ public class NoteBean {
     public void setUserContent(UserBean userContent) {
         this.userContent = userContent;
     }
+
 }

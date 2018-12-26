@@ -5,9 +5,9 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:id="@+id/fabu_root">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:background="@color/lightgray"
         android:orientation="horizontal">
         <Button
@@ -18,22 +18,22 @@
             android:layout_marginLeft="5dp"
             android:background="@drawable/guanbi"/>
 
-        <Button
-            android:id="@+id/cuncaogao"
-            android:layout_width="60dp"
-            android:layout_height="35dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="200dp"
-            android:layout_marginTop="3dp"
-            android:text="存草稿"
-            android:textSize="15sp"
-            android:background="@drawable/yuanjiaobtn1"
-            android:textColor="@color/darkgray"
-            />
+        <!--<Button-->
+            <!--android:id="@+id/cuncaogao"-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginLeft="200dp"-->
+            <!--android:layout_marginTop="3dp"-->
+            <!--android:text="存草稿"-->
+            <!--android:textSize="15sp"-->
+            <!--android:background="@drawable/yuanjiaobtn1"-->
+            <!--android:textColor="@color/darkgray"-->
+            <!--/>-->
         <Button
             android:id="@+id/fabu"
             android:layout_width="60dp"
-            android:layout_height="35dp"
+            android:layout_height="25dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="3dp"
@@ -41,8 +41,10 @@
             android:textSize="15sp"
             android:background="@drawable/yuanjiaobtn"
             android:textColor="@color/white"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             />
-    </LinearLayout>
+    </RelativeLayout>
     
     <LinearLayout
         android:layout_width="match_parent"
