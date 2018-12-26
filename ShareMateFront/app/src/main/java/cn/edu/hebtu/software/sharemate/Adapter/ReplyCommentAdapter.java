@@ -76,6 +76,7 @@ public class ReplyCommentAdapter extends BaseAdapter {
         }
         ImageView image = convertView.findViewById(R.id.iv_image);
         ImageTask imageTask = new ImageTask(replies.get(position).getUser().getUserPhotoPath());
+        Log.e("22222",replies.get(position).getUser().getUserPhotoPath());
         Object[] objects = new Object[]{image};
         imageTask.execute(objects);
         image.setOnClickListener(new View.OnClickListener() {
