@@ -58,7 +58,7 @@ public class RegisterFontServlet extends HttpServlet {
 		String userName = object.getString("userName");
 		String userPassword = object.getString("userPassword");
 		String userPhone = object.getString("userPhone");
-		String userPhoto = "images/userPhotos/0.jpg";
+		String userPhoto = "images/userPhotos/0.png";
 		String userIntro = "添加个人描述，可以让大家更好的认识你";
 		String userAddress = "完善你的位置信息";
 		System.out.println("头像：" + userPhoto + "; 用户名：" + userName + "; 密码：" + userPassword + "; 电话：" + userPhone);

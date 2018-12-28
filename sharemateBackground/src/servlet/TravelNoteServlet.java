@@ -54,13 +54,11 @@ public class TravelNoteServlet extends HttpServlet {
 			int userId = Integer.parseInt(userid);
 		    user=userDao.getUserById(userId);
 	    	noteLike=like.getLikeNoteList(user.getUserId());
-	    	System.out.println("notelike"+noteLike.size());
 		}
 		if(userid!=null&&noteid!=null) {
 	    int userId = Integer.parseInt(userid);
 	    int noteId = Integer.parseInt(noteid);
 	    String islike = request.getParameter("islike");
-	    System.out.println("userID"+userId+"noteid:"+noteId);
 	      if(islike.equals("false")) {
 	        like.addLike(userId, noteId);
 	      }else {
@@ -96,7 +94,6 @@ public class TravelNoteServlet extends HttpServlet {
     				}
     			}
     			note.setLike(ilike);
-    			System.out.println(note.getNoteId()+"islike"+note.isLike());
     		}
     		
     		request.setAttribute("noteList", noteList);

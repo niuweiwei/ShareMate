@@ -12,6 +12,7 @@ public class UserBean {
 	private String userAddress;
 	private Date userBirth;
 	private String userIntro;
+	private int likeCount,followCount,fanCount;
 	public UserBean() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -83,6 +84,28 @@ public class UserBean {
 	public void setUserIntro(String userIntro) {
 		this.userIntro = userIntro;
 	}
-	
+	public int getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+
+	public int getFollowCount() {
+		return followCount;
+	}
+
+	public void setFollowCount(int followCount) {
+		this.followCount = followCount;
+	}
+
+	public int getFanCount() {
+		return fanCount;
+	}
+
+	public void setFanCount(int fanCount) {
+		this.fanCount = fanCount;
+	}
 
 }

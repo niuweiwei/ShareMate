@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+
 import bean.UserBean;
+import dao.TitleDao;
+import dao.TypeDao;
 import dao.UserDao;
 import net.sf.json.JSONObject;
 
@@ -61,11 +66,19 @@ public class PhonePswdLoginServlet extends HttpServlet {
 		System.out.println("result:"+result);
 		if(result == true) {
 			int userId = userDao.getUserIdByPhoneAndPassword(userPhone, userPassword);
+			TitleDao titleDao = new TitleDao();
+			List<Integer> type = titleDao.getType(userId);
 			System.out.println("userId:"+userId);
-			JSONObject back = new JSONObject();
-			back.put("msg", "该用户存在");
-			back.put("userId",userId);
-			response.getWriter().append(back.toString());
+			JSONArray array = new JSONArray();
+			for(Integer i:type) {
+				JSONObject back = new JSONObject();
+				back.put("typeId", i);
+				back.put("msg", "该用户存在");
+				back.put("userId",userId);
+				array.put(back);
+			}
+			System.out.println(array.toString());
+			response.getWriter().append(array.toString());
 		}else {
 			JSONObject back = new JSONObject();
 			back.put("msg", "该用户不存在");
