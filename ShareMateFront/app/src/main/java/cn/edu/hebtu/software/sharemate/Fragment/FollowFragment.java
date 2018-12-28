@@ -113,12 +113,16 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 int u = (int) v.getTag();
                 UserBean userBean =new UserBean();
                 userBean.setUserId(notes.get(u).getUser().getUserId());
-                userBean.setUserPhotoPath(notes.get(u).getUser().getUserPhotoPath());
+                userBean.setUserPhotoPath(getResources().getString(R.string.server_path)+notes.get(u).getUser().getUserPhotoPath());
                 userBean.setUserName(notes.get(u).getUser().getUserName());
                 userBean.setUserSex(notes.get(u).getUser().getUserSex());
                 userBean.setUserAddress(notes.get(u).getUser().getUserAddress());
                 userBean.setUserBirth(notes.get(u).getUser().getUserBirth());
                 userBean.setUserIntroduce(notes.get(u).getUser().getUserIntroduce());
+                userBean.setLikeCount(notes.get(u).getUser().getLikeCount());
+                userBean.setFollowCount(notes.get(u).getUser().getFollowCount());
+                userBean.setFanCount(notes.get(u).getUser().getFanCount());
+
                 Intent perIntent = new Intent();
                 perIntent.setClass(getActivity(), FriendActivity.class);
                 perIntent.putExtra("friend",userBean);
@@ -254,7 +258,7 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 int noteId = notes.get(c).getNoId();
                 Intent intent=new Intent(getActivity(),CommentDetailActivity.class);
                 intent.putExtra("noteId",noteId);
-                intent.putExtra("user",user);
+                intent.putExtra("userId",user.getUserId());
                 startActivity(intent);
                 break;
         }
@@ -483,6 +487,10 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                         user.setUserIntroduce(object2.getString("userIntro"));
                         user.setUserAddress(object2.getString("userAddress"));
                         String userImg = object2.getString("userPhoto");
+                        user.setFanCount(object2.getInt("fanCount"));
+                        user.setFollowCount(object2.getInt("followCount"));
+                        user.setLikeCount(object2.getInt("likeCount"));
+                        //------------
                         user.setUserPhotoPath(userImg);
                         String url3 = U+userImg;
                         URL urluser= new URL(url3);

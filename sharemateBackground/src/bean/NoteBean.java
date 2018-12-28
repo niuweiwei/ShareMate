@@ -15,7 +15,6 @@ public class NoteBean {
 	private TypeBean type;
 	private UserBean user;
 	private List<CommentBean> comment;
-	
 	private int isLike,isCollect,isFollow;
 	private UserBean userContent;
 	public NoteBean() {
@@ -152,7 +151,7 @@ public class NoteBean {
 	public void setUserContent(UserBean userContent) {
 		this.userContent = userContent;
 	}
-	
+
 	
 	
 }
