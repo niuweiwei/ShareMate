@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,11 +30,13 @@ import com.bumptech.glide.request.RequestOptions;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
+import cn.edu.hebtu.software.sharemate.Fragment.MyFragment;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.SaveUser;
 import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
@@ -64,11 +67,13 @@ public class PersonalActivity extends AppCompatActivity {
     private static final int CROP_SMALL_PICTURE = 2;
     private String sign;
     private String path;
+    private ArrayList<Integer> type = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal);
+        type = getIntent().getIntegerArrayListExtra("type");
         path = getResources().getString(R.string.server_path);
         file = new File(Environment.getExternalStorageDirectory() + "/CoolImage/");
         rootLayout = findViewById(R.id.root);
@@ -166,10 +171,14 @@ public class PersonalActivity extends AppCompatActivity {
                     if("my".equals(sign)){
                         Intent myIntent = new Intent(PersonalActivity.this,MainActivity.class);
                         myIntent.putExtra("flag","my");
+                        myIntent.putExtra("userId",user.getUserId());
+                        myIntent.putIntegerArrayListExtra("type",type);
+                        Log.e("personal",user.getUserId()+"");
                         startActivity(myIntent);
                     }else if("set".equals(sign)){
                         Intent myIntent = new Intent(PersonalActivity.this,SettingActivity.class);
                         myIntent.putExtra("user",user);
+                        myIntent.putIntegerArrayListExtra("type",type);
                         startActivity(myIntent);
                     }
             }

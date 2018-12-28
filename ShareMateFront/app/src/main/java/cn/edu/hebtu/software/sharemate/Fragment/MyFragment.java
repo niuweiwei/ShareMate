@@ -7,13 +7,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -51,6 +55,8 @@ public class MyFragment extends Fragment {
     private List<NoteBean> collectionList = new ArrayList<>();
     private List<NoteBean> noteList = new ArrayList<>();
     private UserBean user = new UserBean() ;
+    private int userId;
+    private ArrayList<Integer> type = new ArrayList<>();
     private TextView nameText;
     private TextView idText;
     private TextView introText;
@@ -63,19 +69,33 @@ public class MyFragment extends Fragment {
     private ImageView settingView;
     private Button button;
     private String path = null;
+    PopupWindow popupWindow=null;
+    private LinearLayout root;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        userId = getActivity().getIntent().getIntExtra("userId",0);
+        type = getActivity().getIntent().getIntegerArrayListExtra("type");
         path = getResources().getString(R.string.server_path);
+
         GetUserDetail getUser = new GetUserDetail();
-        getUser.execute(this);
+        getUser.execute(userId);
         GetNote getNote = new GetNote();
         getNote.execute(user);
         GetCollection getCollection = new GetCollection();
         getCollection.execute(user);
         View view = inflater.inflate(R.layout.fragment_my,container,false);
         findView(view);
+        root = view.findViewById(R.id.root1);
+        Button more=view.findViewById(R.id.more);
+        more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupWindow();
+                addBackgroundAlpha(0.7f);
+            }
+        });
         setListener();
         return view;
     }
@@ -165,7 +185,7 @@ public class MyFragment extends Fragment {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL(path+"UserServlet?userId=2");
+                URL url = new URL(path+"UserServlet?userId="+objects[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.setRequestProperty("contentType", "UTF-8");
@@ -244,11 +264,11 @@ public class MyFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("111","111");
                 Intent intent = new Intent(getActivity(), NoteDetailActivity.class);
                 intent.putExtra("noteId",noteList.get(position).getNoId());
                 Log.e("noteId",noteList.get(position).getNoId()+"");
                 intent.putExtra("userId",user.getUserId());
+                intent.putIntegerArrayListExtra("type",type);
                 startActivity(intent);
             }
         });
@@ -257,10 +277,10 @@ public class MyFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("111","111");
                 Intent intent = new Intent(getActivity(), NoteDetailActivity.class);
                 intent.putExtra("noteId",collectionList.get(position).getNoId());
                 intent.putExtra("userId",user.getUserId());
+                intent.putIntegerArrayListExtra("type",type);
                 startActivity(intent);
             }
         });
@@ -288,18 +308,21 @@ public class MyFragment extends Fragment {
                     Intent focusIntent = new Intent();
                     focusIntent.setClass(getActivity(), FollowActivity.class);
                     focusIntent.putExtra("user",user);
+                    focusIntent.putIntegerArrayListExtra("type",type);
                     startActivity(focusIntent);
                     break;
                 case R.id.fanCount:
                     Intent fanIntent = new Intent();
                     fanIntent.setClass(getActivity(), FanActivity.class);
                     fanIntent.putExtra("user",user);
+                    fanIntent.putIntegerArrayListExtra("type",type);
                     startActivity(fanIntent);
                     break;
                 case R.id.personal:
                     Intent perIntent = new Intent();
                     perIntent.setClass(getActivity(), PersonalActivity.class);
                     perIntent.putExtra("user",user);
+                    perIntent.putIntegerArrayListExtra("type",type);
                     perIntent.putExtra("sign","my");
                     startActivityForResult(perIntent,1);
                     break;
@@ -307,9 +330,43 @@ public class MyFragment extends Fragment {
                     Intent setIntent = new Intent();
                     setIntent.setClass(getActivity(), SettingActivity.class);
                     setIntent.putExtra("user",user);
+                    setIntent.putIntegerArrayListExtra("type",type);
                     startActivityForResult(setIntent,2);
                     break;
             }
         }
+    }
+
+    private void showPopupWindow(){
+        popupWindow = new PopupWindow(getContext());
+        popupWindow.setWidth(850);
+        popupWindow.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                addBackgroundAlpha(1f);
+            }
+        });
+        View v =getLayoutInflater().inflate(R.layout.more_item,null);
+        ImageView imageView=v.findViewById(R.id.delete);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+        //将自定义的视图添加到 popupWindow 中
+        popupWindow.setContentView(v);
+        //控制 popupwindow 再点击屏幕其他地方时自动消失
+        popupWindow .setFocusable(true);
+        popupWindow .setOutsideTouchable(true);
+        popupWindow.showAtLocation(root, Gravity.NO_GRAVITY,0,0);
+    }
+
+    // 弹出选项框时为背景加上透明度
+    private void addBackgroundAlpha(float alpha){
+        WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
+        params.alpha = alpha;
+        getActivity().getWindow().setAttributes(params);
     }
 }

@@ -68,7 +68,8 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
     private TextView noteTitle;
     private int height;
 
-    private ImageView attentionImage;
+//    private ImageView attentionImage;
+    private Button attention;
     private ImageView zanImage;
     private ImageView collectionImage;
 
@@ -131,7 +132,8 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
         noteTitle=findViewById(R.id.tv_noteTitle);
         scrollView=findViewById(R.id.scrollView);
         //底部
-        attentionImage=findViewById(R.id.iv_attention);
+//        attentionImage=findViewById(R.id.iv_attention);
+        attention=findViewById(R.id.iv_attention);
         zanImage=findViewById(R.id.iv_zan);
         collectionImage=findViewById(R.id.iv_collection);
         countCollection=findViewById(R.id.tv_countCollection);
@@ -283,7 +285,7 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
             GetUserTask getUserTask=new GetUserTask();
             getUserTask.execute();
             if (note.getUser().getUserId()==userId){
-                attentionImage.setVisibility(View.INVISIBLE);
+                attention.setVisibility(View.INVISIBLE);
             }else {
                 //判断是否关注
                 JudgeFollowTask judgeFollowTask=new JudgeFollowTask(path+"FollowServlet?remark=judgeFollow&userId="+note.getUser().getUserId()+"&followId="+userId);
@@ -500,11 +502,18 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
             super.onPostExecute(o);
             Log.e("isAttention",isAttention+"");
             if (isAttention){
-                attentionImage.setImageResource(R.drawable.a9);
+//                attentionImage.setImageResource(R.drawable.a9);
+                attention.setBackgroundResource(R.drawable.cancelfollowedbutton_style);
+                attention.setText("已关注");
+                attention.setTextColor(getResources().getColor(R.color.deepGray));
             }else{
-                attentionImage.setImageResource(R.drawable.a8);
+//                attentionImage.setImageResource(R.drawable.a8);
+                attention.setBackgroundResource(R.drawable.followbutton_style);
+                attention.setText("关注");
+                attention.setTextColor(getResources().getColor(R.color.brightRed));
             }
-            attentionImage.setOnClickListener(new View.OnClickListener() {
+
+            attention.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(isAttention){
@@ -561,9 +570,15 @@ public class NoteDetailActivity extends AppCompatActivity implements GradationSc
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             if (isAttention){
-                attentionImage.setImageResource(R.drawable.a9);
+//                attentionImage.setImageResource(R.drawable.a9);
+                attention.setBackgroundResource(R.drawable.cancelfollowedbutton_style);
+                attention.setText("已关注");
+                attention.setTextColor(getResources().getColor(R.color.deepGray));
             }else{
-                attentionImage.setImageResource(R.drawable.a8);
+//                attentionImage.setImageResource(R.drawable.a8);
+                attention.setBackgroundResource(R.drawable.followbutton_style);
+                attention.setText("关注");
+                attention.setTextColor(getResources().getColor(R.color.brightRed));
             }
         }
     }

@@ -52,7 +52,8 @@ public class FollowedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_followed);
         listView = findViewById(R.id.lv_followed);
         path = getResources().getString(R.string.server_path);
-        currentUserId = 3;
+        currentUserId = getIntent().getIntExtra("userId",0);
+
 
         FollowTask followTask = new FollowTask();
         followTask.execute();

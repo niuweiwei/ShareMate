@@ -181,7 +181,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                 if (result.equals("用户存在")){
                     int userId = back.getInt("userId");
                     String userPhone = back.getString("userPhone");
-                    Intent intent = new Intent(ForgetPasswordActivity.this,VerifyCodeActivity.class);
+                    Intent intent = new Intent(ForgetPasswordActivity.this,InputCodeActivity.class);
                     intent.putExtra("userId",userId);
                     intent.putExtra("userPhone",userPhone);
                     startActivity(intent);

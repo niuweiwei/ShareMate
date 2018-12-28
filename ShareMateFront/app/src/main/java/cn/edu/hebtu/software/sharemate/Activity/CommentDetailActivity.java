@@ -509,8 +509,13 @@ public class CommentDetailActivity extends AppCompatActivity {
                         reply.setContent(obj.getString("replyDetail"));
                         reply.setTime(obj.getString("replyDate"));
                         reply.setCountZan(obj.getInt("replyLikeCount"));
-                        reply.setUserName(obj.getString("userName"));
-                        reply.setUserPhoto(obj.getString("userPhoto"));
+                        UserBean user=new UserBean();
+                        user.setUserId(obj.getInt("userId"));
+                        user.setUserPhotoPath(path+obj.getString("userPhoto"));
+                        Log.e("1111",obj.getString("userPhoto"));
+                        user.setUserName(obj.getString("userName"));
+                        reply.setUser(user);
+
                         if (obj.getString("reReplyName").equals("0")) {
                             //是针对评论的回复
                             reply.setCommentId(currentCommentId);

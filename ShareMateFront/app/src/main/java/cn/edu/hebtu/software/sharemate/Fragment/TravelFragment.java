@@ -173,6 +173,7 @@ public class TravelFragment extends Fragment implements GridViewAdapter.Callback
             notes=new ArrayList<>();
             try {
                 URL url = new URL(U+"TravelNoteServlet?userId="+userId);
+                Log.e("uer",U+"TravelNoteServlet?userId="+userId );
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType", "UTF-8");
@@ -201,6 +202,7 @@ public class TravelFragment extends Fragment implements GridViewAdapter.Callback
                         UserBean user = new UserBean();
                         user.setUserName(object2.getString("userName"));
                         String userImg = object2.getString("userPhoto");
+                        Log.e("userImg",userImg);
                         String url3 = U+userImg;
                         URL urluser= new URL(url3);
                         HttpURLConnection conn2 = (HttpURLConnection) urluser.openConnection();

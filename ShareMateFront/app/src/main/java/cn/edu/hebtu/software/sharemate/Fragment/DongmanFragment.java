@@ -123,36 +123,36 @@ public class DongmanFragment extends Fragment implements GridViewAdapter.Callbac
 
         }
     }
-    //点赞触发的子进程，传userID和noteID给服务器
-    public class ZanTask extends AsyncTask{
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            try {
-                int noteid = (int) objects[0];
-                boolean islike = (boolean) objects[1];
-                Log.e("noteid", noteid+"");Log.e("like", islike+"");
-                URL url = new URL(U+"DongmanNoteServlet?userId="+userId+"&noteId="+noteid+"&islike="+islike);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("contentType", "UTF-8");
-                InputStream is = connection.getInputStream();
-                InputStreamReader inputStreamReader = new InputStreamReader(is);
-                BufferedReader reader = new BufferedReader(inputStreamReader);
-                String res = reader.readLine();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+//点赞触发的子进程，传userID和noteID给服务器
+public class ZanTask extends AsyncTask{
+    @Override
+    protected Object doInBackground(Object[] objects) {
+        try {
+            int noteid = (int) objects[0];
+            boolean islike = (boolean) objects[1];
+            Log.e("noteid", noteid+"");Log.e("like", islike+"");
+            URL url = new URL(U+"DongmanNoteServlet?userId="+userId+"&noteId="+noteid+"&islike="+islike);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("contentType", "UTF-8");
+            InputStream is = connection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(is);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String res = reader.readLine();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            gridViewAdapter.notifyDataSetChanged();
-        }
+        return null;
     }
+
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        gridViewAdapter.notifyDataSetChanged();
+    }
+}
 
     @Override
     public void onDestroy() {
@@ -167,92 +167,85 @@ public class DongmanFragment extends Fragment implements GridViewAdapter.Callbac
         }
     }
 
-    public class ListTask extends AsyncTask {
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            notes=new ArrayList<>();
+public class ListTask extends AsyncTask {
+    @Override
+    protected Object doInBackground(Object[] objects) {
+        notes=new ArrayList<>();
+        try {
+            URL url = new URL(U+"DongmanNoteServlet?userId="+userId);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("contentType", "UTF-8");
+            InputStream is = connection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(is);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String res = reader.readLine();
+            //解析Json字符串
             try {
-                URL url = new URL(U+"DongmanNoteServlet?userId="+userId);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("contentType", "UTF-8");
-                InputStream is = connection.getInputStream();
-                InputStreamReader inputStreamReader = new InputStreamReader(is);
-                BufferedReader reader = new BufferedReader(inputStreamReader);
-                String res = reader.readLine();
-                //解析Json字符串
-                try {
-                    JSONObject jsonObject = new JSONObject(res);
-                    JSONArray array = jsonObject.getJSONArray("note");
-                    for (int i = 0; i < array.length(); i++){
-                        JSONObject object = array.getJSONObject(i);
-                        NoteBean note1 = new NoteBean();
-                        String img = object.getString("noteImage");
-                        String url1 = U+img;
-                        URL url2= new URL(url1);
-                        HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
-                        BufferedInputStream ins = new BufferedInputStream(conn.getInputStream());
-                        Bitmap a= BitmapFactory.decodeStream(ins);
-                        note1.setNoteImage1(a);
-                        note1.setNoteTitle(object.getString("noteTitle"));
-                        note1.setNoteDetail(object.getString("noteDetail"));
-                        note1.setNoteTime(object.getString("noteDate"));
-                        JSONObject object2 = object.getJSONObject("user");
-                        UserBean user = new UserBean();
-                        user.setUserName(object2.getString("userName"));
-//                        user.setUserId(object2.getInt("userId"));
-//                        user.setUserSex(object2.getString("userSex"));
-//                        user.setUserBirth(object2.getString("userBirth"));
-//                        user.setUserIntroduce(object2.getString("userIntro"));
-//                        user.setUserAddress(object2.getString("userAddress"));
-                        //user.setUserPhoto(object2.getString("usePhoto"));
-                        String userImg = object2.getString("userPhoto");
-                        String url3 = U+userImg;
-                        URL urluser= new URL(url3);
-                        HttpURLConnection conn2 = (HttpURLConnection) urluser.openConnection();
-                        BufferedInputStream ins2 = new BufferedInputStream(conn2.getInputStream());
-                        Bitmap b= BitmapFactory.decodeStream(ins2);
-                        //user.setUserPhoto(R.drawable.a1);
-                        user.setUserImage(b);
-                        note1.setUser(user);
-                        note1.setNoId(object.getInt("noteId"));
-                        note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
-                        note1.setCollectcount(object.getInt("noteCollectionCount"));
-                        note1.setPingluncount(object.getInt("noteCommentCount"));
-                        note1.setIslike(object.getInt("like"));
-                        int j;boolean c=true;
-                        for(j=0;j<notes.size();j++){
-                            if(note1.getNoId()==notes.get(j).getNoId()){
-                                c=false;
-                                break;
-                            }
+                JSONObject jsonObject = new JSONObject(res);
+                JSONArray array = jsonObject.getJSONArray("note");
+                for (int i = 0; i < array.length(); i++){
+                    JSONObject object = array.getJSONObject(i);
+                    NoteBean note1 = new NoteBean();
+                    String img = object.getString("noteImage");
+                    String url1 = U+img;
+                    URL url2= new URL(url1);
+                    HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
+                    BufferedInputStream ins = new BufferedInputStream(conn.getInputStream());
+                    Bitmap a= BitmapFactory.decodeStream(ins);
+                    note1.setNoteImage1(a);
+                    note1.setNoteTitle(object.getString("noteTitle"));
+                    note1.setNoteDetail(object.getString("noteDetail"));
+                    note1.setNoteTime(object.getString("noteDate"));
+                    JSONObject object2 = object.getJSONObject("user");
+                    UserBean user = new UserBean();
+                    user.setUserName(object2.getString("userName"));
+                    String userImg = object2.getString("userPhoto");
+                    String url3 = U+userImg;
+                    URL urluser= new URL(url3);
+                    HttpURLConnection conn2 = (HttpURLConnection) urluser.openConnection();
+                    BufferedInputStream ins2 = new BufferedInputStream(conn2.getInputStream());
+                    Bitmap b= BitmapFactory.decodeStream(ins2);
+                    user.setUserImage(b);
+                    note1.setUser(user);
+                    note1.setNoId(object.getInt("noteId"));
+                    note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
+                    note1.setCollectcount(object.getInt("noteCollectionCount"));
+                    note1.setPingluncount(object.getInt("noteCommentCount"));
+                    note1.setIslike(object.getInt("like"));
+                    int j;boolean c=true;
+                    for(j=0;j<notes.size();j++){
+                        if(note1.getNoId()==notes.get(j).getNoId()){
+                            c=false;
+                            break;
                         }
-                        if(c) {notes.add(note1);}
                     }
-                    Log.e("LoginTask", notes.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    if(c) {notes.add(note1);}
                 }
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+                Log.e("LoginTask", notes.toString());
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return null;
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            //创建Adapter对象
-            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,DongmanFragment.this, notes);
-            //设置Adapter
-            gridView.setAdapter(gridViewAdapter);
-            gridView.setHorizontalSpacing(5);
-            gridView.setVerticalSpacing(5);
-            gridViewAdapter.notifyDataSetChanged();
-        }
+        return null;
     }
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        //创建Adapter对象
+        gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,DongmanFragment.this, notes);
+        //设置Adapter
+        gridView.setAdapter(gridViewAdapter);
+        gridView.setHorizontalSpacing(5);
+        gridView.setVerticalSpacing(5);
+        gridViewAdapter.notifyDataSetChanged();
+    }
+}
 
     @Override
     public void onResume() {

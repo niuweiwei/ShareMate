@@ -167,7 +167,7 @@ public class FanAdapter extends BaseAdapter {
         protected Object doInBackground(Object[] objects) {
             int followId =(Integer) objects[0];
             int userId = (Integer)objects[1];
-            TextView followView =(Button) objects[2];
+            TextView followView =(TextView) objects[2];
             try {
                 URL url = new URL(path+"DeleteFollowServlet?followId="+followId+"&userId="+userId);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -189,7 +189,7 @@ public class FanAdapter extends BaseAdapter {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             TextView followView = (TextView) o;
-            followView.setText("回粉");
+            followView.setText(" 回粉 ");
             followView.setTextColor(context.getResources().getColor(R.color.warmRed));
         }
     }

@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout root = null;
     private PopupWindow window = null;
 
+    private int userId;
+    private ArrayList<Integer> type = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,17 +75,21 @@ public class MainActivity extends AppCompatActivity {
         myView = findViewById(R.id.tv_my);
 
         manager = getSupportFragmentManager();
-        if(getIntent().getStringExtra("flag") != null &&
-                "my".equals(getIntent().getStringExtra("flag"))){
-            showFragment(myFragment);
-        }else{
+        Log.e("flag",getIntent().getStringExtra("flag"));
+        userId=getIntent().getIntExtra("userId",0);
+        type=getIntent().getIntegerArrayListExtra("type");
+        if ("main".equals(getIntent().getStringExtra("flag"))){
+            indexView.setTextSize(TypedValue.COMPLEX_UNIT_SP,24);
+            indexView.setTextColor(getResources().getColor(R.color.inkGray));
             showFragment(indexFragment);
         }
-
-
-        indexView.setTextSize(TypedValue.COMPLEX_UNIT_SP,24);
-        indexView.setTextColor(getResources().getColor(R.color.inkGray));
-
+        if("my".equals(getIntent().getStringExtra("flag"))){
+            showFragment(myFragment);
+            myView.setTextSize(TypedValue.COMPLEX_UNIT_SP,24);
+            myView.setTextColor(getResources().getColor(R.color.inkGray));
+            indexView.setTextSize(TypedValue.COMPLEX_UNIT_SP,22);
+            indexView.setTextColor(getResources().getColor(R.color.darkGray));
+        }
         views.add(indexView);
         views.add(shoppingView);
         views.add(messageView);
@@ -276,6 +283,8 @@ public class MainActivity extends AppCompatActivity {
                     String code = "1";
                     intent.putExtra("code", code);
                     intent.putExtra("lujing", file.getPath());///storage/emulated/0/DCIM/Camera/MT2018122121428.jpg
+                    intent.putExtra("userId",userId);
+                    intent.putExtra("type",type);
                     startActivity(intent);
                     break;
                 case 2:
@@ -300,6 +309,8 @@ public class MainActivity extends AppCompatActivity {
                     intent1.putExtra("pic1", picturePath);
                     Log.e("PICFILE", picturePath);
                     intent1.putExtra("code", code1);
+                    intent1.putExtra("userId",userId);
+                    intent1.putExtra("type",type);
                     intent1.setClass(MainActivity.this, FabuActivity.class);
                     startActivity(intent1);
                     break;

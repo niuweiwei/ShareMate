@@ -5,7 +5,6 @@ package cn.edu.hebtu.software.sharemate.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,29 +13,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,21 +30,24 @@ import cn.edu.hebtu.software.sharemate.Bean.NoteBean;
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.TransObjectToWeb;
-import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
+import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil1;
 
 public class FabuActivity extends AppCompatActivity {
     private PopupWindow window = null;
     private LinearLayout root = null;
     private String path=null;
     private int typeid;
+    private int userId;
+    private List<Integer> type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fabu);
-
         //显示图片
         final Intent intent = getIntent();
         final String code = intent.getStringExtra("code");
+        userId = intent.getIntExtra("userId",0);
+        type = intent.getIntegerArrayListExtra("type");
         ImageView imageView = findViewById(R.id.imageView);
         if (code != null) {
             if (code.equals("1")) {
@@ -93,18 +81,18 @@ public class FabuActivity extends AppCompatActivity {
                 }
             }
         });
-        Button btnShare1 = findViewById(R.id.cuncaogao);
-        btnShare1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(window.isShowing()){
-                    window.dismiss();
-                }else{
-                    showPopupWindow(root);
-                    addBackgroundAlpha(0.7f);
-                }
-            }
-        });
+//        Button btnShare1 = findViewById(R.id.cuncaogao);
+//        btnShare1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(window.isShowing()){
+//                    window.dismiss();
+//                }else{
+//                    showPopupWindow(root);
+//                    addBackgroundAlpha(0.7f);
+//                }
+//            }
+//        });
 
 
 
@@ -140,8 +128,7 @@ public class FabuActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         //获取发布内容
-                        int userid=1;
-                        UserBean userbean=new UserBean(userid);
+                        UserBean userbean=new UserBean(userId);
                         EditText EDdetial=(EditText) findViewById(R.id.detial);
                         String detial=EDdetial.getText().toString();
                         EditText EDtitle=(EditText)findViewById(R.id.wenzi_title);
@@ -161,7 +148,16 @@ public class FabuActivity extends AppCompatActivity {
                     }
                 }).start();
                 //传图片
-                    UpLoadImage(path);
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        UpLoadImage(path);
+                    }
+                };
+                Timer timer = new Timer();
+                timer.schedule(task, 3000);
+
+
                 Log.e("fabu_btn",path);
                 //发布提示
                 showtoast();
@@ -593,10 +589,22 @@ public class FabuActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.btn_save:
-                    finish();
+                    addBackgroundAlpha(1f);
+                    Intent intent1=new Intent();
+                    intent1.setClass(FabuActivity.this,MainActivity.class);
+                    intent1.putExtra("userId",intent1.getIntExtra("userId",0));
+                    intent1.putIntegerArrayListExtra("type",intent1.getIntegerArrayListExtra("type"));
+                    intent1.putExtra("flag","main");
+                    startActivity(intent1);
                     break;
                 case R.id.btn_dissave:
-                    finish();
+                    addBackgroundAlpha(1f);
+                    Intent intent2=new Intent();
+                    intent2.setClass(FabuActivity.this,MainActivity.class);
+                    intent2.putExtra("userId",intent2.getIntExtra("userId",0));
+                    intent2.putIntegerArrayListExtra("type",intent2.getIntegerArrayListExtra("type"));
+                    intent2.putExtra("flag","main");
+                    startActivity(intent2);
                     break;
 
                 case R.id.btn_cancel1:
@@ -614,15 +622,10 @@ public class FabuActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
     //向服务器端发送图片
     public void UpLoadImage(String path){
-        UpLoadUtil upLoadUtil = new UpLoadUtil();
+        String url=getResources().getString(R.string.server_path);
+        UpLoadUtil1 upLoadUtil = new UpLoadUtil1(url);
         upLoadUtil.execute(path);
         Log.e("upLoadImage","uploadimage");
     }
@@ -657,6 +660,7 @@ public void sharepopupWindow(String path){
     window.setFocusable(true);
     window.setOutsideTouchable(true);
     addBackgroundAlpha(0.7f);
+    final Intent intent=getIntent();
     final TextView textView=view.findViewById(R.id.quxiao);
     textView.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -664,7 +668,9 @@ public void sharepopupWindow(String path){
             addBackgroundAlpha(1f);
             Intent intent1=new Intent();
             intent1.setClass(FabuActivity.this,MainActivity.class);
-            intent1.putExtra("show","2");
+            intent1.putExtra("userId",intent.getIntExtra("userId",0));
+            intent1.putIntegerArrayListExtra("type",intent.getIntegerArrayListExtra("type"));
+            intent1.putExtra("flag","main");
             startActivity(intent1);
         }
     });
@@ -675,7 +681,9 @@ public void sharepopupWindow(String path){
             addBackgroundAlpha(1f);
             Intent intent1=new Intent();
             intent1.setClass(FabuActivity.this,MainActivity.class);
-            intent1.putExtra("show","2");
+            intent1.putExtra("userId",intent.getIntExtra("userId",0));
+            intent1.putIntegerArrayListExtra("type",intent.getIntegerArrayListExtra("type"));
+            intent1.putExtra("flag","main");
             startActivity(intent1);
         }
     });

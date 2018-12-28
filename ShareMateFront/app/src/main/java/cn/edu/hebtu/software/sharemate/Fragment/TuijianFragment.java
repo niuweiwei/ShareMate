@@ -54,7 +54,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
     private int userId=2;
     private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
-    private List<Integer>type = new ArrayList<>();
+    private ArrayList<Integer> type = new ArrayList<>();
     int typeid1,typeid2,typeid3,typeid4,typeid5,typeid6;
 //    private int position;
     @Nullable
@@ -64,10 +64,8 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
         U=getResources().getString(R.string.server_path);
         //typeid需要从activity获取intent的内容，待修改
         type=getActivity().getIntent().getIntegerArrayListExtra("type");
-//        type.add(1);
-//        type.add(2);
-//        type.add(3);
         userId = getActivity().getIntent().getIntExtra("userId",0);
+        Log.e("type  userId",type.toString()+" " + userId);
         gridView = view.findViewById(R.id.root);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -168,6 +166,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
     public class ListTask extends AsyncTask {
         @Override
         protected Object doInBackground(Object[] objects) {
+            Log.e("tuijian task","成功打印");
             try {
                 URL url = new URL(U+"TuijianNoteServlet?userId="+userId);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -371,6 +370,7 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         HttpURLConnection conn2 = (HttpURLConnection) urluser.openConnection();
                         BufferedInputStream ins2 = new BufferedInputStream(conn2.getInputStream());
                         Bitmap b= BitmapFactory.decodeStream(ins2);
+                        //user.setUserPhoto(R.drawable.a1);
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
@@ -380,6 +380,8 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         note1.setIslike(object.getInt("like"));
                         notes.add(note1);
                     }
+                    //content=persons.get(1).getUserPhoto();
+                    //handler.post(runnable);
                     Log.e("LoginTask", notes.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -444,12 +446,14 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         HttpURLConnection conn2 = (HttpURLConnection) urluser.openConnection();
                         BufferedInputStream ins2 = new BufferedInputStream(conn2.getInputStream());
                         Bitmap b= BitmapFactory.decodeStream(ins2);
+                        //user.setUserPhoto(R.drawable.a1);
                         user.setUserImage(b);
                         note1.setUser(user);
                         note1.setNoId(object.getInt("noteId"));
                         note1.setZancount1(String.valueOf(object.getInt("noteLikeCount")));
                         note1.setCollectcount(object.getInt("noteCollectionCount"));
                         note1.setPingluncount(object.getInt("noteCommentCount"));
+                        //Log.e("islike",""+object.getInt("like"));
                         note1.setIslike(object.getInt("like"));
                         int j;boolean c=true;
                         for(j=0;j<notes.size();j++){
@@ -460,6 +464,8 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
                         }
                         if(c) {notes.add(note1);}
                     }
+                    //content=persons.get(1).getUserPhoto();
+                    //handler.post(runnable);
                     Log.e("LoginTask", notes.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -501,7 +507,8 @@ public class TuijianFragment extends Fragment implements GridViewAdapter.Callbac
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("tuijian userId",userId+"");Log.e("typesize",type.size()+"");
+        Log.e("tuijian userId",userId+"");
+        Log.e("typesize",type.size()+"");
         if(type.size()==3) {
             typeid1 =type.get(0);
             typeid2 =type.get(1);

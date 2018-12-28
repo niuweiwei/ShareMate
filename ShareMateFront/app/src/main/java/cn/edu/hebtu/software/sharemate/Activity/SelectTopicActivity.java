@@ -338,6 +338,7 @@ public class SelectTopicActivity extends AppCompatActivity implements View.OnCli
                 Intent intent = new Intent(SelectTopicActivity.this,MainActivity.class);
                 intent.putExtra("userId",userId);
                 intent.putIntegerArrayListExtra("type",type);
+                intent.putExtra("flag","main");
                 startActivity(intent);
                 break;
         }

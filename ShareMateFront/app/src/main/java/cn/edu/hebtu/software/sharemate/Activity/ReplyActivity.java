@@ -72,7 +72,7 @@ public class ReplyActivity extends AppCompatActivity {
         Bundle b=getIntent().getExtras();
         comment=(Comment)b.getSerializable("comment");
         user=(UserBean)b.getSerializable("user");
-        ImageTask imageTask1=new ImageTask(user.getUserPhotoPath());
+        ImageTask imageTask1=new ImageTask(path+user.getUserPhotoPath());
         Object[] objects1=new Object[]{userPhoto};
         imageTask1.execute(objects1);
 
@@ -304,7 +304,7 @@ public class ReplyActivity extends AppCompatActivity {
                     //隐藏软键盘
                     InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(),0);
-                    String content=replyList.get(position).getUserName()+":"+replyList.get(position).getContent();
+                    String content=replyList.get(position).getUser().getUserName()+":"+replyList.get(position).getContent();
                     showPopupWindow(content,position);
                 }
             });
@@ -329,7 +329,6 @@ public class ReplyActivity extends AppCompatActivity {
                 OutputStream os=connection.getOutputStream();
                 BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(os));
                 writer.write("remark=addReReply&replyDetail="+content+"&userId="+user.getUserId()+"&reReplyId="+currentReplyId);
-                Log.e("content",content);
                 writer.flush();
                 writer.close();
                 connection.connect();
@@ -367,7 +366,7 @@ public class ReplyActivity extends AppCompatActivity {
                 //根据position得到点击的那个回复，回复指定的回复
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                etReply.setHint("回复"+replyList.get(position).getUserName()+"…");
+                etReply.setHint("回复"+replyList.get(position).getUser().getUserName()+"…");
                 currentReplyId=replyList.get(position).getReplyId();
                 popupWindow.dismiss();
             }

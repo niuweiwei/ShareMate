@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="130dp"
             android:text="我的关注"
             android:textStyle="bold"
             android:textSize="@dimen/text"
@@ -32,7 +32,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="  我关注的好友"
+        android:text="     我关注的好友"
         android:textColor="@color/inkGray"
         android:gravity="center_vertical"
         android:background="@drawable/linear_border"

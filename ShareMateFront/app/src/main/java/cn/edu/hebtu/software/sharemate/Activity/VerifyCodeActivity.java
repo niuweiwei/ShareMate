@@ -1,6 +1,7 @@
 package cn.edu.hebtu.software.sharemate.Activity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -14,6 +15,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mob.MobSDK;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.edu.hebtu.software.sharemate.R;
 import cn.edu.hebtu.software.sharemate.tools.VerifyCodeView;
@@ -150,14 +166,67 @@ public class VerifyCodeActivity extends AppCompatActivity {
         public void onClick(View v) {
             if (!code.equals("") ) {
                 if (isCode == true){
-                    Intent intent = new Intent(VerifyCodeActivity.this,MainActivity.class);
-                    intent.putExtra("userId",userId);
-                    startActivity(intent);
+                    InputCodeUtil inputCodeUtil = new InputCodeUtil();
+                    inputCodeUtil.execute(userId);
                 }
             }else {
                 Toast.makeText(VerifyCodeActivity.this,"请输入验证码",Toast.LENGTH_SHORT).show();
                 verifyCodeView.requestFocus();
             }
+        }
+    }
+    private class InputCodeUtil extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            int userId = (Integer)objects[0];
+            URL url = null;
+            String result = null;
+            List<Integer> type=null;
+            try {
+                url = new URL(getResources().getString(R.string.server_path)+"TypeServlet?userId="+userId);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("Charset","UTF-8");
+
+                InputStream is = connection.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader reader = new BufferedReader(isr);
+                result = reader.readLine();
+                type=new ArrayList<>();
+                JSONArray jsonArray=new JSONArray(result);
+                Log.e("array",jsonArray.length()+"");
+                for (int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+                    int typeId=jsonObject.getInt("typeId");
+                    Log.e("typeId",typeId+"");
+                    type.add(typeId);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return type;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            Log.e("111","222");
+            ArrayList<Integer> type=(ArrayList<Integer>)o;
+            Log.e("type",type.toString());
+            Intent intent = new Intent(VerifyCodeActivity.this,MainActivity.class);
+            intent.putExtra("userId",userId);
+            intent.putIntegerArrayListExtra("type",type);
+            intent.putExtra("flag","main");
+            startActivity(intent);
         }
     }
     Handler handler = new Handler(){

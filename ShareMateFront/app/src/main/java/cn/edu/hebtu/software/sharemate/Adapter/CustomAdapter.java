@@ -85,6 +85,15 @@ public class CustomAdapter extends BaseAdapter implements View.OnClickListener{
         if(notes.get(position).getIscollect()==1){
             notes.get(position).setCol(R.drawable.xingxing2);
         }else {notes.get(position).setCol(R.drawable.xingxing);}
+        if(notes.get(position).getIsfollow()==1){
+            viewHolder.guanZhu.setBackgroundResource(R.drawable.cancelfollowedbutton_style);
+            viewHolder.guanZhu.setText("已关注");
+            viewHolder.guanZhu.setTextColor(convertView.getResources().getColor(R.color.deepGray));
+        }else{
+            viewHolder.guanZhu.setBackgroundResource(R.drawable.followbutton_style);
+            viewHolder.guanZhu.setText("关注");
+            viewHolder.guanZhu.setTextColor(convertView.getResources().getColor(R.color.brightRed));
+        }
         viewHolder.noteZan.setBackgroundResource(notes.get(position).getZan());
         viewHolder.ivPhoto.setImageBitmap(notes.get(position).getNoteImage1());
         viewHolder.noteDetail.setText(notes.get(position).getNoteDetail());
@@ -100,7 +109,6 @@ public class CustomAdapter extends BaseAdapter implements View.OnClickListener{
         viewHolder.zanCount.setText(notes.get(position).getZancount1()+"");
         viewHolder.shouCount.setText(notes.get(position).getCollectcount()+"");
         viewHolder.commentCount.setText(notes.get(position).getPingluncount()+"");
-        viewHolder.guanZhu.setBackgroundResource(notes.get(position).getFol());
         viewHolder.noteShoucang.setBackgroundResource(notes.get(position).getCol());
         viewHolder.userIcon.setTag(position);
         viewHolder.guanZhu.setTag(position);

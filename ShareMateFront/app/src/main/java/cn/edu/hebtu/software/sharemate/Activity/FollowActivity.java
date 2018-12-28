@@ -39,10 +39,12 @@ public class FollowActivity extends AppCompatActivity {
     private FocusAdapter focusAdapter;
     private List<UserBean> userList = new ArrayList<>();
     private String path;
+    private ArrayList<Integer> type = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_focus);
+        type = getIntent().getIntegerArrayListExtra("type");
         findViews();
         path = getResources().getString(R.string.server_path);
         GetFriend getFriend = new GetFriend();
@@ -52,6 +54,8 @@ public class FollowActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(FollowActivity.this,MainActivity.class);
                 intent.putExtra("flag","my");
+                intent.putIntegerArrayListExtra("type",type);
+                intent.putExtra("userId",user.getUserId());
                 startActivity(intent);
             }
         });

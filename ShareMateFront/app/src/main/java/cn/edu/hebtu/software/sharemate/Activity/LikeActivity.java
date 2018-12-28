@@ -79,7 +79,7 @@ public class LikeActivity extends AppCompatActivity {
             try {
 
                 //假设当前的用户id为3
-                URL url = new URL(path+"LikeNoteServlet?userId=3");
+                URL url = new URL(path+"LikeNoteServlet?userId="+ getIntent().getIntExtra("userId",0));
                 HttpURLConnection connection = (HttpURLConnection)  url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType","utf-8");

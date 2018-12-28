@@ -67,15 +67,7 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
         textView = view.findViewById(R.id.text);
         imageView = view.findViewById(R.id.img);
         handler = new Handler();
-        listTask = new ListTask();
-        listTask.execute();
         gridView = view.findViewById(R.id.root);
-        //创建Adapter对象
-        gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,this, notes);
-        //设置Adapter
-        gridView.setAdapter(gridViewAdapter);
-        gridView.setHorizontalSpacing(5);
-        gridView.setVerticalSpacing(5);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -172,6 +164,12 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             Log.e("111", notes.size()+"");
+            //创建Adapter对象
+            gridViewAdapter = new GridViewAdapter(getActivity(),R.layout.grid_item,FujinFragment.this, notes);
+            //设置Adapter
+            gridView.setAdapter(gridViewAdapter);
+            gridView.setHorizontalSpacing(5);
+            gridView.setVerticalSpacing(5);
             gridViewAdapter.notifyDataSetChanged();
         }
     }
@@ -193,5 +191,10 @@ public class FujinFragment extends Fragment implements GridViewAdapter.Callback,
             imageView.setMaxHeight(100);imageView.setMaxWidth(100);
         }
     };
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        listTask = new ListTask();
+        listTask.execute();
+    }
 }

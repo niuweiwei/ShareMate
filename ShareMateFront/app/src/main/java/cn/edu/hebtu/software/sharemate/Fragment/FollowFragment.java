@@ -66,8 +66,6 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
     private int userId;
     private TextView textView;
     private ImageView imageView;
-    private String content=null;
-    private int image = R.drawable.meng;
     private Handler handler=null;
     private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
@@ -115,12 +113,16 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 int u = (int) v.getTag();
                 UserBean userBean =new UserBean();
                 userBean.setUserId(notes.get(u).getUser().getUserId());
-                userBean.setUserPhotoPath(notes.get(u).getUser().getUserPhotoPath());
+                userBean.setUserPhotoPath(getResources().getString(R.string.server_path)+notes.get(u).getUser().getUserPhotoPath());
                 userBean.setUserName(notes.get(u).getUser().getUserName());
                 userBean.setUserSex(notes.get(u).getUser().getUserSex());
                 userBean.setUserAddress(notes.get(u).getUser().getUserAddress());
                 userBean.setUserBirth(notes.get(u).getUser().getUserBirth());
                 userBean.setUserIntroduce(notes.get(u).getUser().getUserIntroduce());
+                userBean.setLikeCount(notes.get(u).getUser().getLikeCount());
+                userBean.setFollowCount(notes.get(u).getUser().getFollowCount());
+                userBean.setFanCount(notes.get(u).getUser().getFanCount());
+
                 Intent perIntent = new Intent();
                 perIntent.setClass(getActivity(), FriendActivity.class);
                 perIntent.putExtra("friend",userBean);
@@ -136,17 +138,17 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 followTask = new FollowTask();
                 followTask.execute(noteid1,isFollow.get(p));
                 if(!isFollow.get(p)){
-                    notes.get(p).setFol(R.drawable.yiguanzhu);
-                    isFollow.put(p,true);
+                    notes.get(p).setFol(1);
                     customAdapter.notifyDataSetChanged();
+                    isFollow.put(p,true);
                 } else {
-                    notes.get(p).setFol(R.drawable.guanzhu);
+                    notes.get(p).setFol(-1);
+                    customAdapter.notifyDataSetChanged();
                     isFollow.put(p,false);
                     //Toast
                     Toast toast=Toast.makeText(getActivity(),"取消关注啦",Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER,0,0);
                     toast.show();
-                    customAdapter.notifyDataSetChanged();
                 }
                 break;
             //点赞获取消赞
@@ -256,7 +258,7 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                 int noteId = notes.get(c).getNoId();
                 Intent intent=new Intent(getActivity(),CommentDetailActivity.class);
                 intent.putExtra("noteId",noteId);
-                intent.putExtra("user",user);
+                intent.putExtra("userId",user.getUserId());
                 startActivity(intent);
                 break;
         }
@@ -485,6 +487,10 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                         user.setUserIntroduce(object2.getString("userIntro"));
                         user.setUserAddress(object2.getString("userAddress"));
                         String userImg = object2.getString("userPhoto");
+                        user.setFanCount(object2.getInt("fanCount"));
+                        user.setFollowCount(object2.getInt("followCount"));
+                        user.setLikeCount(object2.getInt("likeCount"));
+                        //------------
                         user.setUserPhotoPath(userImg);
                         String url3 = U+userImg;
                         URL urluser= new URL(url3);
@@ -517,6 +523,8 @@ public class FollowFragment extends Fragment implements CustomAdapter.Callback,A
                         note1.setPingluncount(object.getInt("noteCommentCount"));
                         note1.setIslike(object.getInt("like"));
                         note1.setIscollect(object.getInt("isCollect"));
+                        note1.setIsfollow(1);
+                        note1.setFol(R.drawable.cancelfollowedbutton_style);
                        notes.add(note1);
                     }
                     if(notes.size()==0){

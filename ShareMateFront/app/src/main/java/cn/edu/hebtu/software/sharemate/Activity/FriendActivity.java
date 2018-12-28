@@ -104,8 +104,8 @@ public class FriendActivity extends AppCompatActivity {
         backView.setOnClickListener(listener);
         note.setOnClickListener(listener);
         collection.setOnClickListener(listener);
-        fanCount.setOnClickListener(listener);
-        followCount.setOnClickListener(listener);
+//        fanCount.setOnClickListener(listener);
+//        followCount.setOnClickListener(listener);
     }
     public void setNoteGridView(GridView gridView){
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -141,18 +141,18 @@ public class FriendActivity extends AppCompatActivity {
                 case R.id.back:
                     FriendActivity.this.finish();
                     break;
-                case R.id.followCount:
-                    Intent focusIntent = new Intent();
-                    focusIntent.setClass(FriendActivity.this, FollowActivity.class);
-                    focusIntent.putExtra("user",user);
-                    startActivity(focusIntent);
-                    break;
-                case R.id.fanCount:
-                    Intent fanIntent = new Intent();
-                    fanIntent.setClass(FriendActivity.this, FanActivity.class);
-                    fanIntent.putExtra("user",user);
-                    startActivity(fanIntent);
-                    break;
+//                case R.id.followCount:
+//                    Intent focusIntent = new Intent();
+//                    focusIntent.setClass(FriendActivity.this, FollowActivity.class);
+//                    focusIntent.putExtra("user",user);
+//                    startActivity(focusIntent);
+//                    break;
+//                case R.id.fanCount:
+//                    Intent fanIntent = new Intent();
+//                    fanIntent.setClass(FriendActivity.this, FanActivity.class);
+//                    fanIntent.putExtra("user",user);
+//                    startActivity(fanIntent);
+//                    break;
                 case R.id.note:
                     note.setTextColor(getResources().getColor(R.color.warmRed));
                     collection.setTextColor(getResources().getColor(R.color.darkGray));

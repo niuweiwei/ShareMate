@@ -15,7 +15,7 @@ public class VerifyCodeView extends RelativeLayout {
 
     private EditText editText;
     private TextView[] textViews;
-    private static int MAX = 6;
+    private static int MAX = 4;
     private String inputContent;
     private InputCompleteListener inputCompleteListener;
     public VerifyCodeView(Context context) {
@@ -31,8 +31,8 @@ public class VerifyCodeView extends RelativeLayout {
         textViews[1] = findViewById(R.id.tv_1);
         textViews[2] = findViewById(R.id.tv_2);
         textViews[3] = findViewById(R.id.tv_3);
-        textViews[4] = findViewById(R.id.tv_4);
-        textViews[5] = findViewById(R.id.tv_5);
+//        textViews[4] = findViewById(R.id.tv_4);
+//        textViews[5] = findViewById(R.id.tv_5);
         editText = findViewById(R.id.edit_text_view);
 
         editText.setCursorVisible(false);//隐藏光标;

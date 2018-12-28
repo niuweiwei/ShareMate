@@ -59,12 +59,13 @@ public class CommentActivity extends AppCompatActivity {
     private final List<CommentBean> comments = new ArrayList<>();
     private ListView listView = null;
     private String path = null;
-    private int currentUserId = 3;//表示当前用户的id
+    private int currentUserId ;//表示当前用户的id
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
+        currentUserId = getIntent().getIntExtra("userId",0);
         root = findViewById(R.id.root);
         replyLayout = findViewById(R.id.rl_reply);
         manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -296,7 +297,7 @@ public class CommentActivity extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                URL url = new URL(path+"CAndRServlet?userId=3");
+                URL url = new URL(path+"CAndRServlet?userId="+currentUserId);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("contentType","utf-8");

@@ -46,16 +46,7 @@ public class HomeFragment extends Fragment {
                 addBackgroundAlpha(0.7f);
             }
         });
-//        //退出登录
-//        Button btnback=view.findViewById(R.id.tuichu);
-//        btnback.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent=new Intent();
-//                intent.setClass(getContext(), LoginActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+
         //获取tabhost组件
         FragmentTabHost tabHost = view.findViewById(android.R.id.tabhost);
         //初始化Tabhost容器
@@ -137,11 +128,14 @@ public class HomeFragment extends Fragment {
             }
         });
         View v =getLayoutInflater().inflate(R.layout.more_item,null);
-        ImageView imageView=v.findViewById(R.id.delete);
-        imageView.setOnClickListener(new View.OnClickListener() {
+        //退出登录
+        final TextView btnback=v.findViewById(R.id.tuichu);
+        btnback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popupWindow.dismiss();
+                Intent intent=new Intent();
+                intent.setClass(getContext(), LoginActivity.class);
+                startActivity(intent);
             }
         });
         //将自定义的视图添加到 popupWindow 中
@@ -150,6 +144,7 @@ public class HomeFragment extends Fragment {
         popupWindow .setFocusable(true);
         popupWindow .setOutsideTouchable(true);
         popupWindow.showAtLocation(root, Gravity.NO_GRAVITY,0,0);
+
     }
     private View getTabSpecView(String name, String tag){
         LayoutInflater layoutInflater = getLayoutInflater();

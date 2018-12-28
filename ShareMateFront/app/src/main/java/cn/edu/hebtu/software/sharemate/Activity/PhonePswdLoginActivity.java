@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +27,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
 import cn.edu.hebtu.software.sharemate.R;
@@ -176,7 +179,10 @@ public class PhonePswdLoginActivity extends AppCompatActivity {
         protected Object doInBackground(Object[] objects) {
             Log.e("PhonePswdLoginUtil", "异步任务");
             UserBean user = (UserBean) objects[0];
-            JSONObject back = null;
+            List<Integer> type=null;
+            String msg="";
+            int userId=0;
+            List<Object> objectList=new ArrayList<>();
             try {
                 URL url = new URL(getResources().getString(R.string.server_path)+"PhonePswdLoginServlet");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -200,9 +206,20 @@ public class PhonePswdLoginActivity extends AppCompatActivity {
                 InputStream is = connection.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader reader = new BufferedReader(isr);
-                String str2 = reader.readLine();
-                back = new JSONObject(str2);
-
+                String back = reader.readLine();
+                type=new ArrayList<>();
+                JSONArray jsonArray=new JSONArray(back);
+                Log.e("array",jsonArray.length()+"");
+                for (int i=0;i<jsonArray.length();i++){
+                    JSONObject obj=jsonArray.getJSONObject(i);
+                    int typeId=obj.getInt("typeId");
+                    type.add(typeId);
+                    msg=obj.getString("msg");
+                    userId=obj.getInt("userId");
+                }
+                objectList.add(type);
+                objectList.add(msg);
+                objectList.add(userId);
                 reader.close();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -211,26 +228,25 @@ public class PhonePswdLoginActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return back;
+            return objectList;
         }
 
         @Override
         protected void onPostExecute(Object o) {
-            JSONObject back = (JSONObject)o;
-            String result = null;
-            try {
-                result = back.getString("msg");
-                Log.e("result", result);
-                if (result.equals("该用户存在")) {
-                    int userId = back.getInt("userId");
-                    Intent intent = new Intent(PhonePswdLoginActivity.this, MainActivity.class);
-                    intent.putExtra("userId", userId);
-                    startActivity(intent);
-                } else if (result.equals("该用户不存在")) {
-                    Toast.makeText(PhonePswdLoginActivity.this, "该用户不存在", Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            List<Object> objectList = (List<Object>)o;
+            Log.e("onPostExecute",objectList.toString());
+            String result =  (String)objectList.get(1);
+            Log.e("result", result);
+            if (result.equals("该用户存在")) {
+                int userId = (Integer)objectList.get(2);
+                Log.e("userId",userId+"");
+                Intent intent = new Intent(PhonePswdLoginActivity.this, MainActivity.class);
+                intent.putExtra("userId", userId);
+                intent.putIntegerArrayListExtra("type",(ArrayList<Integer>)objectList.get(0));
+                intent.putExtra("flag","main");
+                startActivity(intent);
+            } else if (result.equals("该用户不存在")) {
+                Toast.makeText(PhonePswdLoginActivity.this, "该用户不存在", Toast.LENGTH_SHORT).show();
             }
         }
     }

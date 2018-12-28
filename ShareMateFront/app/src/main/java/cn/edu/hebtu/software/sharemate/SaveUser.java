@@ -30,7 +30,7 @@ public class SaveUser extends AsyncTask {
             userObject.put("userAddress",userBean.getUserAddress());
             userObject.put("userIntro",userBean.getUserIntroduce());
             String content = String.valueOf(userObject);
-            URL url = new URL("http://10.7.89.233:8080/sharemate/SaveUserServlet");
+            URL url = new URL(objects[1]+"SaveUserServlet");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("contentType", "UTF-8");

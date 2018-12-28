@@ -48,7 +48,6 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
     private GridView gridView;
     private ListTask listTask;
     private ZanTask zanTask;
-    private UserBean user;
     private int userId;
     private String U;
     private Map<Integer,Boolean> isLike=new HashMap<>();
@@ -63,7 +62,7 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("点击了", ""+ position);
-                int noteid = notes.get(position).getNoId();
+                int noteid= notes.get(position).getNoId();
                 Intent intent = new Intent();
                 intent.setClass(getActivity(),NoteDetailActivity.class);
                 intent.putExtra("noteId",noteid);
@@ -123,7 +122,6 @@ public class BeautFragment extends Fragment implements GridViewAdapter.Callback,
 
         }
     }
-
     //点赞触发的子进程，传userID和noteID给服务器
     public class ZanTask extends AsyncTask{
         @Override
