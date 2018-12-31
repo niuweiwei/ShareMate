@@ -22,22 +22,25 @@
         android:layout_centerHorizontal="true">
 
         <CheckBox
-            android:id="@+id/cb1"
+            android:id="@+id/cb_beauty"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="@drawable/beauty"/>
+            android:background="@drawable/beauty"
+            android:checked="false"/>
         <CheckBox
-            android:id="@+id/cb2"
+            android:id="@+id/cb_travel"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="@drawable/travel"/>
+            android:background="@drawable/travel"
+            android:checked="false"/>
         <CheckBox
-            android:id="@+id/cb3"
+            android:id="@+id/cb_sport"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="@drawable/sport"/>
+            android:background="@drawable/sport"
+            android:checked="false"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/linear2"
@@ -48,19 +51,19 @@
         android:layout_centerHorizontal="true">
 
         <CheckBox
-            android:id="@+id/cb4"
+            android:id="@+id/cb_food"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:background="@drawable/food"/>
         <CheckBox
-            android:id="@+id/cb5"
+            android:id="@+id/cb_science"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:background="@drawable/science"/>
         <CheckBox
-            android:id="@+id/cb6"
+            android:id="@+id/cb_anime"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:background="@drawable/anime"/>
@@ -72,7 +75,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"
-        android:text="下一步"
+        android:text="下一步(至少选择3个兴趣)"
         android:textSize="@dimen/TextSize_4"
         android:textColor="@color/white"
         android:background="@drawable/button_style"/>

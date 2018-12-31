@@ -22,7 +22,7 @@ public class CommentDao {
 		CommentBean commentBean=new CommentBean();
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="select comment_detail,comment_date,comment_like_count,user_id,note_id from comment where comment_id=?";
+		String sql="select comment_detail,comment_date,user_id,note_id from comment where comment_id=?";
 		try {
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1, commentId);
@@ -38,7 +38,6 @@ public class CommentDao {
 				Date date = sdf.parse(str);
 				commentBean.setCommentDate(date);
 				
-				commentBean.setCommentLikeCount(rs.getInt("comment_like_count"));
 				commentBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				commentBean.setNote(new NoteDao().getNoteById(rs.getInt("note_id")));
 			}
@@ -62,7 +61,7 @@ public class CommentDao {
 		List<CommentBean> commentList=new ArrayList<CommentBean>();
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="select comment_id,comment_detail,comment_date,comment_like_count,user_id from comment where note_id=?";
+		String sql="select comment_id,comment_detail,comment_date,user_id from comment where note_id=? order by comment_date desc";
 		ResultSet rs=null;
 		try {
 			pstmt=conn.prepareStatement(sql);
@@ -80,7 +79,6 @@ public class CommentDao {
 				Date date = sdf.parse(str);
 				commentBean.setCommentDate(date);
 				
-				commentBean.setCommentLikeCount(rs.getInt("comment_like_count"));
 				commentBean.setUser(new UserDao().getUserById(rs.getInt("user_id")));
 				commentBean.setNote(new NoteDao().getNoteById(noteId));
 				commentList.add(commentBean);
@@ -126,12 +124,12 @@ public class CommentDao {
 	}
 	
 	/**
-	 * 添加评论
+	 * 添加评论(修改)
 	 */
 	public void addComment(CommentBean comment) {
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="insert into comment(comment_id,comment_detail,comment_date,comment_like_count,user_id,note_id) values(0,?,NOW(),0,?,?)"	;
+		String sql="insert into comment(comment_id,comment_detail,comment_date,user_id,note_id) values(0,?,NOW(),?,?)"	;
 		try {
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setString(1, comment.getCommentDetail());
@@ -169,15 +167,16 @@ public class CommentDao {
 	}
 
 	/**
-	 * 点赞评论
+	 * 点赞评论(修改)
 	 */
-	public void clickLike(int commentId) {
+	public void clickLike(int userId,int commentId) {
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="update comment set comment_like_count=comment_like_count+1 where comment_id=?"	;
+		String sql="insert into like_comment(user_id,comment_id) values(?,?)";
 		try {
 			pstmt=conn.prepareStatement(sql);
-			pstmt.setInt(1,commentId);
+			pstmt.setInt(1,userId);
+			pstmt.setInt(2, commentId);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -189,15 +188,16 @@ public class CommentDao {
 	}
 	
 	/**
-	 * 取消评论点赞
+	 * 取消评论点赞(修改)
 	 */
-	public void cancelLike(int commentId) {
+	public void cancelLike(int userId,int commentId) {
 		Connection conn=DataBase.getConnection();
 		PreparedStatement pstmt=null;
-		String sql="update comment set comment_like_count=comment_like_count-1 where comment_id=?"	;
+		String sql="delete from like_comment where user_id =? and comment_id=?"	;
 		try {
 			pstmt=conn.prepareStatement(sql);
-			pstmt.setInt(1,commentId);
+			pstmt.setInt(1,userId);
+			pstmt.setInt(2, commentId);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -206,6 +206,60 @@ public class CommentDao {
 			DataBase.close(pstmt);
 			DataBase.close(conn);
 		}
+	}
+	/**
+	 * 查看该用户是否点赞了该评论
+	 * */
+	public boolean isLike(int userId,int commentId) {
+		boolean is = false;
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet res = null;
+		
+		try {
+			String sql = "select * from like_comment where user_id =? and comment_id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			pstmt.setInt(2, commentId);
+			res = pstmt.executeQuery();
+			if(res.next())
+				is = true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			DataBase.close(res);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return is;
+	}
+
+	/**
+	 * 得到某个评论总的赞数(新增)
+	 */
+	public int getLikeCount(int commentId) {
+		Connection conn = DataBase.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet res = null;
+		String sql="select count(*) c from like_comment where comment_id=?";
+		int count=0;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, commentId);
+			res=pstmt.executeQuery();
+			if(res.next()) {
+				count=res.getInt("c");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			DataBase.close(res);
+			DataBase.close(pstmt);
+			DataBase.close(conn);
+		}
+		return count;
 	}
 	
 }

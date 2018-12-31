@@ -30,11 +30,20 @@ import com.bumptech.glide.request.RequestOptions;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
+<<<<<<< HEAD
+=======
 import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 import cn.edu.hebtu.software.sharemate.Bean.UserBean;
+import cn.edu.hebtu.software.sharemate.Fragment.MyFragment;
 import cn.edu.hebtu.software.sharemate.R;
+import cn.edu.hebtu.software.sharemate.SaveUser;
+import cn.edu.hebtu.software.sharemate.tools.UpLoadUtil;
 
 public class PersonalActivity extends AppCompatActivity {
 
@@ -55,6 +64,16 @@ public class PersonalActivity extends AppCompatActivity {
     private LinearLayout layoutAddress;
     private LinearLayout layoutIntro;
     private LinearLayout rootLayout;
+<<<<<<< HEAD
+    private String sex;
+    private String birth;
+    private UserBean user;
+    private static final int CODE_PHOTO_REQUEST = 1;
+    private static final int CROP_SMALL_PICTURE = 2;
+    private String sign;
+    private String path;
+    private ArrayList<Integer> type = new ArrayList<>();
+=======
     private String name;
     private String sex;
     private String birth;
@@ -62,64 +81,99 @@ public class PersonalActivity extends AppCompatActivity {
     private UserBean user;
     private static final int CODE_PHOTO_REQUEST = 1;
     private static final int CROP_SMALL_PICTURE = 2;
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal);
+        type = getIntent().getIntegerArrayListExtra("type");
+        path = getResources().getString(R.string.server_path);
+        file = new File(Environment.getExternalStorageDirectory() + "/CoolImage/");
         rootLayout = findViewById(R.id.root);
         user = (UserBean) getIntent().getSerializableExtra("user");
+        sign = getIntent().getStringExtra("sign");
         findView();
+        setContent();
         setListener();
-        Intent intent = getIntent();
-        name = intent.getStringExtra("name");
     }
 
     private void findView() {
         iv_back = findViewById(R.id.back);
         iv_head = findViewById(R.id.head);
-        iv_head.setImageResource(user.getUserPhoto());
         tv_name = findViewById(R.id.user);
-        tv_name.setText(user.getUserName());
         tv_id = findViewById(R.id.num);
+<<<<<<< HEAD
+=======
         tv_id.setText("" + user.getUserId());
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         tv_sex = findViewById(R.id.sex);
-        tv_sex.setText(user.getUserSex());
         tv_birth = findViewById(R.id.birth);
-        tv_birth.setText(user.getUserBirth());
         tv_address = findViewById(R.id.address);
-        tv_address.setText(user.getUserAddress());
         tv_introduce = findViewById(R.id.introduction);
+<<<<<<< HEAD
+=======
         if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 7) {
             tv_introduce.setText(user.getUserIntroduce());
         } else {
             tv_introduce.setText(user.getUserIntroduce().substring(0, 6) + "...");
         }
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         layoutName = findViewById(R.id.ly_name);
         layoutAddress = findViewById(R.id.ly_address);
         layoutBirth = findViewById(R.id.ly_birth);
         layoutIntro = findViewById(R.id.ly_intro);
         layoutSex = findViewById(R.id.ly_sex);
+<<<<<<< HEAD
+    }
+    public void setContent(){
+        tv_address.setText(user.getUserAddress());
+        tv_birth.setText(user.getUserBirth());
+        tv_sex.setText(user.getUserSex());
+        String userId = String.format("%06d",user.getUserId());
+        tv_id.setText(userId);
+        tv_name.setText(user.getUserName());
+        String photoPath = user.getUserPhotoPath();
+        RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true);
+        Glide.with(this).load(photoPath).apply(mRequestOptions).into(iv_head);
+        if (user.getUserIntroduce() == null || user.getUserIntroduce().length() < 7) {
+            tv_introduce.setText(user.getUserIntroduce());
+        } else {
+            tv_introduce.setText(user.getUserIntroduce().substring(0, 6) + "...");
+        }
+=======
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
     }
 
     private void setListener() {
         perOnClickListener listener = new perOnClickListener();
-        layoutName.setOnClickListener(listener);
-        iv_back.setOnClickListener(listener);
         iv_head.setOnClickListener(listener);
+        iv_back.setOnClickListener(listener);
+<<<<<<< HEAD
+        layoutName.setOnClickListener(listener);
+=======
+        iv_head.setOnClickListener(listener);
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         layoutSex.setOnClickListener(listener);
         layoutIntro.setOnClickListener(listener);
         layoutBirth.setOnClickListener(listener);
         layoutAddress.setOnClickListener(listener);
     }
-    public class perOnClickListener implements View.OnClickListener{
+
+    public class perOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
+<<<<<<< HEAD
+            switch (v.getId()) {
+=======
             switch (v.getId()){
                 case R.id.back:
                     PersonalActivity.this.finish();
                     break;
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
                 case R.id.head:
                     Intent intent = new Intent(Intent.ACTION_PICK, null);
                     intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
@@ -127,9 +181,9 @@ public class PersonalActivity extends AppCompatActivity {
                     break;
                 case R.id.ly_name:
                     Intent userIntent = new Intent();
-                    userIntent.setClass(PersonalActivity.this,NameActivity.class);
-                    userIntent.putExtra("user",user);
-                    startActivity(userIntent);
+                    userIntent.setClass(PersonalActivity.this, NameActivity.class);
+                    userIntent.putExtra("user", user);
+                    startActivityForResult(userIntent,3);
                     break;
                 case R.id.ly_sex:
                     showSexDialog();
@@ -139,27 +193,80 @@ public class PersonalActivity extends AppCompatActivity {
                     break;
                 case R.id.ly_address:
                     Intent addIntent = new Intent();
-                    addIntent.setClass(PersonalActivity.this,AddressActivity.class);
-                    addIntent.putExtra("content",user.getUserAddress());
-                    addIntent.putExtra("msg","常住地");
-                    startActivity(addIntent);
+                    addIntent.setClass(PersonalActivity.this, AddressActivity.class);
+                    addIntent.putExtra("user", user);
+                    addIntent.putExtra("msg", "常住地");
+                    startActivityForResult(addIntent,4);
                     break;
                 case R.id.ly_intro:
                     Intent introIntent = new Intent();
-                    introIntent.setClass(PersonalActivity.this,AddressActivity.class);
-                    introIntent.putExtra("content",user.getUserIntroduce());
-                    introIntent.putExtra("msg","个性签名");
-                    startActivity(introIntent);
+                    introIntent.setClass(PersonalActivity.this, AddressActivity.class);
+                    introIntent.putExtra("user", user);
+                    introIntent.putExtra("msg", "个性签名");
+                    startActivityForResult(introIntent,5);
                     break;
+                case R.id.back:
+                    SaveUser saveUser = new SaveUser();
+                    saveUser.execute(user,path);
+                    if("my".equals(sign)){
+                        Intent myIntent = new Intent(PersonalActivity.this,MainActivity.class);
+                        myIntent.putExtra("flag","my");
+                        myIntent.putExtra("userId",user.getUserId());
+                        myIntent.putIntegerArrayListExtra("type",type);
+                        Log.e("personal",user.getUserId()+"");
+                        startActivity(myIntent);
+                    }else if("set".equals(sign)){
+                        Intent myIntent = new Intent(PersonalActivity.this,SettingActivity.class);
+                        myIntent.putExtra("user",user);
+                        myIntent.putIntegerArrayListExtra("type",type);
+                        startActivity(myIntent);
+                    }
             }
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case CODE_PHOTO_REQUEST:
+                if (data != null) {
+                    startPhotoZoom(data.getData());
+                }
+                break;
+            case CROP_SMALL_PICTURE:
+                if (data != null) {
+                    if (!cropUri.equals("")) {
+                        RequestOptions mRequestOptions = RequestOptions.circleCropTransform()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true);
+                        Glide.with(this).load(cropUri).apply(mRequestOptions).into(iv_head);
+                    }
+                }
+                //文本数据全部添加到Map里
+                final Map<String,Object> paramMap = new HashMap<>();
+                paramMap.put("userId",user.getUserId());
+                UpLoadUtil upLoadUtil = new UpLoadUtil();
+                upLoadUtil.execute(cropUri.getPath(),paramMap,path);
+                break;
+        }
+        if(requestCode == 3 && resultCode == 200){
+            user = (UserBean)data.getSerializableExtra("responseUser");
+            setContent();
+        }
+        if(requestCode == 4 && resultCode == 200){
+            user = (UserBean)data.getSerializableExtra("responseUser");
+            setContent();
+        }
+        if(requestCode == 5 && resultCode == 200){
+            user = (UserBean)data.getSerializableExtra("responseUser");
+            setContent();
+        }
+    }
     //性别选择器
-    private void showSexDialog(){
+    private void showSexDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("请选择你的性别");
-        View v = getLayoutInflater().inflate(R.layout.activity_sex,null);
+        View v = getLayoutInflater().inflate(R.layout.activity_sex, null);
         final ImageView manView = v.findViewById(R.id.iv_man);
         final ImageView womanView = v.findViewById(R.id.iv_woman);
         final TextView manText = v.findViewById(R.id.man);
@@ -184,15 +291,15 @@ public class PersonalActivity extends AppCompatActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                    //把性别存到数据库里
                 tv_sex.setText(sex);
+                user.setUserSex(sex);
                 dialog.dismiss();
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                dialog.dismiss();
             }
         });
         AlertDialog alertDialog = builder.create();
@@ -200,10 +307,10 @@ public class PersonalActivity extends AppCompatActivity {
     }
 
     //生日日期选择器
-    private void showBirthDialog(){
+    private void showBirthDialog() {
         final PopupWindow popupWindow = new PopupWindow(this);
         popupWindow.setWidth(ConstraintLayout.LayoutParams.MATCH_PARENT);
-        View view = getLayoutInflater().inflate(R.layout.activity_birth,null);
+        View view = getLayoutInflater().inflate(R.layout.activity_birth, null);
         TextView okText = view.findViewById(R.id.tv_ok);
         TextView canaleText = view.findViewById(R.id.tv_cancle);
         final DatePicker datePicker = (DatePicker) view.findViewById(R.id.datepicker);
@@ -213,7 +320,7 @@ public class PersonalActivity extends AppCompatActivity {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         datePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
             @Override
-            public void onDateChanged(DatePicker view, int year,int monthOfYear, int dayOfMonth) {
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, monthOfYear, dayOfMonth);
                 SimpleDateFormat format = new SimpleDateFormat(
@@ -223,11 +330,12 @@ public class PersonalActivity extends AppCompatActivity {
         });
         popupWindow.setContentView(view);
         addBackgroundAlpha((float) 0.50);
-        popupWindow.showAtLocation(rootLayout, Gravity.BOTTOM,0,0);
+        popupWindow.showAtLocation(rootLayout, Gravity.BOTTOM, 0, 0);
         okText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tv_birth.setText(birth);
+                user.setUserBirth(birth);
                 popupWindow.dismiss();
                 addBackgroundAlpha((float) 1);
             }
@@ -240,13 +348,26 @@ public class PersonalActivity extends AppCompatActivity {
             }
         });
     }
-    private void addBackgroundAlpha(float alpha){
+
+    //修改activity的透明度
+    private void addBackgroundAlpha(float alpha) {
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.alpha = alpha;
-        //设置参数
         getWindow().setAttributes(params);
     }
 
+<<<<<<< HEAD
+
+    //修改头像    对图片进行裁剪
+    private void startPhotoZoom(Uri uri) {
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        cropFile = new File(Environment.getExternalStorageDirectory() + "/CoolImage", System.currentTimeMillis() + ".jpg");
+        if (cropFile.exists()) {
+            cropFile.delete();
+        }else{
+=======
     //修改头像
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -282,6 +403,7 @@ public class PersonalActivity extends AppCompatActivity {
             cropFile.delete();
             Log.e("delete", "delete");
         } else {
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
             try {
                 cropFile.createNewFile();
             } catch (IOException e) {
@@ -302,7 +424,10 @@ public class PersonalActivity extends AppCompatActivity {
         intent.putExtra("scale", true);
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+<<<<<<< HEAD
+=======
         Log.e("cropUri = ", cropUri.toString());
+>>>>>>> 3cee04cf64a9bbfa741281d002153c65e87cb041
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
         startActivityForResult(intent, CROP_SMALL_PICTURE);

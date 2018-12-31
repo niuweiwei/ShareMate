@@ -5,9 +5,9 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:id="@+id/fabu_root">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:background="@color/lightgray"
         android:orientation="horizontal">
         <Button
@@ -18,21 +18,22 @@
             android:layout_marginLeft="5dp"
             android:background="@drawable/guanbi"/>
 
+        <!--<Button-->
+            <!--android:id="@+id/cuncaogao"-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginLeft="200dp"-->
+            <!--android:layout_marginTop="3dp"-->
+            <!--android:text="存草稿"-->
+            <!--android:textSize="15sp"-->
+            <!--android:background="@drawable/yuanjiaobtn1"-->
+            <!--android:textColor="@color/darkgray"-->
+            <!--/>-->
         <Button
-            android:id="@+id/cuncaogao"
+            android:id="@+id/fabu"
             android:layout_width="60dp"
-            android:layout_height="35dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="200dp"
-            android:layout_marginTop="3dp"
-            android:text="存草稿"
-            android:textSize="15sp"
-            android:background="@drawable/yuanjiaobtn1"
-            android:textColor="@color/darkgray"
-            />
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="35dp"
+            android:layout_height="25dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="3dp"
@@ -40,8 +41,10 @@
             android:textSize="15sp"
             android:background="@drawable/yuanjiaobtn"
             android:textColor="@color/white"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             />
-    </LinearLayout>
+    </RelativeLayout>
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,8 +72,11 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
     <EditText
+        android:id="@+id/detial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="这一刻，想说点什么……"
@@ -78,13 +84,44 @@
         android:textColor="@color/darkgray"
         android:background="@null"
         />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/btn_title"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="150dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/huati"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="12dp"/>
+        <TextView
+
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="我的题目"
+            android:textColor="@color/darkgray"
+            android:textSize="18sp"
+            android:layout_marginLeft="10dp"/>
+        <EditText
+            android:id="@+id/wenzi_title"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="35dp"
+            android:background="@color/white"
+            />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/btn_topic"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="150dp">
+        android:orientation="horizontal">
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -145,7 +182,7 @@
             />
         <ImageView
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/xiangyou"/>

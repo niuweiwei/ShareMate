@@ -17,7 +17,7 @@
         android:background="@color/grayishBlue">
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"><!--修改-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -28,13 +28,13 @@
                 android:orientation="horizontal"
                 android:paddingLeft="13dp"
                 android:paddingRight="13dp"
-                android:paddingTop="10dp"
                 android:paddingBottom="6dp"
+                android:paddingTop="10dp"
                 android:background="@color/white">
-                <ImageView
+                <cn.edu.hebtu.software.sharemate.tools.RoundImgView
                     android:id="@+id/iv_image"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp" />
+                    android:layout_width="30dp"
+                    android:layout_height="30dp" /><!--修改-->
                 <LinearLayout
                     android:layout_marginLeft="12dp"
                     android:layout_width="match_parent"
@@ -86,7 +86,8 @@
                 android:id="@+id/lv_reply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@color/grayishBlue">
+                android:divider="@color/grayishBlue"
+                android:layout_marginBottom="50dp">
             </ListView>
             </LinearLayout>
         </ScrollView>
@@ -133,12 +134,13 @@
         android:orientation="horizontal"
         android:background="@color/white"
         android:gravity="center"
-        android:layout_alignParentBottom="true">
-        <ImageView
+        android:layout_alignParentBottom="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"><!--修改-->
+        <cn.edu.hebtu.software.sharemate.tools.RoundImgView
             android:id="@+id/iv_headimage"
             android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/a7"/>
+            android:layout_height="30dp" /><!--修改-->
         <EditText
             android:id="@+id/et_reply"
             android:layout_marginLeft="7dp"
